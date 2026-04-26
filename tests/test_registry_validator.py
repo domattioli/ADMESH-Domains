@@ -200,6 +200,21 @@ class TestSchemaPrimitives:
         m = Mesh(id="x@v1", filename="x.14")
         assert "test_case" not in m.to_dict()
 
+    def test_mesh_kind_defaults_to_mesh(self):
+        m = Mesh(id="x@v1", filename="x.14")
+        assert m.kind == "mesh"
+        assert "kind" not in m.to_dict()
+
+    def test_mesh_kind_boundary_round_trip(self):
+        m = Mesh.from_dict({"id": "x@v1", "filename": "x.14", "kind": "boundary"})
+        assert m.kind == "boundary"
+        assert m.to_dict().get("kind") == "boundary"
+
+    def test_mesh_kind_invalid_rejected(self):
+        m = Mesh(id="x@v1", filename="x.14", kind="grid")
+        with pytest.raises(SchemaError):
+            m.validate()
+
 
 class TestManifestHelpers:
     def test_get_domain_case_insensitive(self, loaded_manifest):

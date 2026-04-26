@@ -20,6 +20,9 @@ region = "Europe"
 applications = ["Coastal Circulation"]
 
 [[domains.meshes]]
+uploaded_date = "2026-04-26"
+modified_date = "2026-04-24"
+contributor = "Dominik O Mattioli"
 id = "default@v1"
 filename = "Baranja_Hill.14"
 license = "MIT"
@@ -28,6 +31,9 @@ description = "Baranja Hill region mesh"
 size_mb = 0.08
 
 [[domains.meshes]]
+uploaded_date = "2026-04-26"
+modified_date = "2026-04-24"
+contributor = "Dominik O Mattioli"
 id = "admesh-v2@v1"
 filename = "Baranja_Hill_ADMESH_v2.14"
 license = "MIT"
@@ -44,6 +50,9 @@ region = "North America"
 applications = ["Coastal Circulation"]
 
 [[domains.meshes]]
+uploaded_date = "2026-04-26"
+modified_date = "2026-04-24"
+contributor = "Dominik O Mattioli"
 id = "default@v1"
 filename = "Chesapeake_Bay.14"
 license = "MIT"
@@ -60,6 +69,9 @@ region = "North America"
 applications = ["Coastal Circulation"]
 
 [[domains.meshes]]
+uploaded_date = "2026-04-26"
+modified_date = "2026-04-24"
+contributor = "Dominik O Mattioli"
 id = "default@v1"
 filename = "Deleware_Bay.14"
 license = "MIT"
@@ -68,6 +80,9 @@ description = "Delaware Bay mesh"
 size_mb = 1.72
 
 [[domains.meshes]]
+uploaded_date = "2026-04-26"
+modified_date = "2026-04-24"
+contributor = "Dominik O Mattioli"
 id = "refined-100-20000@v1"
 filename = "Deleware_Bay_hmin_100_hmax_20000.14"
 license = "MIT"
@@ -86,6 +101,9 @@ region = "North America"
 applications = ["Lake Circulation"]
 
 [[domains.meshes]]
+uploaded_date = "2026-04-26"
+modified_date = "2026-04-24"
+contributor = "Dominik O Mattioli"
 id = "default@v1"
 filename = "Great_Lakes.14"
 license = "MIT"
@@ -102,6 +120,9 @@ region = "Mediterranean"
 applications = ["Coastal Circulation"]
 
 [[domains.meshes]]
+uploaded_date = "2026-04-26"
+modified_date = "2026-04-24"
+contributor = "Dominik O Mattioli"
 id = "default@v1"
 filename = "Italy.14"
 license = "MIT"
@@ -118,6 +139,9 @@ region = "North America"
 applications = ["Lake Circulation"]
 
 [[domains.meshes]]
+uploaded_date = "2026-04-26"
+modified_date = "2026-04-24"
+contributor = "Dominik O Mattioli"
 id = "5k-nodes@v1"
 filename = "LakeErie_5k_500.14"
 license = "MIT"
@@ -126,6 +150,9 @@ description = "Lake Erie mesh - 5k nodes variant"
 size_mb = 1.57
 
 [[domains.meshes]]
+uploaded_date = "2026-04-26"
+modified_date = "2026-04-24"
+contributor = "Dominik O Mattioli"
 id = "refined@v1"
 filename = "Lake_Erie_mesh_refined.14"
 license = "MIT"
@@ -143,6 +170,9 @@ region = "North America"
 applications = ["Lake Circulation"]
 
 [[domains.meshes]]
+uploaded_date = "2026-04-26"
+modified_date = "2026-04-24"
+contributor = "Dominik O Mattioli"
 id = "default@v1"
 filename = "Lake_Michigan_mesh.14"
 license = "MIT"
@@ -158,6 +188,9 @@ description = "Scratch and misc test fixtures"
 category = "synthetic"
 
 [[domains.meshes]]
+uploaded_date = "2026-04-26"
+modified_date = "2026-04-24"
+contributor = "Dominik O Mattioli"
 id = "simple@v1"
 filename = "simple_test_case.14"
 license = "MIT"
@@ -165,6 +198,9 @@ bounding_box = { min_lon = -1.000320, min_lat = -1.000000, max_lon = 1.001642, m
 size_mb = 0.09
 
 [[domains.meshes]]
+uploaded_date = "2026-04-26"
+modified_date = "2026-04-24"
+contributor = "Dominik O Mattioli"
 id = "test1@v1"
 filename = "test1.14"
 license = "MIT"
@@ -172,6 +208,9 @@ bounding_box = { min_lon = 546.000000, min_lat = -13755.000000, max_lon = 30972.
 size_mb = 0.09
 
 [[domains.meshes]]
+uploaded_date = "2026-04-26"
+modified_date = "2026-04-24"
+contributor = "Dominik O Mattioli"
 id = "wetting-drying@v1"
 filename = "wetting_and_drying_test.14"
 license = "MIT"
@@ -179,6 +218,9 @@ bounding_box = { min_lon = -10178.107531, min_lat = -13799.870083, max_lon = 499
 size_mb = 0.31
 
 [[domains.meshes]]
+uploaded_date = "2026-04-26"
+modified_date = "2026-04-24"
+contributor = "Dominik O Mattioli"
 id = "test2@v1"
 filename = "test2.14"
 license = "MIT"
@@ -186,6 +228,9 @@ bounding_box = { min_lon = 18229.911146, min_lat = -4908.524772, max_lon = 49914
 size_mb = 0.04
 
 [[domains.meshes]]
+uploaded_date = "2026-04-26"
+modified_date = "2026-04-24"
+contributor = "Dominik O Mattioli"
 id = "test3@v1"
 filename = "test3.14"
 license = "MIT"
@@ -193,6 +238,9 @@ bounding_box = { min_lon = 18229.911146, min_lat = -4908.524772, max_lon = 49914
 size_mb = 0.04
 
 [[domains.meshes]]
+uploaded_date = "2026-04-26"
+modified_date = "2026-04-24"
+contributor = "Dominik O Mattioli"
 id = "test4@v1"
 filename = "test4.14"
 license = "MIT"
@@ -200,6 +248,9 @@ bounding_box = { min_lon = 18229.911146, min_lat = -4908.524772, max_lon = 49914
 size_mb = 0.04
 
 [[domains.meshes]]
+uploaded_date = "2026-04-26"
+modified_date = "2026-04-24"
+contributor = "Dominik O Mattioli"
 id = "mixed@v1"
 filename = "Mixed_Test.14"
 license = "MIT"
@@ -207,6 +258,9 @@ bounding_box = { min_lon = 1.000000, min_lat = 1.000000, max_lon = 4.000000, max
 size_mb = 0.0
 
 [[domains.meshes]]
+uploaded_date = "2026-04-26"
+modified_date = "2026-04-24"
+contributor = "Dominik O Mattioli"
 id = "sms-2dm@v1"
 filename = "dom.2dm"
 license = "MIT"
@@ -223,6 +277,9 @@ description = "Rectangular triangular and quadrilateral reference meshes"
 category = "synthetic"
 
 [[domains.meshes]]
+uploaded_date = "2026-04-26"
+modified_date = "2026-04-24"
+contributor = "Dominik O Mattioli"
 id = "tri@v1"
 filename = "rectangular_mesh_triangle1.14"
 license = "MIT"
@@ -231,6 +288,9 @@ size_mb = 0.0
 element_type = "triangle"
 
 [[domains.meshes]]
+uploaded_date = "2026-04-26"
+modified_date = "2026-04-24"
+contributor = "Dominik O Mattioli"
 id = "quad@v1"
 filename = "rectangular_mesh_quadrilateral1.14"
 license = "MIT"
@@ -239,6 +299,9 @@ size_mb = 0.0
 element_type = "quadrilateral"
 
 [[domains.meshes]]
+uploaded_date = "2026-04-26"
+modified_date = "2026-04-24"
+contributor = "Dominik O Mattioli"
 id = "tri-skewed@v1"
 filename = "rectangular_skewed_mesh_triangle1.14"
 license = "MIT"
@@ -247,6 +310,9 @@ size_mb = 0.0
 element_type = "triangle"
 
 [[domains.meshes]]
+uploaded_date = "2026-04-26"
+modified_date = "2026-04-24"
+contributor = "Dominik O Mattioli"
 id = "quad-skewed@v1"
 filename = "rectangular_skewed_mesh_quadrilateral1.14"
 license = "MIT"
@@ -262,6 +328,9 @@ description = "Circles, donuts, islands, and other primitive geometries"
 category = "synthetic"
 
 [[domains.meshes]]
+uploaded_date = "2026-04-26"
+modified_date = "2026-04-25"
+contributor = "Dominik O Mattioli"
 id = "block-o@v1"
 filename = "Block_O.14"
 license = "MIT"
@@ -270,6 +339,9 @@ description = "Block-shaped structured mesh"
 size_mb = 0.33
 
 [[domains.meshes]]
+uploaded_date = "2026-04-26"
+modified_date = "2026-04-24"
+contributor = "Dominik O Mattioli"
 id = "islands@v1"
 filename = "islands1.14"
 license = "MIT"
@@ -277,6 +349,9 @@ bounding_box = { min_lon = 1.016230, min_lat = 1.000000, max_lon = 12.000000, ma
 size_mb = 0.22
 
 [[domains.meshes]]
+uploaded_date = "2026-04-26"
+modified_date = "2026-04-24"
+contributor = "Dominik O Mattioli"
 id = "circle@v1"
 filename = "circle.14"
 license = "MIT"
@@ -284,6 +359,9 @@ bounding_box = { min_lon = 24.000239, min_lat = 24.001096, max_lon = 39.999647, 
 size_mb = 0.17
 
 [[domains.meshes]]
+uploaded_date = "2026-04-26"
+modified_date = "2026-04-24"
+contributor = "Dominik O Mattioli"
 id = "square@v1"
 filename = "square_mesh_test.14"
 license = "MIT"
@@ -291,6 +369,9 @@ bounding_box = { min_lon = -1.000847, min_lat = -1.000000, max_lon = 1.000000, m
 size_mb = 0.04
 
 [[domains.meshes]]
+uploaded_date = "2026-04-26"
+modified_date = "2026-04-25"
+contributor = "Dominik O Mattioli"
 id = "annulus-200pts@v1"
 filename = "annulus_200pts.fort.14"
 license = "MIT"
@@ -299,6 +380,9 @@ description = "Annulus mesh with 200 points"
 size_mb = 0.02
 
 [[domains.meshes]]
+uploaded_date = "2026-04-26"
+modified_date = "2026-04-25"
+contributor = "Dominik O Mattioli"
 id = "donut@v1"
 filename = "donut_domain.fort.14"
 license = "MIT"
@@ -314,6 +398,9 @@ description = "Regular structured grid variants used for testing"
 category = "synthetic"
 
 [[domains.meshes]]
+uploaded_date = "2026-04-26"
+modified_date = "2026-04-24"
+contributor = "Dominik O Mattioli"
 id = "v2@v1"
 filename = "structuredMesh2.14"
 license = "MIT"
@@ -321,6 +408,9 @@ bounding_box = { min_lon = -2.000000, min_lat = -1.000000, max_lon = 2.000000, m
 size_mb = 0.07
 
 [[domains.meshes]]
+uploaded_date = "2026-04-26"
+modified_date = "2026-04-24"
+contributor = "Dominik O Mattioli"
 id = "v4@v1"
 filename = "structuredMesh4.14"
 license = "MIT"
@@ -328,6 +418,9 @@ bounding_box = { min_lon = -2.000000, min_lat = -1.000000, max_lon = 2.000000, m
 size_mb = 0.07
 
 [[domains.meshes]]
+uploaded_date = "2026-04-26"
+modified_date = "2026-04-25"
+contributor = "Dominik O Mattioli"
 id = "v1@v1"
 filename = "structuredMesh1.14"
 license = "MIT"
@@ -335,6 +428,9 @@ bounding_box = { min_lon = -2.000000, min_lat = -1.000000, max_lon = 2.000000, m
 size_mb = 0.04
 
 [[domains.meshes]]
+uploaded_date = "2026-04-26"
+modified_date = "2026-04-24"
+contributor = "Dominik O Mattioli"
 id = "v3@v1"
 filename = "structuredMesh3.14"
 license = "MIT"
@@ -349,6 +445,9 @@ description = "Synthetic numbered test cases used for validation"
 category = "synthetic"
 
 [[domains.meshes]]
+uploaded_date = "2026-04-26"
+modified_date = "2026-04-24"
+contributor = "Dominik O Mattioli"
 id = "case-4@v1"
 filename = "Test_Case_4.14"
 license = "MIT"
@@ -357,6 +456,9 @@ size_mb = 0.39
 test_case = true
 
 [[domains.meshes]]
+uploaded_date = "2026-04-26"
+modified_date = "2026-04-24"
+contributor = "Dominik O Mattioli"
 id = "case-4.2@v1"
 filename = "Test_Case_4.2.14"
 license = "MIT"
@@ -365,6 +467,9 @@ size_mb = 0.26
 test_case = true
 
 [[domains.meshes]]
+uploaded_date = "2026-04-26"
+modified_date = "2026-04-24"
+contributor = "Dominik O Mattioli"
 id = "case-2@v1"
 filename = "Test_Case_2.14"
 license = "MIT"
@@ -373,6 +478,9 @@ size_mb = 0.22
 test_case = true
 
 [[domains.meshes]]
+uploaded_date = "2026-04-26"
+modified_date = "2026-04-24"
+contributor = "Dominik O Mattioli"
 id = "case-1@v1"
 filename = "Test_Case_1.14"
 license = "MIT"
@@ -381,6 +489,9 @@ size_mb = 0.16
 test_case = true
 
 [[domains.meshes]]
+uploaded_date = "2026-04-26"
+modified_date = "2026-04-24"
+contributor = "Dominik O Mattioli"
 id = "case-3@v1"
 filename = "Test_Case_3.14"
 license = "MIT"
@@ -398,6 +509,9 @@ region = "Atlantic Ocean"
 applications = ["Hurricane/Storm Surge", "Coastal Circulation"]
 
 [[domains.meshes]]
+uploaded_date = "2026-04-26"
+modified_date = "2026-04-24"
+contributor = "Dominik O Mattioli"
 id = "onur@v1"
 filename = "WNAT_Onur.14"
 license = "MIT"
@@ -406,6 +520,9 @@ description = "Western North Atlantic mesh (Onur variant)"
 size_mb = 15.32
 
 [[domains.meshes]]
+uploaded_date = "2026-04-26"
+modified_date = "2026-04-24"
+contributor = "Dominik O Mattioli"
 id = "hagen@v1"
 filename = "WNAT_Hagen.14"
 license = "MIT"
@@ -415,6 +532,9 @@ size_mb = 5.48
 aliases = ["WNAT_53K_Nodes"]
 
 [[domains.meshes]]
+uploaded_date = "2026-04-26"
+modified_date = "2026-04-24"
+contributor = "Dominik O Mattioli"
 id = "test@v1"
 filename = "WNAT_Test.14"
 license = "MIT"
@@ -423,6 +543,9 @@ description = "Western North Atlantic test mesh"
 size_mb = 1.17
 
 [[domains.meshes]]
+uploaded_date = "2026-04-26"
+modified_date = "2026-04-25"
+contributor = "Dominik O Mattioli"
 id = "nc-inundation-v6c@v1"
 filename = "nc_inundation_v6c.grd"
 license = "MIT"

@@ -19,15 +19,17 @@
 
     <div class="view-toggle" role="tablist" aria-label="View mode">
       <button type="button" id="view-cards" class="btn secondary" aria-pressed="true">Cards</button>
+      <button type="button" id="view-thumbs" class="btn secondary" aria-pressed="false">Thumbnails</button>
       <button type="button" id="view-table" class="btn secondary" aria-pressed="false">Table</button>
     </div>
 
     <div id="domain-cards" class="cards"></div>
+    <div id="mesh-thumbs" class="thumbs" hidden></div>
     <div id="mesh-table-wrap" hidden>
       <table id="mesh-table">
         <thead>
           <tr>
-            <th>Domain</th><th>Mesh</th><th>Type</th><th>Nodes</th><th>Size (MB)</th><th>License</th><th>Download</th>
+            <th>Domain</th><th>Mesh</th><th>Kind</th><th>Type</th><th>Nodes</th><th>Size (MB)</th><th>License</th><th>Modified</th><th>Uploaded</th><th>Contributor</th><th>Download</th>
           </tr>
         </thead>
         <tbody></tbody>

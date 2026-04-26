@@ -21,6 +21,7 @@ SCHEMA_VERSION = "0.2"
 
 VALID_TYPES = {"ADCIRC", "SMS_2DM", "ADCIRC_GRD"}
 VALID_CATEGORIES = {"real-world", "synthetic"}
+VALID_KINDS = {"mesh", "boundary"}
 VALID_LICENSES = {
     "public-domain",
     "CC0-1.0",
@@ -71,13 +72,15 @@ class Mesh:
     element_type: Optional[str] = None
     type: str = "ADCIRC"
     contributor: Optional[str] = None
-    created_date: Optional[str] = None
+    uploaded_date: Optional[str] = None
+    modified_date: Optional[str] = None
     refinement_level: Optional[str] = None
     features: list[str] = field(default_factory=list)
     aliases: list[str] = field(default_factory=list)
     bounding_box: Optional[BoundingBox] = None
     license: str = "unknown"
     test_case: bool = False
+    kind: str = "mesh"
 
     _domain_name: Optional[str] = field(default=None, repr=False, compare=False)
     _base_dir: Optional[Path] = field(default=None, repr=False, compare=False)
@@ -97,6 +100,10 @@ class Mesh:
             raise SchemaError(
                 f"Mesh.license must be one of {sorted(VALID_LICENSES)}, "
                 f"got {self.license!r}"
+            )
+        if self.kind not in VALID_KINDS:
+            raise SchemaError(
+                f"Mesh.kind must be one of {sorted(VALID_KINDS)}, got {self.kind!r}"
             )
 
     @property
@@ -164,7 +171,11 @@ class Mesh:
         d = asdict(self)
         d.pop("_base_dir", None)
         d.pop("_domain_name", None)
-        return {k: v for k, v in d.items() if v is not None and v != [] and v is not False}
+        defaults = {"kind": "mesh"}
+        return {
+            k: v for k, v in d.items()
+            if v is not None and v != [] and v is not False and defaults.get(k) != v
+        }
 
     @classmethod
     def from_dict(

@@ -90,6 +90,20 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
 .btn.secondary { background: transparent; color: var(--accent); }
 
 .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 0.75rem; }
+
+.thumbs { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 0.75rem; margin: 0.5rem 0 1.5rem; }
+.thumb-card {
+  display: block;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.6rem 0.7rem 0.7rem;
+  color: var(--fg);
+  text-decoration: none;
+}
+.thumb-card:hover { border-color: var(--accent); text-decoration: none; }
+.thumb-svg { display: block; width: 100%; height: auto; background: var(--bg); border: 1px solid var(--border); border-radius: 4px; margin-bottom: 0.4rem; }
+.thumb-title { font-size: 0.9rem; font-weight: 600; word-break: break-all; }
 .card { background: var(--card-bg); border: 1px solid var(--border); padding: 0.85rem 1rem; border-radius: 6px; }
 .card h3 { margin-top: 0; }
 .card .meta { color: var(--muted); font-size: 0.85rem; }

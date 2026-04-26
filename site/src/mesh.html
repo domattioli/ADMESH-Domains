@@ -15,6 +15,11 @@
     <div id="mesh-content"><p class="muted">Loading…</p></div>
     <h2>Bounding box</h2>
     <div id="map"></div>
+
+    <h2>Geometry</h2>
+    <p class="muted" id="geometry-note">Click <strong>Render geometry</strong> to download and draw the mesh. Large meshes may take a few seconds.</p>
+    <p><button type="button" id="render-btn">Render geometry</button></p>
+    <canvas id="geometry-canvas" hidden></canvas>
   </main>
   <footer id="site-footer"></footer>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"

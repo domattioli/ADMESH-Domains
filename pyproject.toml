@@ -4,12 +4,12 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "admesh-domains"
-version = "0.1.0"
+version = "0.1.1"
 description = "ADCIRC mesh registry - domain management and validation for mesh data"
 readme = "README.md"
 license = {text = "MIT"}
 authors = [
-    {name = "David Omattioli", email = "iqh766c2@duck.com"}
+    {name = "Dominik Mattioli", email = "iqh766c2@duck.com"}
 ]
 keywords = ["adcirc", "mesh", "registry", "coastal", "simulation"]
 classifiers = [
@@ -23,7 +23,9 @@ classifiers = [
     "Topic :: Scientific/Engineering",
 ]
 requires-python = ">=3.9"
-dependencies = []
+dependencies = [
+    "tomli >= 1.1.0 ; python_version < '3.11'",
+]
 
 [project.urls]
 Repository = "https://github.com/domattioli/ADMESH-Domains"
@@ -44,6 +46,7 @@ admesh-domains = "admesh_domains.cli:main"
 
 [tool.setuptools]
 packages = ["admesh_domains"]
+include-package-data = true
 
 [tool.setuptools.package-data]
-admesh_domains = ["py.typed"]
+admesh_domains = ["py.typed", "data/*.toml"]

@@ -49,13 +49,28 @@ admesh-domains publish --tag v0.0.0-dryrun \
 
 Every push and PR is validated by `.github/workflows/validate-pr.yml` (matrix across Python 3.9 / 3.11 / 3.12).
 
-## Releasing
+## Releasing — code vs. data
 
-Tag a strict-semver version (`v[0-9]+.[0-9]+.[0-9]+`), push it, walk away. The `release.yml` workflow handles `twine upload` to PyPI and a single atomic `create_commit` to the HF dataset, with sha256 dedup against the prior release. See [specs/006-huggingface-publisher/quickstart.md](specs/006-huggingface-publisher/quickstart.md) for the full maintainer recipe.
+Two separate tracks; **don't conflate them**:
+
+| Type of change | What to do | Workflow | Effect |
+|---|---|---|---|
+| Code, API, schema, publisher, template | Bump `pyproject.toml` + `__init__.py`, tag `vX.Y.Z`, push | `release.yml` | PyPI release + HF tagged `vX.Y.Z` |
+| Add / remove / edit a mesh (data only) | Edit `registry_data/`, commit, push to `main` | `publish-data.yml` | HF tagged `data-YYYY-MM-DD-<sha7>`; **PyPI untouched** |
+
+PyPI versions reflect *code/API* changes only. Data updates flow through HF without forcing a wheel bump (which would mislead users about what changed). Both tracks produce reproducible, pinned HF revisions.
+
+See [specs/006-huggingface-publisher/quickstart.md](specs/006-huggingface-publisher/quickstart.md) for the full maintainer recipe.
 
 ```bash
-# bump pyproject.toml + admesh_domains/__init__.py to e.g. 0.2.2
-git tag v0.2.2 && git push origin v0.2.2
+# Code release (bumps PyPI):
+# bump pyproject.toml + admesh_domains/__init__.py to e.g. 0.2.5
+git tag v0.2.5 && git push origin v0.2.5
+
+# Data update (HF only, no PyPI):
+git add registry_data/ admesh_domains/data/manifest.toml
+git commit -m "Add foo.14 to <Domain>"
+git push origin main
 ```
 
 ## Contributing

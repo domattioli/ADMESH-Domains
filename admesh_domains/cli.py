@@ -161,11 +161,17 @@ def cmd_publish(args: argparse.Namespace) -> int:
         print(f"ERROR: {e}", file=sys.stderr)
         return 1
 
+    tag = args.tag
+    if not tag:
+        from datetime import datetime, timezone
+        tag = f"data-{datetime.now(timezone.utc).strftime('%Y-%m-%d-%H%M%S')}"
+        print(f"(no --tag provided; using data-only tag: {tag})")
+
     repo = args.repo or DEFAULT_HF_REPO
     try:
         result = publish(
             manifest=manifest,
-            tag=args.tag,
+            tag=tag,
             hf_repo=repo,
             dry_run=args.dry_run,
         )
@@ -186,7 +192,7 @@ def cmd_publish(args: argparse.Namespace) -> int:
             print(f"  - {hp}")
     if result.commit_sha:
         print(f"  commit: {result.commit_sha}")
-        print(f"  view:   https://huggingface.co/datasets/{repo}/tree/{args.tag}")
+        print(f"  view:   https://huggingface.co/datasets/{repo}/tree/{tag}")
     return 0
 
 
@@ -233,7 +239,14 @@ def build_parser() -> argparse.ArgumentParser:
     pa.set_defaults(func=cmd_applications)
 
     pp = sub.add_parser("publish", help="Publish the registry to HuggingFace Datasets")
-    pp.add_argument("--tag", required=True, help="Release tag, e.g. v0.2.0")
+    pp.add_argument(
+        "--tag",
+        default=None,
+        help=(
+            "Release tag. Use 'vX.Y.Z' for code releases (paired with PyPI), or omit "
+            "for a data-only update (defaults to 'data-YYYY-MM-DD-HHMMSS')."
+        ),
+    )
     pp.add_argument("--repo", default=None, help="HF dataset slug (default: DEFAULT_HF_REPO)")
     pp.add_argument("--manifest", default=None, help="Manifest path (default: bundled)")
     pp.add_argument("--dry-run", action="store_true", help="Print plan only; do not write to HF")

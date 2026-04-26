@@ -36,16 +36,28 @@ Adding optional fields is **not** a breaking change and stays at the same SCHEMA
 
 Schema version is **independent** of the package version (PyPI) and the manifest data version (`metadata.version`). Don't conflate them.
 
-## IV. Atomic releases
+## IV. Atomic releases — and separate code from data
 
-Releases are tag-triggered (`v[0-9]+.[0-9]+.[0-9]+`) and atomic across PyPI + HF:
+There are **two release tracks** with strictly separate concerns:
 
-- PyPI uploads first; if it fails, the workflow stops
-- HF publish runs only on PyPI success
-- HF writes go through one `create_commit` (no partial state visible)
+**Code track** (PyPI + HF together):
+
+- Triggered by a strict-semver git tag (`v[0-9]+.[0-9]+.[0-9]+`)
+- `release.yml` runs PyPI upload first; HF publish runs only on PyPI success
+- HF writes go through one `create_commit` (no partial state)
 - HF tag and `main` branch update happen in the same workflow run
+- Use this for: code, API, schema, publisher, dataset-card-template changes
+- Hot-fixes follow the same path — bump the patch version, push the tag
 
-Hot-fixes follow the same path — bump the patch version, push the tag. Never edit a published artifact in place.
+**Data track** (HF only):
+
+- Triggered by push to `main` touching `registry_data/**` or `admesh_domains/data/manifest.toml` (or manual `workflow_dispatch`)
+- `publish-data.yml` publishes to HF with a `data-YYYY-MM-DD-<sha7>` tag
+- **PyPI is not touched.** Bumping the package version for a data change misleads users about what's in the wheel.
+- Use this for: adding/removing/editing meshes or Domain metadata
+- Every data change still gets a reproducible HF revision; readers can pin to `data-2026-04-26-abcdef0` exactly like a code release
+
+Never edit a published artifact in place. PyPI is immutable; HF revisions are git-style commits.
 
 ## V. Test before tagging
 

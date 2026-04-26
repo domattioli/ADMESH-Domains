@@ -65,11 +65,32 @@ admesh-domains publish --tag v0.0.0-dryrun \
   --manifest registry_data/manifest.toml --dry-run --verbose
 ```
 
-### Cut a release
+### Releasing code (bumps PyPI + HF)
+**Use this for code, API, schema, or publisher changes — NOT for adding meshes.**
 ```bash
 # Bump version in pyproject.toml AND admesh_domains/__init__.py
 git tag v0.X.Y && git push origin v0.X.Y
-# Watch the release workflow do PyPI + HF in one shot
+# Triggers release.yml: PyPI release + HF tagged with same vX.Y.Z
+```
+
+### Adding a mesh (data-only update — NO PyPI bump)
+**Mesh additions / removals / metadata edits are data, not code. Don't tag.**
+```bash
+# Edit registry_data/manifest.toml (and admesh_domains/data/manifest.toml),
+# add the file under registry_data/meshes/, commit, push to main:
+git add registry_data/ admesh_domains/data/manifest.toml
+git commit -m "Add foo.14 to <Domain>"
+git push origin main
+# Triggers publish-data.yml automatically: HF gets a new revision
+# tagged 'data-YYYY-MM-DD-<sha7>'. PyPI is untouched.
+```
+
+### Manual data publish
+```bash
+# Run the data-only HF publish out-of-band (no commit needed):
+gh workflow run publish-data.yml -R domattioli/ADMESH-Domains
+# Or with a custom tag:
+gh workflow run publish-data.yml -R domattioli/ADMESH-Domains -f tag=data-special-rev
 ```
 
 ## Specs index
@@ -88,3 +109,4 @@ Active and shipped specs live under `specs/`. Use the spec-kit-style format: `sp
 - **Don't lowercase `ADMESH-Domains`** in the HF slug.
 - **Don't bump SCHEMA_VERSION for additive changes.** Only for breaking ones.
 - **Don't write to PyPI/HF without the user explicitly asking** — releases are tag-triggered for a reason.
+- **Don't bump the PyPI version when adding/removing/editing meshes.** Mesh changes are *data* updates and go through `publish-data.yml` to HF only. Bumping the package version misleads users about what changed. PyPI versions reserved for code, API, schema, or publisher changes.

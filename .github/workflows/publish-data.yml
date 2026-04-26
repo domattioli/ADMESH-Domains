@@ -1,0 +1,71 @@
+name: Publish data update
+
+# Data-only updates to HuggingFace. Triggered when the manifest or
+# mesh files change on main, or manually via workflow_dispatch.
+# Does NOT bump PyPI — code/API/schema changes go through release.yml
+# with a semver tag instead.
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "registry_data/manifest.toml"
+      - "registry_data/meshes/**"
+      - "admesh_domains/data/manifest.toml"
+      - "admesh_domains/templates/**"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Optional override tag (defaults to data-YYYY-MM-DD-<sha7>)"
+        required: false
+
+jobs:
+  publish:
+    if: github.repository == 'domattioli/ADMESH-Domains'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install publish extras
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[publish]"
+
+      - name: Validate dev manifest (with mesh files)
+        run: admesh-domains validate registry_data/manifest.toml
+
+      - name: Compute data tag
+        id: dtag
+        run: |
+          if [ -n "${{ inputs.tag }}" ]; then
+            echo "tag=${{ inputs.tag }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "tag=data-$(date -u +%Y-%m-%d)-${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Publish to HuggingFace
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          admesh-domains publish \
+            --tag "${{ steps.dtag.outputs.tag }}" \
+            --manifest registry_data/manifest.toml \
+            --verbose
+
+      - name: Summary
+        run: |
+          TAG="${{ steps.dtag.outputs.tag }}"
+          echo "### Data-only update: ${TAG}" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "PyPI was NOT bumped (data change, not code)." >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "View: https://huggingface.co/datasets/domattioli/ADMESH-Domains/tree/${TAG}" >> "$GITHUB_STEP_SUMMARY"

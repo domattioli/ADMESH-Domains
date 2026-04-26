@@ -71,6 +71,11 @@ def bbox_from_2dm(path: Path) -> Optional[tuple[float, float, float, float]]:
 
 
 def extract_bbox(path: Path) -> Optional[tuple[float, float, float, float]]:
+    """Dispatch to the right parser by extension.
+
+    Recognized: .14, .grd, .fort.14 (all ADCIRC-format) and .2dm (SMS).
+    Anything else falls through to the fort.14 parser as a best-effort.
+    """
     if path.suffix == ".2dm":
         return bbox_from_2dm(path)
     return bbox_from_fort14(path)

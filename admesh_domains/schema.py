@@ -19,7 +19,7 @@ from typing import Optional
 
 SCHEMA_VERSION = "0.2"
 
-VALID_TYPES = {"ADCIRC", "SMS_2DM"}
+VALID_TYPES = {"ADCIRC", "SMS_2DM", "ADCIRC_GRD"}
 VALID_CATEGORIES = {"real-world", "synthetic"}
 VALID_LICENSES = {
     "public-domain",

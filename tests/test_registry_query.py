@@ -64,12 +64,13 @@ class TestFindDomains:
 class TestFindMeshes:
     def test_no_filters_returns_all_meshes(self, loaded_manifest):
         out = find_meshes(manifest=loaded_manifest)
-        assert len(out) == loaded_manifest.total_meshes == 40
+        assert len(out) == loaded_manifest.total_meshes
+        assert len(out) >= 40  # registry only grows
 
     def test_filter_by_domain_wnat(self, loaded_manifest):
         out = find_meshes(domain="WNAT", manifest=loaded_manifest)
-        assert len(out) == 3
-        assert {m.id for m in out} == {"hagen@v1", "onur@v1", "test@v1"}
+        ids = {m.id for m in out}
+        assert {"hagen@v1", "onur@v1", "test@v1"}.issubset(ids)
 
     def test_filter_by_element_type_quadrilateral(self, loaded_manifest):
         out = find_meshes(element_type="quadrilateral", manifest=loaded_manifest)

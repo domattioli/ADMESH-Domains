@@ -8,8 +8,8 @@ version = "1.0.0"
 description = "ADCIRC mesh domain registry"
 created = "2026-04-25"
 total_domains = 13
-total_meshes = 40
-total_size_mb = 59.0
+total_meshes = 41
+total_size_mb = 62.0
 
 # Domain: Baranja Hill
 [[domains]]
@@ -416,4 +416,12 @@ license = "MIT"
 bounding_box = { min_lon = -97.850032, min_lat = 8.001743, max_lon = -60.038337, max_lat = 45.769246 }
 description = "Western North Atlantic test mesh"
 size_mb = 1.17
+
+[[domains.meshes]]
+id = "nc-inundation-v6c@v1"
+filename = "nc_inundation_v6c.grd"
+license = "MIT"
+bounding_box = { min_lon = -97.858330, min_lat = 7.909559, max_lon = -60.040029, max_lat = 45.836122 }
+description = "WNAT mesh with NC inundation refinement (adcirc.org/products/grids)"
+size_mb = 2.99
 

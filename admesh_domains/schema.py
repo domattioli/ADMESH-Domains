@@ -21,6 +21,18 @@ SCHEMA_VERSION = "0.2"
 
 VALID_TYPES = {"ADCIRC", "SMS_2DM"}
 VALID_CATEGORIES = {"real-world", "synthetic"}
+VALID_LICENSES = {
+    "public-domain",
+    "CC0-1.0",
+    "CC-BY-4.0",
+    "CC-BY-SA-4.0",
+    "MIT",
+    "proprietary",
+    "unknown",
+}
+REDISTRIBUTABLE_LICENSES = {
+    "public-domain", "CC0-1.0", "CC-BY-4.0", "CC-BY-SA-4.0", "MIT",
+}
 
 
 class SchemaError(ValueError):
@@ -64,6 +76,7 @@ class Mesh:
     features: list[str] = field(default_factory=list)
     aliases: list[str] = field(default_factory=list)
     bounding_box: Optional[BoundingBox] = None
+    license: str = "unknown"
 
     _domain_name: Optional[str] = field(default=None, repr=False, compare=False)
     _base_dir: Optional[Path] = field(default=None, repr=False, compare=False)
@@ -79,6 +92,16 @@ class Mesh:
             )
         if self.size_mb < 0:
             raise SchemaError(f"Mesh.size_mb must be >= 0, got {self.size_mb}")
+        if self.license not in VALID_LICENSES:
+            raise SchemaError(
+                f"Mesh.license must be one of {sorted(VALID_LICENSES)}, "
+                f"got {self.license!r}"
+            )
+
+    @property
+    def mirror_eligible(self) -> bool:
+        """True iff this mesh's license permits redistribution via the HF mirror."""
+        return self.license in REDISTRIBUTABLE_LICENSES
 
     @property
     def full_id(self) -> str:

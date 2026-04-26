@@ -68,6 +68,19 @@ class TestBuildParquetSidecar:
         for col in ("bbox_min_lon", "bbox_min_lat", "bbox_max_lon", "bbox_max_lat"):
             assert col in table.schema.names
 
+    def test_includes_license_columns(self, loaded_manifest):
+        hashes = {hf_path_for(m): "x" * 64 for m in loaded_manifest.all_meshes()}
+        blob = build_parquet_sidecar(loaded_manifest, hashes, tag="v0.0.0")
+
+        import pyarrow.parquet as pq
+        table = pq.read_table(io.BytesIO(blob))
+        assert "license" in table.schema.names
+        assert "mirror_eligible" in table.schema.names
+        # All current meshes are MIT and mirror-eligible
+        licenses = set(table["license"].to_pylist())
+        assert licenses == {"MIT"}
+        assert all(table["mirror_eligible"].to_pylist())
+
     def test_metadata_includes_tag_and_schema(self, loaded_manifest):
         hashes = {hf_path_for(m): "x" * 64 for m in loaded_manifest.all_meshes()}
         blob = build_parquet_sidecar(loaded_manifest, hashes, tag="v9.9.9")

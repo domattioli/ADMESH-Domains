@@ -70,6 +70,8 @@ def find_meshes(
     type: Optional[str] = None,
     element_type: Optional[str] = None,
     refinement_level: Optional[str] = None,
+    license: Optional[Union[str, list[str]]] = None,
+    mirror_eligible: Optional[bool] = None,
     min_size_mb: Optional[float] = None,
     max_size_mb: Optional[float] = None,
     min_node_count: Optional[int] = None,
@@ -103,6 +105,12 @@ def find_meshes(
             if element_type is not None and mesh.element_type != element_type:
                 continue
             if refinement_level is not None and mesh.refinement_level != refinement_level:
+                continue
+            if license is not None:
+                allowed = {license} if isinstance(license, str) else set(license)
+                if mesh.license not in allowed:
+                    continue
+            if mirror_eligible is not None and mesh.mirror_eligible != mirror_eligible:
                 continue
             if min_size_mb is not None and mesh.size_mb < min_size_mb:
                 continue

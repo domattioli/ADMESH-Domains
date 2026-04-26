@@ -143,3 +143,28 @@ class TestBoundingBox:
         m = get_mesh("ChesapeakeBay/default@v1", manifest=loaded_manifest)
         assert -82 < m.bounding_box.min_lon < -80
         assert 27 < m.bounding_box.min_lat < 29
+
+
+class TestLicenseFilter:
+    def test_all_meshes_have_license(self, loaded_manifest):
+        for mesh in loaded_manifest.all_meshes():
+            assert mesh.license is not None and mesh.license != ""
+
+    def test_filter_by_single_license(self, loaded_manifest):
+        out = find_meshes(license="MIT", manifest=loaded_manifest)
+        assert len(out) == loaded_manifest.total_meshes
+
+    def test_filter_by_license_list(self, loaded_manifest):
+        out = find_meshes(license=["MIT", "CC0-1.0"], manifest=loaded_manifest)
+        assert len(out) == loaded_manifest.total_meshes
+
+    def test_filter_by_nonexistent_license_returns_none(self, loaded_manifest):
+        out = find_meshes(license="proprietary", manifest=loaded_manifest)
+        assert len(out) == 0
+
+    def test_mirror_eligible_filter(self, loaded_manifest):
+        eligible = find_meshes(mirror_eligible=True, manifest=loaded_manifest)
+        ineligible = find_meshes(mirror_eligible=False, manifest=loaded_manifest)
+        assert len(eligible) + len(ineligible) == loaded_manifest.total_meshes
+        # All current meshes are MIT, which is redistributable
+        assert len(ineligible) == 0

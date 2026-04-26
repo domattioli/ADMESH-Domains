@@ -19,13 +19,21 @@ This is the **Tier 1** implementation from the carry-over discussion: bbox-overl
 
 ## Clarifications
 
-### Session 2026-04-26
+### Session 2026-04-26 (initial)
 
-- **Q (C-1)**: Where does the suggester run? → **A**: As a CLI command, runnable both locally (pre-commit) and in CI (a `suggest-domain` GitHub Action that comments on PRs that add a mesh file). PR comment integration is a follow-up; the CLI is the contract.
-- **Q (C-2)**: What overlap metric? → **A**: **IoU** (intersection over union) of bounding boxes, plus a simple "centroid distance" tiebreaker. IoU is between 0 and 1, easy to threshold, and treats a small mesh inside a big domain bbox as a strong match.
-- **Q (C-3)**: Confidence thresholds? → **A**: `IoU >= 0.5` = confident match (one candidate). `0.05 <= IoU < 0.5` = uncertain (multiple candidates ranked). `IoU < 0.05` for all = no match (suggest new Domain).
-- **Q (C-4)**: How does the suggester handle non-geographic bboxes (synthetic test cases, projected coords)? → **A**: It only compares same-coordinate-system bboxes. Any mesh whose bbox sits outside lat/lon range is auto-suggested as a synthetic-category Domain (no IoU computed against geographic Domains).
-- **Q (C-5)**: Is this a hard CI gate or an advisory check? → **A**: Advisory only — the suggester never blocks a merge. Reviewer decides.
+- **Q (C-1)**: Where does the suggester run? → **A**: As a CLI command, runnable both locally (pre-commit) and in CI (a GitHub Action that comments on PRs that add a mesh file). PR comment integration is a follow-up; the CLI is the contract.
+- **Q (C-2)**: What overlap metric? → **A**: **IoU** (intersection over union) of bounding boxes, plus a simple "centroid distance" tiebreaker.
+- **Q (C-3)**: Confidence thresholds? → **A**: `IoU >= 0.5` = confident match. `0.05 <= IoU < 0.5` = uncertain (multiple candidates ranked). `IoU < 0.05` for all = no match (suggest new Domain).
+- **Q (C-4)**: How does the suggester handle non-geographic bboxes? → **A**: It only compares same-coordinate-system bboxes. Any mesh whose bbox sits outside lat/lon range is auto-suggested as a synthetic-category Domain.
+- **Q (C-5)**: Is this a hard CI gate or an advisory check? → **A**: Advisory only — the suggester never blocks a merge.
+
+### Session 2026-04-26 (clarify)
+
+- **Q (C-6)**: Per-mesh vs Domain-union IoU? → **A**: **Both**. Compute the *best per-mesh IoU* within each Domain AND the *Domain-union bbox IoU*. Show both numbers in output. Rank primarily by per-mesh IoU (more accurate); union is a secondary signal that surfaces "this matches a wide-coverage Domain."
+- **Q (C-7)**: Antimeridian / dateline crossing? → **A**: Skip wrapping bboxes for v1; log a warning. We have zero Pacific meshes today. Antimeridian-safe IoU is deferred to a future spec.
+- **Q (C-8)**: "Propose new Domain" output when no match? → **A**: **Interactive prompt** by default — asks for `name`, `full_name`, `category` (real-world / synthetic, default real-world), `region` (if real-world), `applications` (comma-separated, optional). Then prints a paste-ready TOML stub with the answers + parsed bbox. A `--non-interactive` flag (auto-set when stdin isn't a tty, e.g. CI) skips the prompt and prints the TOML stub with `<TBD>` placeholders.
+- **Q (C-9)**: CLI verb pattern? → **A**: **Grouped verb-noun**: `admesh-domains domain suggest <PATH>` and `admesh-domains domain audit`. New `domain` group also gets a `domain list` alias for the existing `domains` command (kept for backward compat). Future grouping for meshes (`mesh load`, `mesh show`, etc.) will follow the same pattern.
+- **Q (C-10)**: Default output format? → **A**: Pretty text by default (ranked list, color when stdout is a tty), `--json` flag for machine-readable output. No tty auto-detect for the format choice — explicit flag only, simpler to reason about.
 
 ## User Scenarios & Testing
 
@@ -79,20 +87,27 @@ When a PR adds a `.14` file to `registry_data/meshes/`, a GitHub Action runs the
 
 ### Functional
 
-- **FR-001**: New CLI subcommand `admesh-domains suggest-domain PATH`.
-- **FR-002**: The command parses the bbox from the mesh file (reusing `scripts/extract_bboxes.py` logic — refactor into `admesh_domains.geometry`).
-- **FR-003**: For each existing Domain with at least one geographic-bbox mesh, compute the IoU of the new bbox vs. the Domain's union bbox.
-- **FR-004**: Print a ranked list:
+- **FR-001**: New CLI command group `admesh-domains domain` with subcommands `suggest <PATH>`, `audit`, and `list` (alias for the existing `admesh-domains domains`).
+- **FR-002**: `domain suggest <PATH>` parses the bbox from the mesh file (reusing `scripts/extract_bboxes.py` logic — refactor into `admesh_domains.geometry`).
+- **FR-003**: For each existing Domain with at least one geographic-bbox mesh, compute **two** scores:
+  - **per-mesh IoU**: max IoU of the new bbox against any single mesh in that Domain
+  - **union IoU**: IoU of the new bbox against the Domain's union bbox (smallest bbox covering all of the Domain's meshes)
+  Rank Domains by per-mesh IoU (descending); show both numbers in output.
+- **FR-004**: Default (pretty) output:
   ```
   Suggestions for new.14 (bbox: -95.00, 25.00, -80.00, 31.00):
-    1. WNAT          IoU=0.62  (confident)
-    2. ChesapeakeBay IoU=0.04  (low)
-    Propose new Domain: 'NewDomain'
+    1. WNAT          per-mesh IoU=0.62  union IoU=0.41  (confident)
+    2. ChesapeakeBay per-mesh IoU=0.04  union IoU=0.04  (low)
+    Propose new Domain: launch interactive prompt? [y/N]
   ```
-- **FR-005**: Exit codes: `0` confident match, `1` no match, `2` ambiguous (≥2 candidates above 0.5 IoU), `3` parse error.
-- **FR-006**: Optional `--json` flag emits machine-readable output for CI consumption.
-- **FR-007**: New CLI subcommand `admesh-domains audit-domains` that runs the suggester against every existing mesh and reports disagreements (User Story 2).
-- **FR-008**: A new module `admesh_domains/geometry.py` houses bbox / IoU helpers, importable by external tooling.
+  Color is used when stdout is a tty (green for confident, yellow for uncertain, gray for low). Plain text when piped.
+- **FR-005**: Exit codes: `0` confident match (single Domain ≥ 0.5 IoU), `1` no match (all < 0.05 IoU), `2` ambiguous (≥2 candidates ≥ 0.5 IoU), `3` parse/IO error.
+- **FR-006**: `--json` flag emits a machine-readable JSON object: `{"path": ..., "bbox": [...], "candidates": [{"domain": "...", "per_mesh_iou": ..., "union_iou": ..., "confidence": "..."}], "exit_code": ...}`.
+- **FR-007**: When no confident match is found, by default the CLI launches an interactive prompt that asks for `name`, `full_name`, `category` (default "real-world"), `region` (if real-world), `applications` (comma-separated, optional), then prints a paste-ready TOML stub with the answers + parsed bbox + filename.
+- **FR-008**: `--non-interactive` flag (auto-set when stdin is not a tty) skips the prompt and prints the TOML stub with `<TBD>` placeholders for the user to fill in.
+- **FR-009**: New CLI subcommand `admesh-domains domain audit` runs the suggester against every existing mesh and reports disagreements between current Domain assignment and the rank-1 suggestion.
+- **FR-010**: New module `admesh_domains/geometry.py` houses bbox / IoU helpers (`compute_iou`, `domain_union_bbox`, `per_mesh_iou`, `suggest_domain`), importable by external tooling.
+- **FR-011**: Bboxes that wrap the antimeridian (`min_lon > max_lon`) are skipped with a warning logged to stderr; they are excluded from both the new mesh and existing Domain candidates. Antimeridian-safe IoU is out of scope for this spec.
 
 ### Non-Functional
 
@@ -145,6 +160,7 @@ def suggest_domain(
 - **Boundary polygon comparison** (Hausdorff distance, IoU on boundary polygon, not just bbox). Defer to spec 008+.
 - **Geometry embedding / ML clustering**. Defer to spec 009+.
 - **Reprojection between coordinate systems**. Out of scope until we have a use case.
+- **Antimeridian-safe IoU**. We have zero Pacific meshes today. Wrapping bboxes are skipped with a warning per FR-011. Defer until a real Pacific mesh is contributed.
 - **PR comment automation** beyond exit-code-based CI gating. Defer until the CLI itself is in use.
 - **A "merge two Domains" CLI** — different problem (curation cleanup), separate spec.
 
@@ -157,6 +173,6 @@ def suggest_domain(
 
 ## Open Questions for Plan Phase
 
-- Should the suggester also propose a `category` (real-world vs synthetic) based on the bbox coordinate-system heuristic? Probably yes — the contributor would have to set it anyway.
-- What format for "propose new Domain" — a TOML stub the contributor pastes into `manifest.toml`, or just a textual hint?
-- Should `audit-domains` output be sortable by IoU disagreement magnitude so the worst offenders surface first?
+- Should the suggester also propose a `category` (real-world vs synthetic) by inspecting the bbox coordinate system (lat/lon → real-world, otherwise → synthetic)? Leaning **yes** — the prompt's `category` default would be set from the heuristic rather than hardcoded.
+- Should `domain audit` output be sortable by IoU disagreement magnitude (worst offenders first) and have a `--threshold` flag? Probably yes.
+- The interactive prompt — pure stdlib `input()` (lightweight, no deps) or use `prompt_toolkit`/`rich.prompt` (better UX, new dep)? Leaning **stdlib** to honor Constitution Principle II.

@@ -11,13 +11,13 @@ Auto-publish each tagged release of the `admesh-domains` registry to a public Hu
 
 The publisher runs as a GitHub Action on every `v*` tag push, and is also exposed as a CLI command (`admesh-domains publish`) for ops use.
 
-## Clarifications Needed
+## Clarifications
 
-These need a decision before implementation:
+### Session 2026-04-25
 
-- **C-1**: HuggingFace target — `huggingface.co/datasets/admesh-domains/registry` or a different slug? Need to register the org/dataset manually before the first publish.
-- **C-2**: Should we publish *every* tag or only `v[0-9]+.[0-9]+.[0-9]+` (no pre-release / RC tags)?
-- **C-3**: For v1, do we publish all meshes regardless of license, or hold off until a `license` field is added to the schema (deferred from `005`)?
+- **Q (C-1)**: HuggingFace target slug? → **A**: `domattioli/admesh-domains` (personal account; no HF org setup needed). May migrate to an org slug later if collaborators join.
+- **Q (C-2)**: Which tags trigger a publish? → **A**: Strict semver only — workflow filter `v[0-9]+.[0-9]+.[0-9]+`. Pre-releases / RC tags do not publish.
+- **Q (C-3)**: License handling for v1? → **A**: Publish all 40 meshes. They were imported from public GitHub repos so are de facto already-public. Per-mesh `license` field deferred to a later spec; revisit before accepting outside contributions.
 
 ## User Scenarios & Testing
 
@@ -151,6 +151,5 @@ One row per mesh, flat schema:
 
 ## Open Questions for Plan Phase
 
-- Is `admesh-domains/registry` the right HF dataset slug, or should it be `<your-username>/admesh-domains` for solo ownership?
-- Should the dataset card include screenshots / a small folium map of mesh bounding boxes, or stay text-only for v1?
-- Do we want a `latest` symlink/branch on HF in addition to `v*` revision tags?
+- Should the dataset card include a small folium / static-image map of mesh bounding boxes, or stay text-only for v1? (Leans text-only — no `bounding_box` data on Meshes yet.)
+- Do we want a `main` branch on HF that always tracks the latest tag, in addition to per-tag revisions?

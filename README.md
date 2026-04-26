@@ -44,20 +44,42 @@ See [registry_data/manifest.toml](registry_data/manifest.toml) for complete doma
 ## Installation
 
 ```bash
+# Base install — query the bundled manifest, no mesh downloads
 pip install admesh-domains
+
+# With HuggingFace runtime download for Mesh.load()
+pip install admesh-domains[hf]
+
+# Maintainer-only: includes pyarrow, jinja2, twine for publishing
+pip install admesh-domains[publish]
 ```
 
 ## Quick Start
 
 ```python
-from admesh_domains import query, validator
+from admesh_domains import find_domains, find_meshes, get_mesh
 
-# Query registry
-meshes = query.get_meshes()
+# Find all real-world domains
+for d in find_domains(category="real-world"):
+    print(d.name, "->", len(d.meshes), "meshes")
 
-# Validate mesh data
-validator.validate(mesh_data)
+# Look up a specific mesh by composite ID
+mesh = get_mesh("WNAT/hagen@v1")
+print(mesh.full_id, mesh.size_mb, "MB")
+
+# Download the actual mesh file from the HuggingFace mirror
+local_path = mesh.load()   # requires pip install admesh-domains[hf]
 ```
+
+## HuggingFace Mirror
+
+All 40 meshes (~59 MB) are mirrored to a HuggingFace Dataset and downloaded
+on demand via `Mesh.load()`. Browse it directly at:
+
+**https://huggingface.co/datasets/domattioli/ADMESH-Domains**
+
+The `manifest.parquet` sidecar at the dataset root lets you query metadata
+without the Python loader.
 
 ## Documentation
 

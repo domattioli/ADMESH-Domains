@@ -2,8 +2,9 @@
 
 **Feature Branch**: `006-huggingface-publisher`
 **Created**: 2026-04-25
-**Status**: Draft
+**Status**: ✅ Complete (shipped in v0.2.0 — 2026-04-25)
 **Input**: Adaptation of the original `005-adcirc-mesh-registry/contracts/hf-publisher.md` to the current Domain → Meshes schema (v0.1.1)
+**Verified**: SC-001..005 all pass — see HF dataset at https://huggingface.co/datasets/domattioli/ADMESH-Domains/tree/v0.2.0
 
 ## Summary
 

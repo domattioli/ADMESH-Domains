@@ -1,0 +1,362 @@
+# ADMESH Domain Registry Manifest
+# Consolidated from three mesh repositories
+
+[metadata]
+version = "1.0.0"
+description = "ADCIRC mesh domain registry"
+created = "2026-04-25"
+source_repositories = [
+    "https://github.com/domattioli/CHILmesh",
+    "https://github.com/domattioli/QuADMesh-MATLAB",
+    "https://github.com/domattioli/chil_mesh-master"
+]
+total_unique_meshes = 40
+total_size_mb = 59.0
+
+# Real-world domain meshes
+[[domain]]
+name = "Great_Lakes"
+filename = "Great_Lakes.14"
+type = "ADCIRC"
+description = "Great Lakes region mesh"
+size_mb = 15.16
+region = "North America"
+application = "Coastal Circulation"
+
+[[domain]]
+name = "WNAT_Onur"
+filename = "WNAT_Onur.14"
+type = "ADCIRC"
+description = "Western North Atlantic mesh (Onur variant)"
+size_mb = 15.32
+region = "Atlantic Ocean"
+application = "Hurricane/Storm Surge"
+
+[[domain]]
+name = "Chesapeake_Bay"
+filename = "Chesapeake_Bay.14"
+type = "ADCIRC"
+description = "Chesapeake Bay region mesh"
+size_mb = 9.47
+region = "North America"
+application = "Coastal Circulation"
+
+[[domain]]
+name = "WNAT_Hagen"
+filename = "WNAT_Hagen.14"
+type = "ADCIRC"
+description = "Western North Atlantic mesh (Hagen variant)"
+size_mb = 5.48
+region = "Atlantic Ocean"
+application = "Hurricane/Storm Surge"
+aliases = ["WNAT_53K_Nodes"]
+
+[[domain]]
+name = "Lake_Michigan_mesh"
+filename = "Lake_Michigan_mesh.14"
+type = "ADCIRC"
+description = "Lake Michigan mesh"
+size_mb = 2.47
+region = "North America"
+application = "Lake Circulation"
+
+[[domain]]
+name = "Italy"
+filename = "Italy.14"
+type = "ADCIRC"
+description = "Italy region mesh"
+size_mb = 1.45
+region = "Mediterranean"
+application = "Coastal Circulation"
+
+[[domain]]
+name = "LakeErie_5k_500"
+filename = "LakeErie_5k_500.14"
+type = "ADCIRC"
+description = "Lake Erie mesh - 5k nodes variant"
+size_mb = 1.57
+region = "North America"
+application = "Lake Circulation"
+
+[[domain]]
+name = "Deleware_Bay"
+filename = "Deleware_Bay.14"
+type = "ADCIRC"
+description = "Delaware Bay mesh"
+size_mb = 1.72
+region = "North America"
+application = "Coastal Circulation"
+
+[[domain]]
+name = "Deleware_Bay_refined"
+filename = "Deleware_Bay_hmin_100_hmax_20000.14"
+type = "ADCIRC"
+description = "Delaware Bay mesh - refined version"
+size_mb = 1.72
+region = "North America"
+application = "Coastal Circulation"
+refinement_level = "high"
+
+[[domain]]
+name = "WNAT_Test"
+filename = "WNAT_Test.14"
+type = "ADCIRC"
+description = "Western North Atlantic test mesh"
+size_mb = 1.17
+region = "Atlantic Ocean"
+application = "Testing"
+purpose = "validation"
+
+[[domain]]
+name = "Lake_Erie_refined"
+filename = "Lake_Erie_mesh_refined.14"
+type = "ADCIRC"
+description = "Lake Erie refined mesh"
+size_mb = 0.57
+region = "North America"
+application = "Lake Circulation"
+refinement_level = "medium"
+
+# Test and synthetic domains
+[[domain]]
+name = "Block_O"
+filename = "Block_O.14"
+type = "ADCIRC"
+description = "Block-shaped structured mesh"
+size_mb = 0.33
+purpose = "testing"
+category = "synthetic"
+
+[[domain]]
+name = "Test_Case_4"
+filename = "Test_Case_4.14"
+type = "ADCIRC"
+size_mb = 0.39
+purpose = "validation"
+category = "synthetic"
+
+[[domain]]
+name = "Test_Case_4.2"
+filename = "Test_Case_4.2.14"
+type = "ADCIRC"
+size_mb = 0.26
+purpose = "validation"
+category = "synthetic"
+
+[[domain]]
+name = "Test_Case_2"
+filename = "Test_Case_2.14"
+type = "ADCIRC"
+size_mb = 0.22
+purpose = "validation"
+category = "synthetic"
+
+[[domain]]
+name = "Test_Case_1"
+filename = "Test_Case_1.14"
+type = "ADCIRC"
+size_mb = 0.16
+purpose = "validation"
+category = "synthetic"
+
+[[domain]]
+name = "Test_Case_3"
+filename = "Test_Case_3.14"
+type = "ADCIRC"
+size_mb = 0.11
+purpose = "validation"
+category = "synthetic"
+
+[[domain]]
+name = "Baranja_Hill"
+filename = "Baranja_Hill.14"
+type = "ADCIRC"
+description = "Baranja Hill region mesh"
+size_mb = 0.08
+region = "Europe"
+application = "Coastal Circulation"
+
+[[domain]]
+name = "Baranja_Hill_ADMESH_v2"
+filename = "Baranja_Hill_ADMESH_v2.14"
+type = "ADCIRC"
+description = "Baranja Hill mesh - ADMESH v2 variant"
+size_mb = 0.09
+region = "Europe"
+application = "Coastal Circulation"
+version = "2"
+
+[[domain]]
+name = "simple_test_case"
+filename = "simple_test_case.14"
+type = "ADCIRC"
+size_mb = 0.09
+purpose = "testing"
+category = "synthetic"
+
+[[domain]]
+name = "test1"
+filename = "test1.14"
+type = "ADCIRC"
+size_mb = 0.09
+purpose = "testing"
+category = "synthetic"
+
+[[domain]]
+name = "structuredMesh2"
+filename = "structuredMesh2.14"
+type = "ADCIRC"
+size_mb = 0.07
+purpose = "testing"
+category = "synthetic"
+
+[[domain]]
+name = "structuredMesh4"
+filename = "structuredMesh4.14"
+type = "ADCIRC"
+size_mb = 0.07
+purpose = "testing"
+category = "synthetic"
+
+[[domain]]
+name = "islands1"
+filename = "islands1.14"
+type = "ADCIRC"
+size_mb = 0.22
+purpose = "testing"
+category = "synthetic"
+
+[[domain]]
+name = "circle"
+filename = "circle.14"
+type = "ADCIRC"
+size_mb = 0.17
+purpose = "testing"
+category = "synthetic"
+
+[[domain]]
+name = "wetting_and_drying_test"
+filename = "wetting_and_drying_test.14"
+type = "ADCIRC"
+size_mb = 0.31
+purpose = "testing"
+category = "synthetic"
+
+[[domain]]
+name = "square_mesh_test"
+filename = "square_mesh_test.14"
+type = "ADCIRC"
+size_mb = 0.04
+purpose = "testing"
+category = "synthetic"
+
+[[domain]]
+name = "structuredMesh1"
+filename = "structuredMesh1.14"
+type = "ADCIRC"
+size_mb = 0.04
+purpose = "testing"
+category = "synthetic"
+
+[[domain]]
+name = "structuredMesh3"
+filename = "structuredMesh3.14"
+type = "ADCIRC"
+size_mb = 0.04
+purpose = "testing"
+category = "synthetic"
+
+[[domain]]
+name = "annulus_200pts"
+filename = "annulus_200pts.fort.14"
+type = "ADCIRC"
+description = "Annulus mesh with 200 points"
+size_mb = 0.02
+purpose = "testing"
+category = "synthetic"
+
+[[domain]]
+name = "donut_domain"
+filename = "donut_domain.fort.14"
+type = "ADCIRC"
+description = "Donut-shaped domain mesh"
+size_mb = 0.01
+purpose = "testing"
+category = "synthetic"
+
+[[domain]]
+name = "test2"
+filename = "test2.14"
+type = "ADCIRC"
+size_mb = 0.04
+purpose = "testing"
+category = "synthetic"
+
+[[domain]]
+name = "test3"
+filename = "test3.14"
+type = "ADCIRC"
+size_mb = 0.04
+purpose = "testing"
+category = "synthetic"
+
+[[domain]]
+name = "test4"
+filename = "test4.14"
+type = "ADCIRC"
+size_mb = 0.04
+purpose = "testing"
+category = "synthetic"
+
+[[domain]]
+name = "rectangular_mesh_triangle1"
+filename = "rectangular_mesh_triangle1.14"
+type = "ADCIRC"
+size_mb = 0.0
+purpose = "testing"
+category = "synthetic"
+element_type = "triangle"
+
+[[domain]]
+name = "rectangular_mesh_quadrilateral1"
+filename = "rectangular_mesh_quadrilateral1.14"
+type = "ADCIRC"
+size_mb = 0.0
+purpose = "testing"
+category = "synthetic"
+element_type = "quadrilateral"
+
+[[domain]]
+name = "rectangular_skewed_mesh_triangle1"
+filename = "rectangular_skewed_mesh_triangle1.14"
+type = "ADCIRC"
+size_mb = 0.0
+purpose = "testing"
+category = "synthetic"
+element_type = "triangle"
+
+[[domain]]
+name = "rectangular_skewed_mesh_quadrilateral1"
+filename = "rectangular_skewed_mesh_quadrilateral1.14"
+type = "ADCIRC"
+size_mb = 0.0
+purpose = "testing"
+category = "synthetic"
+element_type = "quadrilateral"
+
+[[domain]]
+name = "Mixed_Test"
+filename = "Mixed_Test.14"
+type = "ADCIRC"
+size_mb = 0.0
+purpose = "testing"
+category = "synthetic"
+
+[[domain]]
+name = "dom_2dm"
+filename = "dom.2dm"
+type = "SMS_2DM"
+description = "SMS-format mesh file"
+size_mb = 0.0
+purpose = "testing"
+category = "synthetic"

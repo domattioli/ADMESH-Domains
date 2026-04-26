@@ -1,0 +1,713 @@
+{
+  "Test_Case_4.14": {
+    "checksum": "032ef537ea85e9484bd8694928db9f63",
+    "size": 404365,
+    "size_mb": 0.39,
+    "sources": [
+      "Test_Case_4.14"
+    ],
+    "source_paths": [
+      "03_CHILMesh_Test_Cases/01_.14_Files/Test_Case_4.14",
+      "data/01_.14_Files/Test_Case_4.14"
+    ],
+    "duplicates": [
+      "Block_O.14",
+      "annulus_200pts.fort.14",
+      "structuredMesh1.14",
+      "donut_domain.fort.14"
+    ]
+  },
+  "Baranja_Hill_ADMESH_v2.14": {
+    "checksum": "0a14fc7f5bb06ddf2d489fdbbf11dd32",
+    "size": 89838,
+    "size_mb": 0.09,
+    "sources": [
+      "Baranja_Hill_ADMESH_v2.14"
+    ],
+    "source_paths": [
+      "03_CHILMesh_Test_Cases/01_.14_Files/Baranja_Hill_ADMESH_v2.14",
+      "data/01_.14_Files/Baranja_Hill_ADMESH_v2.14"
+    ],
+    "duplicates": [
+      "Block_O.14",
+      "annulus_200pts.fort.14",
+      "structuredMesh1.14",
+      "donut_domain.fort.14"
+    ]
+  },
+  "Test_Case_4.2.14": {
+    "checksum": "22754b0ea4a19402201a17530c9a6e5f",
+    "size": 276240,
+    "size_mb": 0.26,
+    "sources": [
+      "Test_Case_4.2.14"
+    ],
+    "source_paths": [
+      "03_CHILMesh_Test_Cases/01_.14_Files/Test_Case_4.2.14",
+      "data/01_.14_Files/Test_Case_4.2.14"
+    ],
+    "duplicates": [
+      "Block_O.14",
+      "annulus_200pts.fort.14",
+      "structuredMesh1.14",
+      "donut_domain.fort.14"
+    ]
+  },
+  "Test_Case_3.14": {
+    "checksum": "2394f72da507392d32c5333ad9603e58",
+    "size": 111911,
+    "size_mb": 0.11,
+    "sources": [
+      "Test_Case_3.14"
+    ],
+    "source_paths": [
+      "03_CHILMesh_Test_Cases/01_.14_Files/Test_Case_3.14",
+      "data/01_.14_Files/Test_Case_3.14"
+    ],
+    "duplicates": [
+      "Block_O.14",
+      "annulus_200pts.fort.14",
+      "structuredMesh1.14",
+      "donut_domain.fort.14"
+    ]
+  },
+  "square_mesh_test.14": {
+    "checksum": "3522feee602455d7d14f28cddf4ca1b2",
+    "size": 42000,
+    "size_mb": 0.04,
+    "sources": [
+      "square_mesh_test.14"
+    ],
+    "source_paths": [
+      "03_CHILMesh_Test_Cases/01_.14_Files/square_mesh_test.14",
+      "data/01_.14_Files/square_mesh_test.14"
+    ],
+    "duplicates": [
+      "Block_O.14",
+      "annulus_200pts.fort.14",
+      "structuredMesh1.14",
+      "donut_domain.fort.14"
+    ]
+  },
+  "annulus_200pts.fort.14": {
+    "checksum": "37237ca98374dd7500c51e5d9334f4ba",
+    "size": 24395,
+    "size_mb": 0.02,
+    "sources": [
+      "annulus_200pts.fort.14"
+    ],
+    "source_paths": [
+      "chilmesh/data/annulus_200pts.fort.14"
+    ],
+    "duplicates": []
+  },
+  "Test_Case_1.14": {
+    "checksum": "37af3e4e4e65eb5dc17d946c64ae20b9",
+    "size": 164224,
+    "size_mb": 0.16,
+    "sources": [
+      "Test_Case_1.14"
+    ],
+    "source_paths": [
+      "03_CHILMesh_Test_Cases/01_.14_Files/Test_Case_1.14",
+      "data/01_.14_Files/Test_Case_1.14"
+    ],
+    "duplicates": [
+      "Block_O.14",
+      "annulus_200pts.fort.14",
+      "structuredMesh1.14",
+      "donut_domain.fort.14"
+    ]
+  },
+  "Baranja_Hill.14": {
+    "checksum": "3a8f9a5719f4816cb5449f1d7779c7aa",
+    "size": 79159,
+    "size_mb": 0.08,
+    "sources": [
+      "Baranja_Hill.14"
+    ],
+    "source_paths": [
+      "03_CHILMesh_Test_Cases/01_.14_Files/Baranja_Hill.14",
+      "data/01_.14_Files/Baranja_Hill.14"
+    ],
+    "duplicates": [
+      "Block_O.14",
+      "annulus_200pts.fort.14",
+      "structuredMesh1.14",
+      "donut_domain.fort.14"
+    ]
+  },
+  "rectangular_skewed_mesh_quadrilateral1.14": {
+    "checksum": "3e9682e880081d05e28d792d7b271620",
+    "size": 2820,
+    "size_mb": 0.0,
+    "sources": [
+      "rectangular_skewed_mesh_quadrilateral1.14"
+    ],
+    "source_paths": [
+      "03_CHILMesh_Test_Cases/01_.14_Files/rectangular_skewed_mesh_quadrilateral1.14",
+      "data/01_.14_Files/rectangular_skewed_mesh_quadrilateral1.14"
+    ],
+    "duplicates": [
+      "Block_O.14",
+      "annulus_200pts.fort.14",
+      "structuredMesh1.14",
+      "donut_domain.fort.14"
+    ]
+  },
+  "LakeErie_5k_500.14": {
+    "checksum": "408cab00f471df29bf6b08528615418a",
+    "size": 1641988,
+    "size_mb": 1.57,
+    "sources": [
+      "LakeErie_5k_500.14"
+    ],
+    "source_paths": [
+      "03_CHILMesh_Test_Cases/01_.14_Files/LakeErie_5k_500.14",
+      "data/01_.14_Files/LakeErie_5k_500.14"
+    ],
+    "duplicates": [
+      "Block_O.14",
+      "annulus_200pts.fort.14",
+      "structuredMesh1.14",
+      "donut_domain.fort.14"
+    ]
+  },
+  "Deleware_Bay_hmin_100_hmax_20000.14": {
+    "checksum": "408cb2f4fb22f11487cd47e189b3cafd",
+    "size": 1806478,
+    "size_mb": 1.72,
+    "sources": [
+      "Deleware_Bay_hmin_100_hmax_20000.14"
+    ],
+    "source_paths": [
+      "03_CHILMesh_Test_Cases/01_.14_Files/Deleware_Bay_hmin_100_hmax_20000.14",
+      "data/01_.14_Files/Deleware_Bay_hmin_100_hmax_20000.14"
+    ],
+    "duplicates": [
+      "Block_O.14",
+      "annulus_200pts.fort.14",
+      "structuredMesh1.14",
+      "donut_domain.fort.14"
+    ]
+  },
+  "wetting_and_drying_test.14": {
+    "checksum": "464ee0806f437beb86b7d85618cddd49",
+    "size": 323451,
+    "size_mb": 0.31,
+    "sources": [
+      "wetting_and_drying_test.14"
+    ],
+    "source_paths": [
+      "03_CHILMesh_Test_Cases/01_.14_Files/wetting_and_drying_test.14",
+      "data/01_.14_Files/wetting_and_drying_test.14"
+    ],
+    "duplicates": [
+      "Block_O.14",
+      "annulus_200pts.fort.14",
+      "structuredMesh1.14",
+      "donut_domain.fort.14"
+    ]
+  },
+  "Italy.14": {
+    "checksum": "46be345e50f911f0608177ad176b0e01",
+    "size": 1523371,
+    "size_mb": 1.45,
+    "sources": [
+      "Italy.14"
+    ],
+    "source_paths": [
+      "03_CHILMesh_Test_Cases/01_.14_Files/Italy.14",
+      "data/01_.14_Files/Italy.14"
+    ],
+    "duplicates": [
+      "Block_O.14",
+      "annulus_200pts.fort.14",
+      "structuredMesh1.14",
+      "donut_domain.fort.14"
+    ]
+  },
+  "Test_Case_2.14": {
+    "checksum": "4dd6402005e7e6a9623116eb3b16a13c",
+    "size": 227962,
+    "size_mb": 0.22,
+    "sources": [
+      "Test_Case_2.14"
+    ],
+    "source_paths": [
+      "03_CHILMesh_Test_Cases/01_.14_Files/Test_Case_2.14",
+      "data/01_.14_Files/Test_Case_2.14"
+    ],
+    "duplicates": [
+      "Block_O.14",
+      "annulus_200pts.fort.14",
+      "structuredMesh1.14",
+      "donut_domain.fort.14"
+    ]
+  },
+  "Great_Lakes.14": {
+    "checksum": "538dd7872bbfb6eebb599b832400942e",
+    "size": 15897575,
+    "size_mb": 15.16,
+    "sources": [
+      "Great_Lakes.14"
+    ],
+    "source_paths": [
+      "03_CHILMesh_Test_Cases/01_.14_Files/Great_Lakes.14",
+      "data/01_.14_Files/Great_Lakes.14"
+    ],
+    "duplicates": [
+      "Block_O.14",
+      "annulus_200pts.fort.14",
+      "structuredMesh1.14",
+      "donut_domain.fort.14"
+    ]
+  },
+  "Deleware_Bay.14": {
+    "checksum": "5777c073a00902b0d2624ed47b5a8eac",
+    "size": 1806478,
+    "size_mb": 1.72,
+    "sources": [
+      "Deleware_Bay.14"
+    ],
+    "source_paths": [
+      "03_CHILMesh_Test_Cases/01_.14_Files/Deleware_Bay.14",
+      "data/01_.14_Files/Deleware_Bay.14"
+    ],
+    "duplicates": [
+      "Block_O.14",
+      "annulus_200pts.fort.14",
+      "structuredMesh1.14",
+      "donut_domain.fort.14"
+    ]
+  },
+  "rectangular_skewed_mesh_triangle1.14": {
+    "checksum": "5a5b4d8115dcb2a363c7b3b48ae11f64",
+    "size": 3211,
+    "size_mb": 0.0,
+    "sources": [
+      "rectangular_skewed_mesh_triangle1.14"
+    ],
+    "source_paths": [
+      "03_CHILMesh_Test_Cases/01_.14_Files/rectangular_skewed_mesh_triangle1.14",
+      "data/01_.14_Files/rectangular_skewed_mesh_triangle1.14"
+    ],
+    "duplicates": [
+      "Block_O.14",
+      "annulus_200pts.fort.14",
+      "structuredMesh1.14",
+      "donut_domain.fort.14"
+    ]
+  },
+  "Chesapeake_Bay.14": {
+    "checksum": "5cfc2e2ab1e6e2e58d486a9f431fe4fb",
+    "size": 9927732,
+    "size_mb": 9.47,
+    "sources": [
+      "Chesapeake_Bay.14"
+    ],
+    "source_paths": [
+      "03_CHILMesh_Test_Cases/01_.14_Files/Chesapeake_Bay.14",
+      "data/01_.14_Files/Chesapeake_Bay.14"
+    ],
+    "duplicates": [
+      "Block_O.14",
+      "annulus_200pts.fort.14",
+      "structuredMesh1.14",
+      "donut_domain.fort.14"
+    ]
+  },
+  "test3.14": {
+    "checksum": "728b9f9851c60166470de2cfb8369e68",
+    "size": 41856,
+    "size_mb": 0.04,
+    "sources": [
+      "test3.14"
+    ],
+    "source_paths": [
+      "03_CHILMesh_Test_Cases/01_.14_Files/test3.14",
+      "data/01_.14_Files/test3.14"
+    ],
+    "duplicates": [
+      "Block_O.14",
+      "annulus_200pts.fort.14",
+      "structuredMesh1.14",
+      "donut_domain.fort.14"
+    ]
+  },
+  "test2.14": {
+    "checksum": "79233c70b82ff02da4c21c49d648da08",
+    "size": 45662,
+    "size_mb": 0.04,
+    "sources": [
+      "test2.14"
+    ],
+    "source_paths": [
+      "03_CHILMesh_Test_Cases/01_.14_Files/test2.14",
+      "data/01_.14_Files/test2.14"
+    ],
+    "duplicates": [
+      "Block_O.14",
+      "annulus_200pts.fort.14",
+      "structuredMesh1.14",
+      "donut_domain.fort.14"
+    ]
+  },
+  "circle.14": {
+    "checksum": "7be331e657ed758ebadf49d7b24f9af4",
+    "size": 177288,
+    "size_mb": 0.17,
+    "sources": [
+      "circle.14"
+    ],
+    "source_paths": [
+      "03_CHILMesh_Test_Cases/01_.14_Files/circle.14",
+      "data/01_.14_Files/circle.14"
+    ],
+    "duplicates": [
+      "Block_O.14",
+      "annulus_200pts.fort.14",
+      "structuredMesh1.14",
+      "donut_domain.fort.14"
+    ]
+  },
+  "test1.14": {
+    "checksum": "7f525ce2e26d0412d7a6a25bdd9cc1b0",
+    "size": 94408,
+    "size_mb": 0.09,
+    "sources": [
+      "test1.14"
+    ],
+    "source_paths": [
+      "03_CHILMesh_Test_Cases/01_.14_Files/test1.14",
+      "data/01_.14_Files/test1.14"
+    ],
+    "duplicates": [
+      "Block_O.14",
+      "annulus_200pts.fort.14",
+      "structuredMesh1.14",
+      "donut_domain.fort.14"
+    ]
+  },
+  "structuredMesh2.14": {
+    "checksum": "806a2587cd881708a8d2bb98f0573127",
+    "size": 74775,
+    "size_mb": 0.07,
+    "sources": [
+      "structuredMesh2.14"
+    ],
+    "source_paths": [
+      "03_CHILMesh_Test_Cases/01_.14_Files/structuredMesh2.14",
+      "data/01_.14_Files/structuredMesh2.14"
+    ],
+    "duplicates": [
+      "Block_O.14",
+      "annulus_200pts.fort.14",
+      "structuredMesh1.14",
+      "donut_domain.fort.14"
+    ]
+  },
+  "islands1.14": {
+    "checksum": "839cb2f2aacb80bf6da68d8b002d8f01",
+    "size": 232773,
+    "size_mb": 0.22,
+    "sources": [
+      "islands1.14"
+    ],
+    "source_paths": [
+      "03_CHILMesh_Test_Cases/01_.14_Files/islands1.14",
+      "data/01_.14_Files/islands1.14"
+    ],
+    "duplicates": [
+      "Block_O.14",
+      "annulus_200pts.fort.14",
+      "structuredMesh1.14",
+      "donut_domain.fort.14"
+    ]
+  },
+  "structuredMesh3.14": {
+    "checksum": "9321ab444c174e02e3ed1adc4b8db5f9",
+    "size": 37077,
+    "size_mb": 0.04,
+    "sources": [
+      "structuredMesh3.14"
+    ],
+    "source_paths": [
+      "03_CHILMesh_Test_Cases/01_.14_Files/structuredMesh3.14",
+      "data/01_.14_Files/structuredMesh3.14"
+    ],
+    "duplicates": [
+      "Block_O.14",
+      "annulus_200pts.fort.14",
+      "structuredMesh1.14",
+      "donut_domain.fort.14"
+    ]
+  },
+  "WNAT_Test.14": {
+    "checksum": "9897acee1038060f6d50dd6d41c32b17",
+    "size": 1230471,
+    "size_mb": 1.17,
+    "sources": [
+      "WNAT_Test.14"
+    ],
+    "source_paths": [
+      "03_CHILMesh_Test_Cases/01_.14_Files/WNAT_Test.14",
+      "data/01_.14_Files/WNAT_Test.14"
+    ],
+    "duplicates": [
+      "Block_O.14",
+      "annulus_200pts.fort.14",
+      "structuredMesh1.14",
+      "donut_domain.fort.14"
+    ]
+  },
+  "test4.14": {
+    "checksum": "9ae8f2d670031a07030579516be6ae32",
+    "size": 45662,
+    "size_mb": 0.04,
+    "sources": [
+      "test4.14"
+    ],
+    "source_paths": [
+      "03_CHILMesh_Test_Cases/01_.14_Files/test4.14",
+      "data/01_.14_Files/test4.14"
+    ],
+    "duplicates": [
+      "Block_O.14",
+      "annulus_200pts.fort.14",
+      "structuredMesh1.14",
+      "donut_domain.fort.14"
+    ]
+  },
+  "donut_domain.fort.14": {
+    "checksum": "9e4f19ccd6dae57a8f1b228078c58ecb",
+    "size": 9785,
+    "size_mb": 0.01,
+    "sources": [
+      "donut_domain.fort.14"
+    ],
+    "source_paths": [
+      "chilmesh/data/donut_domain.fort.14"
+    ],
+    "duplicates": []
+  },
+  "simple_test_case.14": {
+    "checksum": "9f0d2e9aa2c2ee19665db6a8b8e5839d",
+    "size": 96818,
+    "size_mb": 0.09,
+    "sources": [
+      "simple_test_case.14"
+    ],
+    "source_paths": [
+      "03_CHILMesh_Test_Cases/01_.14_Files/simple_test_case.14",
+      "data/01_.14_Files/simple_test_case.14"
+    ],
+    "duplicates": [
+      "Block_O.14",
+      "annulus_200pts.fort.14",
+      "structuredMesh1.14",
+      "donut_domain.fort.14"
+    ]
+  },
+  "WNAT_Hagen.14": {
+    "checksum": "a7aa55ef6a31f2a91d2fc7f2f256bb7a",
+    "size": 5741204,
+    "size_mb": 5.48,
+    "sources": [
+      "WNAT_Hagen.14",
+      "WNAT_53K_Nodes.14"
+    ],
+    "source_paths": [
+      "03_CHILMesh_Test_Cases/01_.14_Files/WNAT_Hagen.14",
+      "03_CHILMesh_Test_Cases/01_.14_Files/WNAT_53K_Nodes.14",
+      "data/01_.14_Files/WNAT_Hagen.14",
+      "data/01_.14_Files/WNAT_53K_Nodes.14"
+    ],
+    "duplicates": [
+      "Block_O.14",
+      "annulus_200pts.fort.14",
+      "structuredMesh1.14",
+      "donut_domain.fort.14"
+    ]
+  },
+  "dom.2dm": {
+    "checksum": "a9e1c5279acb9083bbe2b53aa65e7c1e",
+    "size": 2512,
+    "size_mb": 0.0,
+    "sources": [
+      "dom.2dm"
+    ],
+    "source_paths": [
+      "03_CHILMesh_Test_Cases/01_.14_Files/dom.2dm",
+      "data/01_.14_Files/dom.2dm"
+    ],
+    "duplicates": [
+      "Block_O.14",
+      "annulus_200pts.fort.14",
+      "structuredMesh1.14",
+      "donut_domain.fort.14"
+    ]
+  },
+  "WNAT_Onur.14": {
+    "checksum": "b563ea211a0ebe9843b0ea2e5a027268",
+    "size": 16061921,
+    "size_mb": 15.32,
+    "sources": [
+      "WNAT_Onur.14"
+    ],
+    "source_paths": [
+      "03_CHILMesh_Test_Cases/01_.14_Files/WNAT_Onur.14",
+      "data/01_.14_Files/WNAT_Onur.14"
+    ],
+    "duplicates": [
+      "Block_O.14",
+      "annulus_200pts.fort.14",
+      "structuredMesh1.14",
+      "donut_domain.fort.14"
+    ]
+  },
+  "structuredMesh1.14": {
+    "checksum": "ba6756e5294d8b9eebdedc40966f6b63",
+    "size": 37078,
+    "size_mb": 0.04,
+    "sources": [
+      "structuredMesh1.14"
+    ],
+    "source_paths": [
+      "chilmesh/data/structuredMesh1.14",
+      "03_CHILMesh_Test_Cases/01_.14_Files/structuredMesh1.14",
+      "data/01_.14_Files/structuredMesh1.14"
+    ],
+    "duplicates": [
+      "Block_O.14",
+      "annulus_200pts.fort.14",
+      "donut_domain.fort.14"
+    ]
+  },
+  "rectangular_mesh_quadrilateral1.14": {
+    "checksum": "bbad1cdeb9e34dcdc6037bbd2a05606c",
+    "size": 2813,
+    "size_mb": 0.0,
+    "sources": [
+      "rectangular_mesh_quadrilateral1.14"
+    ],
+    "source_paths": [
+      "03_CHILMesh_Test_Cases/01_.14_Files/rectangular_mesh_quadrilateral1.14",
+      "data/01_.14_Files/rectangular_mesh_quadrilateral1.14"
+    ],
+    "duplicates": [
+      "Block_O.14",
+      "annulus_200pts.fort.14",
+      "structuredMesh1.14",
+      "donut_domain.fort.14"
+    ]
+  },
+  "rectangular_mesh_triangle1.14": {
+    "checksum": "d2249d037e21ec513f23d5403c731841",
+    "size": 3205,
+    "size_mb": 0.0,
+    "sources": [
+      "rectangular_mesh_triangle1.14"
+    ],
+    "source_paths": [
+      "03_CHILMesh_Test_Cases/01_.14_Files/rectangular_mesh_triangle1.14",
+      "data/01_.14_Files/rectangular_mesh_triangle1.14"
+    ],
+    "duplicates": [
+      "Block_O.14",
+      "annulus_200pts.fort.14",
+      "structuredMesh1.14",
+      "donut_domain.fort.14"
+    ]
+  },
+  "structuredMesh4.14": {
+    "checksum": "d2fadd45e8821913009687beaafbdd0e",
+    "size": 73195,
+    "size_mb": 0.07,
+    "sources": [
+      "structuredMesh4.14"
+    ],
+    "source_paths": [
+      "03_CHILMesh_Test_Cases/01_.14_Files/structuredMesh4.14",
+      "data/01_.14_Files/structuredMesh4.14"
+    ],
+    "duplicates": [
+      "Block_O.14",
+      "annulus_200pts.fort.14",
+      "structuredMesh1.14",
+      "donut_domain.fort.14"
+    ]
+  },
+  "Lake_Erie_mesh_refined.14": {
+    "checksum": "d7d33d6493ab2da3a92b293ff8e95aea",
+    "size": 599476,
+    "size_mb": 0.57,
+    "sources": [
+      "Lake_Erie_mesh_refined.14"
+    ],
+    "source_paths": [
+      "03_CHILMesh_Test_Cases/01_.14_Files/Lake_Erie_mesh_refined.14",
+      "data/01_.14_Files/Lake_Erie_mesh_refined.14"
+    ],
+    "duplicates": [
+      "Block_O.14",
+      "annulus_200pts.fort.14",
+      "structuredMesh1.14",
+      "donut_domain.fort.14"
+    ]
+  },
+  "Lake_Michigan_mesh.14": {
+    "checksum": "dfcc608bb2e93a1ba0ae757161c9041d",
+    "size": 2588552,
+    "size_mb": 2.47,
+    "sources": [
+      "Lake_Michigan_mesh.14"
+    ],
+    "source_paths": [
+      "03_CHILMesh_Test_Cases/01_.14_Files/Lake_Michigan_mesh.14",
+      "data/01_.14_Files/Lake_Michigan_mesh.14"
+    ],
+    "duplicates": [
+      "Block_O.14",
+      "annulus_200pts.fort.14",
+      "structuredMesh1.14",
+      "donut_domain.fort.14"
+    ]
+  },
+  "Block_O.14": {
+    "checksum": "ecf2f245448428c5cc42e17c530258c9",
+    "size": 344003,
+    "size_mb": 0.33,
+    "sources": [
+      "Block_O.14"
+    ],
+    "source_paths": [
+      "chilmesh/data/Block_O.14",
+      "03_CHILMesh_Test_Cases/01_.14_Files/Block_O.14",
+      "data/01_.14_Files/Block_O.14"
+    ],
+    "duplicates": [
+      "annulus_200pts.fort.14",
+      "structuredMesh1.14",
+      "donut_domain.fort.14"
+    ]
+  },
+  "Mixed_Test.14": {
+    "checksum": "f1b4b4f05662c279ed5a60012b72d9b4",
+    "size": 518,
+    "size_mb": 0.0,
+    "sources": [
+      "Mixed_Test.14"
+    ],
+    "source_paths": [
+      "03_CHILMesh_Test_Cases/01_.14_Files/Mixed_Test.14",
+      "data/01_.14_Files/Mixed_Test.14"
+    ],
+    "duplicates": [
+      "Block_O.14",
+      "annulus_200pts.fort.14",
+      "structuredMesh1.14",
+      "donut_domain.fort.14"
+    ]
+  }
+}

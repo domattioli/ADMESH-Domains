@@ -76,13 +76,29 @@ git tag v0.X.Y && git push origin v0.X.Y
 ### Adding a mesh (data-only update — NO PyPI bump)
 **Mesh additions / removals / metadata edits are data, not code. Don't tag.**
 ```bash
-# Edit registry_data/manifest.toml (and admesh_domains/data/manifest.toml),
-# add the file under registry_data/meshes/, commit, push to main:
+# 1. Drop the new mesh file into registry_data/meshes/, then run the
+#    auto-suggester to find the right Domain (introduced in v0.3.0):
+admesh-domains domain suggest registry_data/meshes/new.14
+#    -> ranks existing Domains by IoU and either confirms a match or
+#       drops you into an interactive prompt that emits a paste-ready
+#       TOML stub for a new Domain.
+# 2. Edit registry_data/manifest.toml (and admesh_domains/data/manifest.toml)
+#    to add the entry under the chosen Domain.
+# 3. Commit and push:
 git add registry_data/ admesh_domains/data/manifest.toml
 git commit -m "Add foo.14 to <Domain>"
 git push origin main
 # Triggers publish-data.yml automatically: HF gets a new revision
 # tagged 'data-YYYY-MM-DD-<sha7>'. PyPI is untouched.
+```
+
+### Auditing existing Domain assignments
+```bash
+# Run the suggester against every existing mesh; reports any whose current
+# Domain disagrees with the rank-1 suggestion (curation drift detector).
+admesh-domains domain audit
+admesh-domains domain audit --threshold 0.1   # tune sensitivity
+admesh-domains domain audit --json            # machine-readable output
 ```
 
 ### Manual data publish

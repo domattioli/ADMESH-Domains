@@ -20,65 +20,27 @@ from pathlib import Path
 from typing import Optional
 
 
-def bbox_from_fort14(path: Path) -> Optional[tuple[float, float, float, float]]:
-    """Return (min_lon, min_lat, max_lon, max_lat) or None if unparseable."""
-    try:
-        with open(path, "r", encoding="utf-8", errors="replace") as f:
-            f.readline()  # AGRID
-            ne_nn = f.readline().split()
-            if len(ne_nn) < 2:
-                return None
-            nn = int(ne_nn[1])
-            min_lon = min_lat = float("inf")
-            max_lon = max_lat = float("-inf")
-            for _ in range(nn):
-                parts = f.readline().split()
-                if len(parts) < 3:
-                    return None
-                x, y = float(parts[1]), float(parts[2])
-                min_lon = min(min_lon, x)
-                max_lon = max(max_lon, x)
-                min_lat = min(min_lat, y)
-                max_lat = max(max_lat, y)
-            return min_lon, min_lat, max_lon, max_lat
-    except (ValueError, IndexError, OSError) as e:
-        print(f"  WARN: failed to parse {path.name}: {e}")
-        return None
-
-
-def bbox_from_2dm(path: Path) -> Optional[tuple[float, float, float, float]]:
-    try:
-        min_lon = min_lat = float("inf")
-        max_lon = max_lat = float("-inf")
-        n_nodes = 0
-        with open(path, "r", encoding="utf-8", errors="replace") as f:
-            for line in f:
-                if line.startswith("ND "):
-                    parts = line.split()
-                    if len(parts) >= 4:
-                        x, y = float(parts[2]), float(parts[3])
-                        min_lon = min(min_lon, x)
-                        max_lon = max(max_lon, x)
-                        min_lat = min(min_lat, y)
-                        max_lat = max(max_lat, y)
-                        n_nodes += 1
-        if n_nodes == 0:
-            return None
-        return min_lon, min_lat, max_lon, max_lat
-    except (ValueError, OSError) as e:
-        print(f"  WARN: failed to parse {path.name}: {e}")
-        return None
-
-
 def extract_bbox(path: Path) -> Optional[tuple[float, float, float, float]]:
-    """Dispatch to the right parser by extension.
+    """Dispatch via admesh_domains.geometry. Returns plain tuple for legacy callers."""
+    from admesh_domains.geometry import bbox_from_mesh_file
+    bb = bbox_from_mesh_file(path)
+    if bb is None:
+        print(f"  WARN: failed to parse {path.name}")
+        return None
+    return bb.min_lon, bb.min_lat, bb.max_lon, bb.max_lat
 
-    Recognized: .14, .grd, .fort.14 (all ADCIRC-format) and .2dm (SMS).
-    Anything else falls through to the fort.14 parser as a best-effort.
-    """
-    if path.suffix == ".2dm":
-        return bbox_from_2dm(path)
-    return bbox_from_fort14(path)
+
+# Back-compat aliases (kept for any external script that imports them):
+def bbox_from_fort14(path: Path):
+    from admesh_domains.geometry import bbox_from_fort14 as _fort14
+    bb = _fort14(path)
+    return None if bb is None else (bb.min_lon, bb.min_lat, bb.max_lon, bb.max_lat)
+
+
+def bbox_from_2dm(path: Path):
+    from admesh_domains.geometry import bbox_from_2dm as _2dm
+    bb = _2dm(path)
+    return None if bb is None else (bb.min_lon, bb.min_lat, bb.max_lon, bb.max_lat)
 
 
 def insert_bbox_into_manifest(manifest_text: str, filename: str, bbox: tuple) -> str:

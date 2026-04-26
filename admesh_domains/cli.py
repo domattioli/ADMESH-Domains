@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import os
 import sys
 from pathlib import Path
 from typing import Optional
@@ -196,6 +197,172 @@ def cmd_publish(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_domain_suggest(args: argparse.Namespace) -> int:
+    """Suggest the best Domain for a candidate mesh file."""
+    from .geometry import (
+        bbox_from_mesh_file, suggest_domain, CONFIDENT_THRESHOLD,
+    )
+    import json as _json
+
+    path = Path(args.path)
+    if not path.exists():
+        print(f"ERROR: mesh file not found: {path}", file=sys.stderr)
+        return 3
+
+    bb = bbox_from_mesh_file(path)
+    if bb is None:
+        print(f"ERROR: could not parse mesh file: {path}", file=sys.stderr)
+        return 3
+
+    manifest = load_manifest(Path(args.manifest) if args.manifest else None)
+    scores = suggest_domain(bb, manifest)
+
+    confident = [s for s in scores if s.confidence == "confident"]
+    exit_code = 0 if len(confident) == 1 else (2 if len(confident) > 1 else 1)
+
+    if args.json:
+        out = {
+            "path": str(path),
+            "bbox": [bb.min_lon, bb.min_lat, bb.max_lon, bb.max_lat],
+            "candidates": [s.to_dict() for s in scores],
+            "exit_code": exit_code,
+        }
+        print(_json.dumps(out, indent=2))
+        return exit_code
+
+    use_color = sys.stdout.isatty() and not os.environ.get("NO_COLOR")
+    GREEN = "\033[32m" if use_color else ""
+    YELLOW = "\033[33m" if use_color else ""
+    GRAY = "\033[90m" if use_color else ""
+    RESET = "\033[0m" if use_color else ""
+
+    print(
+        f"Suggestions for {path.name} "
+        f"(bbox: {bb.min_lon:.2f}, {bb.min_lat:.2f}, {bb.max_lon:.2f}, {bb.max_lat:.2f}):"
+    )
+    if not scores:
+        print("  (no Domains have geographic-bbox meshes; cannot rank)")
+    for i, s in enumerate(scores[:10], 1):
+        color = (
+            GREEN if s.confidence == "confident"
+            else YELLOW if s.confidence == "uncertain"
+            else GRAY
+        )
+        print(
+            f"  {i}. {color}{s.domain_name:20}{RESET}  "
+            f"per_mesh IoU={s.per_mesh_iou:.3f}  union IoU={s.union_iou:.3f}  "
+            f"({s.confidence})"
+        )
+
+    is_no_match = not scores or scores[0].per_mesh_iou < CONFIDENT_THRESHOLD
+    if is_no_match:
+        # Fall to interactive prompt unless --non-interactive or stdin not a tty.
+        non_interactive = args.non_interactive or not sys.stdin.isatty()
+        print()
+        if non_interactive:
+            print(_render_new_domain_stub(path, bb, interactive=False))
+        else:
+            try:
+                stub = _interactive_new_domain_prompt(path, bb)
+                print()
+                print(stub)
+            except (EOFError, KeyboardInterrupt):
+                print("\n(interrupted)")
+                return exit_code
+    return exit_code
+
+
+def _render_new_domain_stub(path: Path, bb, *, interactive: bool, answers: dict | None = None) -> str:
+    a = answers or {}
+    name = a.get("name", "<TBD>")
+    full_name = a.get("full_name", "<TBD>")
+    category = a.get("category", "real-world")
+    region = a.get("region")
+    apps = a.get("applications", [])
+    apps_repr = "[" + ", ".join(f'"{x}"' for x in apps) + "]" if apps else "[]"
+
+    header = "# Paste this into registry_data/manifest.toml AND admesh_domains/data/manifest.toml"
+    lines = [
+        header,
+        "[[domains]]",
+        f'name = "{name}"',
+        f'full_name = "{full_name}"',
+        f'category = "{category}"',
+    ]
+    if region:
+        lines.append(f'region = "{region}"')
+    elif category == "real-world":
+        lines.append('region = "<TBD>"')
+    lines.append(f"applications = {apps_repr}")
+    lines.append("")
+    lines.append("[[domains.meshes]]")
+    lines.append('id = "default@v1"')
+    lines.append(f'filename = "{path.name}"')
+    lines.append('license = "MIT"   # or another VALID_LICENSES value')
+    lines.append(
+        f"bounding_box = {{ min_lon = {bb.min_lon}, min_lat = {bb.min_lat}, "
+        f"max_lon = {bb.max_lon}, max_lat = {bb.max_lat} }}"
+    )
+    lines.append('description = "<TBD>"')
+    return "\n".join(lines)
+
+
+def _interactive_new_domain_prompt(path: Path, bb) -> str:
+    print("No confident match. Let's propose a new Domain.")
+    name = input("  Domain name (e.g. 'GulfOfMexico'): ").strip() or "<TBD>"
+    full_name = input(f"  Full name [{name}]: ").strip() or name
+    category = input("  Category (real-world|synthetic) [real-world]: ").strip() or "real-world"
+    region = ""
+    if category == "real-world":
+        region = input("  Region (e.g. 'North America'): ").strip()
+    apps_raw = input("  Applications (comma-separated, optional): ").strip()
+    apps = [a.strip() for a in apps_raw.split(",") if a.strip()] if apps_raw else []
+    return _render_new_domain_stub(
+        path, bb, interactive=True,
+        answers={"name": name, "full_name": full_name, "category": category,
+                 "region": region or None, "applications": apps},
+    )
+
+
+def cmd_domain_audit(args: argparse.Namespace) -> int:
+    """Run the suggester against every mesh and report disagreements."""
+    from .geometry import suggest_domain
+    import json as _json
+
+    manifest = load_manifest()
+    disagreements = []
+    for d in manifest.domains:
+        for mesh in d.meshes:
+            if mesh.bounding_box is None:
+                continue
+            scores = suggest_domain(mesh.bounding_box, manifest)
+            if not scores:
+                continue
+            top = scores[0]
+            if top.domain_name != d.name and top.per_mesh_iou >= args.threshold:
+                disagreements.append({
+                    "mesh": mesh.full_id,
+                    "current": d.name,
+                    "suggested": top.domain_name,
+                    "per_mesh_iou": round(top.per_mesh_iou, 4),
+                })
+    disagreements.sort(key=lambda x: -x["per_mesh_iou"])
+
+    if args.json:
+        print(_json.dumps({"disagreements": disagreements, "count": len(disagreements)}, indent=2))
+    else:
+        if not disagreements:
+            print(f"0 disagreements in {manifest.total_meshes} meshes (threshold={args.threshold}).")
+        else:
+            print(f"{len(disagreements)} disagreement(s) (threshold={args.threshold}):")
+            for d_ in disagreements:
+                print(
+                    f"  {d_['mesh']:40} current={d_['current']:15} "
+                    f"suggested={d_['suggested']:15} IoU={d_['per_mesh_iou']:.3f}"
+                )
+    return 0 if not disagreements else 1
+
+
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(
         prog="admesh-domains",
@@ -253,7 +420,51 @@ def build_parser() -> argparse.ArgumentParser:
     pp.add_argument("-v", "--verbose", action="store_true", help="Print per-file actions")
     pp.set_defaults(func=cmd_publish)
 
+    # 'domain' command group (verb-noun grouping per spec 007 C-9).
+    pdom = sub.add_parser(
+        "domain",
+        help="Domain operations: suggest, audit, list",
+    )
+    dom_sub = pdom.add_subparsers(dest="domain_command", required=True)
+
+    pds = dom_sub.add_parser(
+        "suggest",
+        help="Suggest the best Domain for a candidate mesh file",
+    )
+    pds.add_argument("path", help="Path to a fort.14 / .grd / .2dm mesh file")
+    pds.add_argument("--manifest", default=None, help="Manifest path (default: bundled)")
+    pds.add_argument("--json", action="store_true", help="Emit JSON output")
+    pds.add_argument(
+        "--non-interactive", action="store_true",
+        help="Skip the new-Domain prompt; print TOML stub with <TBD> placeholders",
+    )
+    pds.set_defaults(func=cmd_domain_suggest)
+
+    pda = dom_sub.add_parser(
+        "audit",
+        help="Run suggester against every mesh; report disagreements with current Domain assignment",
+    )
+    pda.add_argument(
+        "--threshold", type=float, default=UNCERTAIN_THRESHOLD_DEFAULT,
+        help="Minimum per-mesh IoU to count as a real disagreement (default 0.05)",
+    )
+    pda.add_argument("--json", action="store_true", help="Emit JSON output")
+    pda.set_defaults(func=cmd_domain_audit)
+
+    pdl = dom_sub.add_parser(
+        "list",
+        help="List domains (alias for the top-level 'domains' command)",
+    )
+    pdl.add_argument("--category")
+    pdl.add_argument("--region")
+    pdl.add_argument("--application")
+    pdl.set_defaults(func=cmd_domains)
+
     return p
+
+
+# Default threshold for `domain audit` matches the suggester's "uncertain" floor.
+UNCERTAIN_THRESHOLD_DEFAULT = 0.05
 
 
 def main(argv: Optional[list[str]] = None) -> int:

@@ -2,9 +2,10 @@
 
 **Feature Branch**: `007-domain-auto-suggester`
 **Created**: 2026-04-26
-**Status**: Draft
+**Status**: ✅ Complete (shipped in v0.3.0 — 2026-04-26)
 **Issue**: [#3](https://github.com/domattioli/ADMESH-Domains/issues/3)
 **Input**: When a contributor adds a new mesh via PR, the registry should suggest which existing Domain it likely belongs to (or recommend creating a new one) based on geometry. Human-in-the-loop: the tool proposes, the reviewer decides.
+**Verified**: SC-001..005 all pass — `admesh-domains domain audit` returns 0 disagreements across the full 41-mesh registry, `domain suggest` returns rank-1 = current Domain for every existing real-world mesh, `--json` output is jq-parseable, base install size unchanged (no new deps).
 
 ## Summary
 

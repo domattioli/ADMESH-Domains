@@ -13,11 +13,20 @@ The publisher runs as a GitHub Action on every `v*` tag push, and is also expose
 
 ## Clarifications
 
-### Session 2026-04-25
+### Session 2026-04-25 (initial)
 
 - **Q (C-1)**: HuggingFace target slug? → **A**: `domattioli/admesh-domains` (personal account; no HF org setup needed). May migrate to an org slug later if collaborators join.
 - **Q (C-2)**: Which tags trigger a publish? → **A**: Strict semver only — workflow filter `v[0-9]+.[0-9]+.[0-9]+`. Pre-releases / RC tags do not publish.
 - **Q (C-3)**: License handling for v1? → **A**: Publish all 40 meshes. They were imported from public GitHub repos so are de facto already-public. Per-mesh `license` field deferred to a later spec; revisit before accepting outside contributions.
+
+### Session 2026-04-25 (clarify)
+
+- **Q (C-4)**: Content-hash dedup mechanism? → **A**: Compute sha256 at publish time, write the column into the Parquet sidecar, and on subsequent runs read the *previous* sidecar from HF to decide skip/re-upload. No `Mesh` schema change, no PR-author burden. First run uploads everything (no prior sidecar to compare against).
+- **Q (C-5)**: HF dataset file-path layout? → **A**: Group by domain — `meshes/<domain_name>/<original_filename>`, e.g. `meshes/WNAT/WNAT_Hagen.14`. Original filenames preserved (no information loss); collision-proof if two domains ever ship a `WNAT.14`.
+- **Q (C-6)**: Required vs optional `huggingface_hub` / `pyarrow` deps? → **A**: Optional extra — `pip install admesh-domains[publish]` for the publisher; `pip install admesh-domains[hf]` for runtime `Mesh.load()` from HF. Base install stays light.
+- **Q (C-7)**: Should `Mesh.load()` fetch from HF? → **A**: Yes — `Mesh.load()` calls `huggingface_hub.hf_hub_download(...)` for the configured dataset. Files cache to `HF_HUB_CACHE` (cross-platform), with built-in progress bars and resumable downloads — appropriate even for the largest meshes today (~15 MB) and for future multi-GB additions. Requires the `[hf]` extra.
+- **Q (C-8)**: HF "latest" tracking branch? → **A**: Yes — keep `main` always pointing at the latest semver tag, in addition to per-tag revisions. Casual users get latest-by-default with `snapshot_download`; pin-conscious users use `revision="v0.2.0"`.
+- **Q (C-9)**: Couple PyPI publish to the same workflow? → **A**: Yes — single GitHub Action on a semver tag does both `twine upload` (PyPI) and HF publish. Requires `PYPI_API_TOKEN` and `HF_TOKEN` repo secrets. PyPI step runs first; HF step runs only if PyPI succeeds.
 
 ## User Scenarios & Testing
 
@@ -78,16 +87,19 @@ A researcher who doesn't use the Python loader can browse the dataset on hugging
 
 ### Functional
 
-- **FR-001**: A GitHub Actions workflow at `.github/workflows/publish-hf.yml` triggers on push of any tag matching `v*`.
+- **FR-001**: A GitHub Actions workflow at `.github/workflows/release.yml` triggers on push of any tag matching the strict semver pattern `v[0-9]+.[0-9]+.[0-9]+`.
 - **FR-002**: The workflow also supports `workflow_dispatch` for manual re-runs.
 - **FR-003**: The publisher reads `admesh_domains/data/manifest.toml`, validates it, and refuses to proceed on any error.
-- **FR-004**: The publisher uploads each mesh file under `registry_data/meshes/<filename>` to HF as `meshes/<filename>` using `huggingface_hub.upload_file`.
-- **FR-005**: Uploads are skipped for files already present in HF with the same content hash (sha256).
-- **FR-006**: A Parquet sidecar (`manifest.parquet`) is written, containing one row per mesh with flattened columns (see Data Model section).
+- **FR-004**: The publisher uploads each mesh file under `registry_data/meshes/<filename>` to HF as `meshes/<domain_name>/<filename>` (e.g. `meshes/WNAT/WNAT_Hagen.14`) via a single batched `huggingface_hub.create_commit` call.
+- **FR-005**: For dedup, the publisher downloads the previous `manifest.parquet` from HF (if present), reads the prior `content_sha256` per file, and skips re-uploading files whose hash hasn't changed. First run (no prior sidecar) uploads everything.
+- **FR-006**: A Parquet sidecar (`manifest.parquet`) is written at the dataset root, containing one row per mesh with flattened columns (see Data Model section), including the freshly-computed `content_sha256`.
 - **FR-007**: A dataset card (`README.md`) is rendered from a Jinja template and written to the HF dataset repo.
-- **FR-008**: All HF writes for a given run land in a single commit, tagged with the release tag (e.g. `v0.2.0`).
-- **FR-009**: The CLI exposes the same operation as `admesh-domains publish [--dry-run] [--token ENV] [--tag STR]`.
-- **FR-010**: A `--dry-run` mode prints what would be uploaded/changed without touching HF.
+- **FR-008**: All HF writes for a given run land in a single atomic commit (`huggingface_hub.create_commit` with batched operations), tagged on HF with the release tag (e.g. `v0.2.0`) via `huggingface_hub.create_tag`.
+- **FR-009**: After a successful tagged commit, the workflow updates the HF `main` branch to point at the same revision, so `snapshot_download(...)` defaults to the latest published tag.
+- **FR-010**: The release workflow first runs `twine upload dist/*` to PyPI using `PYPI_API_TOKEN`; the HF publish step runs only on PyPI success. A failure during HF publish does NOT roll back PyPI (PyPI versions are immutable anyway).
+- **FR-011**: The CLI exposes the HF operation as `admesh-domains publish [--dry-run] [--tag STR]`. Token is read from `HF_TOKEN` env var.
+- **FR-012**: `--dry-run` mode prints planned uploads, deletes, and dataset-card diff without touching HF.
+- **FR-013**: `Mesh.load()` is added to the runtime API. When called, it downloads the file from the configured HF dataset via `huggingface_hub.hf_hub_download` (cached under `HF_HUB_CACHE`) and returns the local `Path`. Requires the `[hf]` extra.
 
 ### Non-Functional
 
@@ -144,12 +156,19 @@ One row per mesh, flat schema:
 
 ## Dependencies
 
-- `huggingface_hub >= 0.20` — auth, file ops, atomic commits
-- `pyarrow >= 14.0` — Parquet sidecar writes
-- `jinja2 >= 3.0` — dataset card templating
-- Existing `admesh_domains.manifest.load_manifest` and `Manifest.all_meshes()` (already shipped in v0.1.1)
+All publisher-side deps are gated behind the `[publish]` extra; runtime HF download is gated behind `[hf]`. Base install stays at the current `tomli ; python_version < '3.11'` only.
+
+- `[publish]` extra:
+  - `huggingface_hub >= 0.20` — auth, batched create_commit, create_tag
+  - `pyarrow >= 14.0` — Parquet sidecar read/write
+  - `jinja2 >= 3.0` — dataset card templating
+  - `twine >= 4.0` — PyPI upload (already in dev workflow, surfaced explicitly here)
+- `[hf]` extra:
+  - `huggingface_hub >= 0.20` — runtime `Mesh.load()` downloads
+- Existing: `admesh_domains.manifest.load_manifest`, `Manifest.all_meshes()`, `Mesh.path` (already in v0.1.1)
+- New repo secrets required: `HF_TOKEN` (write to `domattioli/admesh-domains`), `PYPI_API_TOKEN` (already used manually).
 
 ## Open Questions for Plan Phase
 
-- Should the dataset card include a small folium / static-image map of mesh bounding boxes, or stay text-only for v1? (Leans text-only — no `bounding_box` data on Meshes yet.)
-- Do we want a `main` branch on HF that always tracks the latest tag, in addition to per-tag revisions?
+- Should the dataset card include a small folium / static-image map of mesh bounding boxes? Leaning **no** for v1 — no `bounding_box` data on Meshes yet, so there's nothing to plot. Revisit when bbox is populated.
+- Should there be a `[publish]` test that exercises the publisher end-to-end against a *test* HF dataset (e.g. `domattioli/admesh-domains-ci`) on every PR? Adds CI cost but catches breakage early.

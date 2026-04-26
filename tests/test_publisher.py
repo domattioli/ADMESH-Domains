@@ -157,15 +157,36 @@ class TestPublishErrors:
             publish(m, tag="v1.0.0", dry_run=True, token="dummy")
 
 
+def _make_hf_error(exc_cls):
+    """Construct an HF error across huggingface_hub versions.
+
+    Older versions: ``cls(message)`` works. Newer versions require ``response=``
+    as a keyword-only argument.
+    """
+    response = MagicMock()
+    response.status_code = 404
+    response.headers = {}
+    try:
+        return exc_cls("not found", response=response)
+    except TypeError:
+        return exc_cls("not found")
+
+
 class TestFetchPriorHashes:
     def test_returns_empty_on_404(self):
         from huggingface_hub.errors import EntryNotFoundError
-        mock = MagicMock(side_effect=EntryNotFoundError("not found"))
+        mock = MagicMock(side_effect=_make_hf_error(EntryNotFoundError))
         with patch("huggingface_hub.hf_hub_download", mock):
             assert fetch_prior_hashes("foo/bar", token="x") == {}
 
     def test_returns_empty_on_repo_404(self):
         from huggingface_hub.errors import RepositoryNotFoundError
-        mock = MagicMock(side_effect=RepositoryNotFoundError("nope"))
+        mock = MagicMock(side_effect=_make_hf_error(RepositoryNotFoundError))
+        with patch("huggingface_hub.hf_hub_download", mock):
+            assert fetch_prior_hashes("foo/bar", token="x") == {}
+
+    def test_returns_empty_on_other_errors(self):
+        """Any unexpected failure should fall through to empty (first-publish behavior)."""
+        mock = MagicMock(side_effect=RuntimeError("network broke"))
         with patch("huggingface_hub.hf_hub_download", mock):
             assert fetch_prior_hashes("foo/bar", token="x") == {}

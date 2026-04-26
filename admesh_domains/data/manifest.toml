@@ -7,11 +7,6 @@ schema_version = "0.2"
 version = "1.0.0"
 description = "ADCIRC mesh domain registry"
 created = "2026-04-25"
-source_repositories = [
-    "https://github.com/domattioli/CHILmesh",
-    "https://github.com/domattioli/QuADMesh-MATLAB",
-    "https://github.com/domattioli/chil_mesh-master",
-]
 total_domains = 13
 total_meshes = 40
 total_size_mb = 59.0
@@ -27,12 +22,14 @@ applications = ["Coastal Circulation"]
 [[domains.meshes]]
 id = "default@v1"
 filename = "Baranja_Hill.14"
+bounding_box = { min_lon = 6553298.963500, min_lat = 5070669.699400, max_lon = 6554897.860200, max_lat = 5072223.659400 }
 description = "Baranja Hill region mesh"
 size_mb = 0.08
 
 [[domains.meshes]]
 id = "admesh-v2@v1"
 filename = "Baranja_Hill_ADMESH_v2.14"
+bounding_box = { min_lon = 6553297.013900, min_lat = 5070671.556200, max_lon = 6554897.990500, max_lat = 5072224.219700 }
 description = "Baranja Hill mesh - ADMESH v2 variant"
 size_mb = 0.09
 
@@ -47,6 +44,7 @@ applications = ["Coastal Circulation"]
 [[domains.meshes]]
 id = "default@v1"
 filename = "Chesapeake_Bay.14"
+bounding_box = { min_lon = -81.487709, min_lat = 28.017990, max_lon = -62.999817, max_lat = 45.833164 }
 description = "Chesapeake Bay region mesh"
 size_mb = 9.47
 
@@ -61,12 +59,14 @@ applications = ["Coastal Circulation"]
 [[domains.meshes]]
 id = "default@v1"
 filename = "Deleware_Bay.14"
+bounding_box = { min_lon = -75.615127, min_lat = 37.934355, max_lon = -73.693529, max_lat = 40.029191 }
 description = "Delaware Bay mesh"
 size_mb = 1.72
 
 [[domains.meshes]]
 id = "refined-100-20000@v1"
 filename = "Deleware_Bay_hmin_100_hmax_20000.14"
+bounding_box = { min_lon = -75.615127, min_lat = 37.934355, max_lon = -73.693529, max_lat = 40.029191 }
 description = "Delaware Bay mesh - refined version"
 size_mb = 1.72
 refinement_level = "high"
@@ -83,6 +83,7 @@ applications = ["Lake Circulation"]
 [[domains.meshes]]
 id = "default@v1"
 filename = "Great_Lakes.14"
+bounding_box = { min_lon = -92.109894, min_lat = 41.381063, max_lon = -75.763391, max_lat = 49.020740 }
 description = "Great Lakes region mesh"
 size_mb = 15.16
 
@@ -97,6 +98,7 @@ applications = ["Coastal Circulation"]
 [[domains.meshes]]
 id = "default@v1"
 filename = "Italy.14"
+bounding_box = { min_lon = 11.163465, min_lat = 34.992968, max_lon = 20.298273, max_lat = 45.762892 }
 description = "Italy region mesh"
 size_mb = 1.45
 
@@ -111,12 +113,14 @@ applications = ["Lake Circulation"]
 [[domains.meshes]]
 id = "5k-nodes@v1"
 filename = "LakeErie_5k_500.14"
+bounding_box = { min_lon = -83.484170, min_lat = 41.378718, max_lon = -78.859364, max_lat = 42.926953 }
 description = "Lake Erie mesh - 5k nodes variant"
 size_mb = 1.57
 
 [[domains.meshes]]
 id = "refined@v1"
 filename = "Lake_Erie_mesh_refined.14"
+bounding_box = { min_lon = -83.484143, min_lat = 41.378194, max_lon = -78.859096, max_lat = 42.926741 }
 description = "Lake Erie refined mesh"
 size_mb = 0.57
 refinement_level = "medium"
@@ -132,6 +136,7 @@ applications = ["Lake Circulation"]
 [[domains.meshes]]
 id = "default@v1"
 filename = "Lake_Michigan_mesh.14"
+bounding_box = { min_lon = -88.040937, min_lat = 41.620997, max_lon = -84.779017, max_lat = 46.108227 }
 description = "Lake Michigan mesh"
 size_mb = 2.47
 
@@ -145,41 +150,49 @@ category = "synthetic"
 [[domains.meshes]]
 id = "simple@v1"
 filename = "simple_test_case.14"
+bounding_box = { min_lon = -1.000320, min_lat = -1.000000, max_lon = 1.001642, max_lat = 1.000000 }
 size_mb = 0.09
 
 [[domains.meshes]]
 id = "test1@v1"
 filename = "test1.14"
+bounding_box = { min_lon = 546.000000, min_lat = -13755.000000, max_lon = 30972.579431, max_lat = 15170.617903 }
 size_mb = 0.09
 
 [[domains.meshes]]
 id = "wetting-drying@v1"
 filename = "wetting_and_drying_test.14"
+bounding_box = { min_lon = -10178.107531, min_lat = -13799.870083, max_lon = 49914.809892, max_lat = 50091.911765 }
 size_mb = 0.31
 
 [[domains.meshes]]
 id = "test2@v1"
 filename = "test2.14"
+bounding_box = { min_lon = 18229.911146, min_lat = -4908.524772, max_lon = 49914.809892, max_lat = 18694.852941 }
 size_mb = 0.04
 
 [[domains.meshes]]
 id = "test3@v1"
 filename = "test3.14"
+bounding_box = { min_lon = 18229.911146, min_lat = -4908.524772, max_lon = 49914.809892, max_lat = 18694.852941 }
 size_mb = 0.04
 
 [[domains.meshes]]
 id = "test4@v1"
 filename = "test4.14"
+bounding_box = { min_lon = 18229.911146, min_lat = -4908.524772, max_lon = 49914.809892, max_lat = 18694.852941 }
 size_mb = 0.04
 
 [[domains.meshes]]
 id = "mixed@v1"
 filename = "Mixed_Test.14"
+bounding_box = { min_lon = 1.000000, min_lat = 1.000000, max_lon = 4.000000, max_lat = 4.000000 }
 size_mb = 0.0
 
 [[domains.meshes]]
 id = "sms-2dm@v1"
 filename = "dom.2dm"
+bounding_box = { min_lon = 0.000000, min_lat = 0.000000, max_lon = 100.000000, max_lat = 50.000000 }
 description = "SMS-format mesh file"
 size_mb = 0.0
 type = "SMS_2DM"
@@ -194,24 +207,28 @@ category = "synthetic"
 [[domains.meshes]]
 id = "tri@v1"
 filename = "rectangular_mesh_triangle1.14"
+bounding_box = { min_lon = 40000.000000, min_lat = 10000.000000, max_lon = 150000.000000, max_lat = 55000.000000 }
 size_mb = 0.0
 element_type = "triangle"
 
 [[domains.meshes]]
 id = "quad@v1"
 filename = "rectangular_mesh_quadrilateral1.14"
+bounding_box = { min_lon = 40000.000000, min_lat = 10000.000000, max_lon = 150000.000000, max_lat = 55000.000000 }
 size_mb = 0.0
 element_type = "quadrilateral"
 
 [[domains.meshes]]
 id = "tri-skewed@v1"
 filename = "rectangular_skewed_mesh_triangle1.14"
+bounding_box = { min_lon = 40000.000000, min_lat = 10000.000000, max_lon = 150000.000000, max_lat = 55000.000000 }
 size_mb = 0.0
 element_type = "triangle"
 
 [[domains.meshes]]
 id = "quad-skewed@v1"
 filename = "rectangular_skewed_mesh_quadrilateral1.14"
+bounding_box = { min_lon = 40000.000000, min_lat = 10000.000000, max_lon = 150000.000000, max_lat = 55000.000000 }
 size_mb = 0.0
 element_type = "quadrilateral"
 
@@ -225,33 +242,39 @@ category = "synthetic"
 [[domains.meshes]]
 id = "block-o@v1"
 filename = "Block_O.14"
+bounding_box = { min_lon = 4.998625, min_lat = -0.000577, max_lon = 49.000841, max_lat = 54.001028 }
 description = "Block-shaped structured mesh"
 size_mb = 0.33
 
 [[domains.meshes]]
 id = "islands@v1"
 filename = "islands1.14"
+bounding_box = { min_lon = 1.016230, min_lat = 1.000000, max_lon = 12.000000, max_lat = 10.972002 }
 size_mb = 0.22
 
 [[domains.meshes]]
 id = "circle@v1"
 filename = "circle.14"
+bounding_box = { min_lon = 24.000239, min_lat = 24.001096, max_lon = 39.999647, max_lat = 39.999784 }
 size_mb = 0.17
 
 [[domains.meshes]]
 id = "square@v1"
 filename = "square_mesh_test.14"
+bounding_box = { min_lon = -1.000847, min_lat = -1.000000, max_lon = 1.000000, max_lat = 1.000783 }
 size_mb = 0.04
 
 [[domains.meshes]]
 id = "annulus-200pts@v1"
 filename = "annulus_200pts.fort.14"
+bounding_box = { min_lon = -1.000000, min_lat = -1.000000, max_lon = 1.000000, max_lat = 1.000000 }
 description = "Annulus mesh with 200 points"
 size_mb = 0.02
 
 [[domains.meshes]]
 id = "donut@v1"
 filename = "donut_domain.fort.14"
+bounding_box = { min_lon = -1.000000, min_lat = -0.998993, max_lon = 1.000000, max_lat = 0.998993 }
 description = "Donut-shaped domain mesh"
 size_mb = 0.01
 
@@ -265,21 +288,25 @@ category = "synthetic"
 [[domains.meshes]]
 id = "v2@v1"
 filename = "structuredMesh2.14"
+bounding_box = { min_lon = -2.000000, min_lat = -1.000000, max_lon = 2.000000, max_lat = 1.000000 }
 size_mb = 0.07
 
 [[domains.meshes]]
 id = "v4@v1"
 filename = "structuredMesh4.14"
+bounding_box = { min_lon = -2.000000, min_lat = -1.000000, max_lon = 2.000000, max_lat = 1.000000 }
 size_mb = 0.07
 
 [[domains.meshes]]
 id = "v1@v1"
 filename = "structuredMesh1.14"
+bounding_box = { min_lon = -2.000000, min_lat = -1.000000, max_lon = 2.000000, max_lat = 1.000000 }
 size_mb = 0.04
 
 [[domains.meshes]]
 id = "v3@v1"
 filename = "structuredMesh3.14"
+bounding_box = { min_lon = -2.000000, min_lat = -1.000000, max_lon = 2.000000, max_lat = 1.000000 }
 size_mb = 0.04
 
 # Domain: Numbered test cases
@@ -292,26 +319,31 @@ category = "synthetic"
 [[domains.meshes]]
 id = "case-4@v1"
 filename = "Test_Case_4.14"
+bounding_box = { min_lon = -15.992345, min_lat = -30.000241, max_lon = 15.981827, max_lat = 30.000000 }
 size_mb = 0.39
 
 [[domains.meshes]]
 id = "case-4.2@v1"
 filename = "Test_Case_4.2.14"
+bounding_box = { min_lon = -30.000241, min_lat = -15.992345, max_lon = 30.000000, max_lat = 15.981827 }
 size_mb = 0.26
 
 [[domains.meshes]]
 id = "case-2@v1"
 filename = "Test_Case_2.14"
+bounding_box = { min_lon = 1.015373, min_lat = 1.000000, max_lon = 12.003913, max_lat = 10.981018 }
 size_mb = 0.22
 
 [[domains.meshes]]
 id = "case-1@v1"
 filename = "Test_Case_1.14"
+bounding_box = { min_lon = 1.000000, min_lat = 1.000000, max_lon = 4.414214, max_lat = 4.414214 }
 size_mb = 0.16
 
 [[domains.meshes]]
 id = "case-3@v1"
 filename = "Test_Case_3.14"
+bounding_box = { min_lon = 1.000802, min_lat = -1.499226, max_lon = 8.001755, max_lat = 4.998047 }
 size_mb = 0.11
 
 # Domain: Western North Atlantic
@@ -326,12 +358,14 @@ applications = ["Hurricane/Storm Surge", "Coastal Circulation"]
 [[domains.meshes]]
 id = "onur@v1"
 filename = "WNAT_Onur.14"
+bounding_box = { min_lon = -97.856155, min_lat = 7.914458, max_lon = -60.039580, max_lat = 45.832838 }
 description = "Western North Atlantic mesh (Onur variant)"
 size_mb = 15.32
 
 [[domains.meshes]]
 id = "hagen@v1"
 filename = "WNAT_Hagen.14"
+bounding_box = { min_lon = -97.856889, min_lat = 7.912906, max_lon = -60.040000, max_lat = 45.838806 }
 description = "Western North Atlantic mesh (Hagen variant)"
 size_mb = 5.48
 aliases = ["WNAT_53K_Nodes"]
@@ -339,6 +373,7 @@ aliases = ["WNAT_53K_Nodes"]
 [[domains.meshes]]
 id = "test@v1"
 filename = "WNAT_Test.14"
+bounding_box = { min_lon = -97.850032, min_lat = 8.001743, max_lon = -60.038337, max_lat = 45.769246 }
 description = "Western North Atlantic test mesh"
 size_mb = 1.17
 

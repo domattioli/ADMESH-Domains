@@ -151,6 +151,7 @@ def build_parquet_sidecar(
         "domain", "mesh_id", "full_id", "filename", "description",
         "size_mb", "type", "element_type", "refinement_level", "node_count",
         "aliases", "category", "region", "applications",
+        "bbox_min_lon", "bbox_min_lat", "bbox_max_lon", "bbox_max_lat",
         "content_sha256", "hf_path",
     )}
     for d in manifest.domains:
@@ -170,6 +171,11 @@ def build_parquet_sidecar(
             rows["category"].append(d.category)
             rows["region"].append(d.region)
             rows["applications"].append(list(d.applications or []))
+            bb = mesh.bounding_box
+            rows["bbox_min_lon"].append(bb.min_lon if bb else None)
+            rows["bbox_min_lat"].append(bb.min_lat if bb else None)
+            rows["bbox_max_lon"].append(bb.max_lon if bb else None)
+            rows["bbox_max_lat"].append(bb.max_lat if bb else None)
             rows["content_sha256"].append(hashes[hp])
             rows["hf_path"].append(hp)
 
@@ -188,6 +194,10 @@ def build_parquet_sidecar(
         pa.field("category", pa.string()),
         pa.field("region", pa.string()),
         pa.field("applications", pa.list_(pa.string())),
+        pa.field("bbox_min_lon", pa.float64()),
+        pa.field("bbox_min_lat", pa.float64()),
+        pa.field("bbox_max_lon", pa.float64()),
+        pa.field("bbox_max_lat", pa.float64()),
         pa.field("content_sha256", pa.string()),
         pa.field("hf_path", pa.string()),
     ], metadata={

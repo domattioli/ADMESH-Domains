@@ -36,7 +36,6 @@ The registry contains **40 unique mesh domains** consolidated from multiple sour
 - Various element types (triangles, quadrilaterals)
 
 **Total Data**: 59 MB of mesh data  
-**Sources**: Consolidated from CHILmesh, QuADMesh-MATLAB, and chil_mesh repositories  
 **Format**: ADCIRC-format (.14 and .2dm files)
 
 See [registry_data/manifest.toml](registry_data/manifest.toml) for complete domain metadata.

@@ -63,6 +63,7 @@ class Mesh:
     refinement_level: Optional[str] = None
     features: list[str] = field(default_factory=list)
     aliases: list[str] = field(default_factory=list)
+    bounding_box: Optional[BoundingBox] = None
 
     _domain_name: Optional[str] = field(default=None, repr=False, compare=False)
     _base_dir: Optional[Path] = field(default=None, repr=False, compare=False)
@@ -150,7 +151,10 @@ class Mesh:
     ) -> "Mesh":
         known = {f.name for f in cls.__dataclass_fields__.values() if not f.name.startswith("_")}
         kwargs = {k: v for k, v in data.items() if k in known}
-        instance = cls(**kwargs)
+        bbox_raw = kwargs.pop("bounding_box", None)
+        if bbox_raw is not None and not isinstance(bbox_raw, BoundingBox):
+            bbox_raw = BoundingBox(**bbox_raw)
+        instance = cls(bounding_box=bbox_raw, **kwargs)
         instance._domain_name = domain_name
         instance._base_dir = base_dir
         return instance

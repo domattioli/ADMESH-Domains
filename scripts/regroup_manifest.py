@@ -193,10 +193,6 @@ def main() -> int:
     out.append('version = "1.0.0"')
     out.append('description = "ADCIRC mesh domain registry"')
     out.append('created = "2026-04-25"')
-    out.append("source_repositories = [")
-    for url in old["metadata"].get("source_repositories", []):
-        out.append(f'    "{url}",')
-    out.append("]")
     out.append(f"total_domains = {total_domains}")
     out.append(f"total_meshes = {total_meshes}")
     out.append(f"total_size_mb = {round(total_size, 1)}")

@@ -1,6 +1,7 @@
 import { renderNav, renderFooter } from "./nav.js";
 import { loadManifest, findDomain } from "./manifest-loader.js";
 import { createMap, addBbox } from "./map.js";
+import { fmtContributor, fmtDate } from "./format.js";
 
 renderNav();
 renderFooter();
@@ -11,17 +12,18 @@ function esc(s) {
 }
 
 function meshRow(d, m) {
-  const dl = m.download_url
-    ? `<a href="${esc(m.download_url)}" download>Download</a>`
-    : "—";
   const detail = `mesh.html?d=${encodeURIComponent(d.name)}&m=${encodeURIComponent(m.id)}`;
+  const kindLabel = m.kind === "boundary" ? "Boundary" : "Mesh";
+  const date = m.modified_date || m.uploaded_date;
   return `<tr>
     <td><a href="${detail}"><code>${esc(m.id)}</code></a></td>
+    <td>${kindLabel}</td>
     <td>${esc(m.filename)}</td>
     <td>${esc(m.type || "")}</td>
-    <td>${m.size_mb ?? ""}</td>
+    <td>${m.size_mb != null ? m.size_mb.toFixed(2) : "—"}</td>
     <td>${esc(m.license || "")}</td>
-    <td>${dl}</td>
+    <td>${esc(fmtDate(m.modified_date))}</td>
+    <td>${esc(fmtContributor(m.contributor, date))}</td>
   </tr>`;
 }
 
@@ -49,7 +51,7 @@ function meshRow(d, m) {
       ${d.description ? `<p>${esc(d.description)}</p>` : ""}
       <h2>Meshes (${d.meshes.length})</h2>
       <table>
-        <thead><tr><th>ID</th><th>File</th><th>Type</th><th>Size (MB)</th><th>License</th><th></th></tr></thead>
+        <thead><tr><th>ID</th><th>Kind</th><th>File</th><th>Type</th><th>Size (MB)</th><th>License</th><th>Modified</th><th>Contributor</th></tr></thead>
         <tbody>${d.meshes.map((m) => meshRow(d, m)).join("")}</tbody>
       </table>
     `;

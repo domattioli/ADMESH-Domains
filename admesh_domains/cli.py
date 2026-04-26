@@ -85,8 +85,8 @@ def cmd_meshes(args: argparse.Namespace) -> int:
     id_w = max(len(m.full_id) for m in meshes)
     for mesh in meshes:
         size = f"{mesh.size_mb:6.2f} MB"
-        kind = mesh.element_type or mesh.type
-        print(f"  {mesh.full_id:<{id_w}}  {size}  {kind}")
+        elem_kind = mesh.element_type or mesh.type
+        print(f"  {mesh.full_id:<{id_w}}  {size}  {elem_kind}")
     print(f"\n{len(meshes)} mesh(es)")
     return 0
 

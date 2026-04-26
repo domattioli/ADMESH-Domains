@@ -10,7 +10,11 @@ function matchesQuery(d, lower) {
   const haystack = [
     d.name, d.full_name, d.region, d.category, d.description,
     ...(d.applications || []),
-    ...(d.meshes || []).flatMap((m) => [m.id, m.filename, m.contributor, m.license, m.description]),
+    ...(d.meshes || []).flatMap((m) => [
+      m.id, m.filename, m.contributor, m.license, m.description,
+      m.kind, m.test_case ? "test_case" : "",
+      m.uploaded_date, m.modified_date,
+    ]),
   ].filter(Boolean).join(" ").toLowerCase();
   return haystack.includes(lower);
 }

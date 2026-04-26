@@ -73,6 +73,16 @@ git tag v0.X.Y && git push origin v0.X.Y
 # Triggers release.yml: PyPI release + HF tagged with same vX.Y.Z
 ```
 
+### Mesh schema fields (added in 0.3.2, all optional/additive)
+
+- `kind: "mesh" | "boundary"` (default `"mesh"`) — `"boundary"` means an outline polygon with no element connectivity. The site hides the geometry-render button for boundaries.
+- `test_case: bool` (default `false`) — surface this mesh on the **Test Suites** site tab and (when issue #11 lands) via `from admesh_domains import test_meshes`.
+- `uploaded_date: str` — ISO date added to the registry.
+- `modified_date: str` — ISO date the underlying file last changed (file mtime is a fine source).
+- `contributor: str` — full name; the site formats it as "F. M. Last (YYYYMMDD)".
+
+`SCHEMA_VERSION` did **not** bump for these — they're additive.
+
 ### Adding a mesh (data-only update — NO PyPI bump)
 **Mesh additions / removals / metadata edits are data, not code. Don't tag.**
 ```bash

@@ -113,12 +113,33 @@ function row(label, value) {
       btn.addEventListener("click", async () => {
         btn.disabled = true;
         const orig = btn.textContent;
-        btn.textContent = "Downloading…";
+        const sizeStr = m.size_mb != null ? ` (${m.size_mb.toFixed(1)} MB)` : "";
+        btn.textContent = `Downloading${sizeStr}…`;
         try {
           const resp = await fetch(m.download_url);
           if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+          // Stream + report progress when content-length is known.
+          const total = Number(resp.headers.get("content-length") || 0);
+          let loaded = 0;
+          const reader = resp.body && resp.body.getReader ? resp.body.getReader() : null;
+          let text;
+          if (reader && total) {
+            const chunks = [];
+            const decoder = new TextDecoder();
+            let buf = "";
+            while (true) {
+              const { done, value } = await reader.read();
+              if (done) break;
+              chunks.push(value);
+              loaded += value.length;
+              buf += decoder.decode(value, { stream: true });
+              btn.textContent = `Downloading… ${Math.round((loaded / total) * 100)}%`;
+            }
+            text = buf + decoder.decode();
+          } else {
+            text = await resp.text();
+          }
           btn.textContent = "Parsing…";
-          const text = await resp.text();
           const full = parseFort14Full(text);
           const truncated = full.renderedElements < full.elementCount;
           note.textContent = truncated

@@ -66,6 +66,7 @@ def build_manifest_json(manifest_toml: Path) -> dict:
                 "description": m.get("description"),
                 "bounding_box": bbox,
                 "geographic": _is_geographic(bbox),
+                "test_case": bool(m.get("test_case", False)),
                 "download_url": f"{HF_BASE}/{d['name']}/{filename}",
             })
             total_meshes += 1

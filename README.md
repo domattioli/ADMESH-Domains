@@ -2,8 +2,11 @@
 
 Source repository for the **ADCIRC mesh domain registry**: a curated catalog of coastal-simulation meshes with a Python loader, HuggingFace dataset mirror, and PR-based contribution workflow.
 
+**🌐 Browse the registry: [domattioli.github.io/ADMESH-Domains](https://domattioli.github.io/ADMESH-Domains/)** — interactive map, search, preview, download, and contribute.
+
 | Where to go | What you'll find |
 |---|---|
+| 🌐 [domattioli.github.io/ADMESH-Domains](https://domattioli.github.io/ADMESH-Domains/) | The website (browse / preview / download / contribute) |
 | 📦 [pypi.org/project/admesh-domains](https://pypi.org/project/admesh-domains/) | The Python package |
 | 🤗 [huggingface.co/datasets/domattioli/ADMESH-Domains](https://huggingface.co/datasets/domattioli/ADMESH-Domains) | The mesh files + Parquet sidecar + auto-generated dataset card (start here if you just want data) |
 | 🧪 [domattioli/ADMESH](https://github.com/domattioli/ADMESH) | The parent ADMESH library this registry complements |

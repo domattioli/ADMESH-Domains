@@ -32,5 +32,5 @@ Pages artifact, and deploys via `actions/deploy-pages@v4`.
 
 1. Create `site/src/<page>.html`.
 2. Create `site/src/js/<page>.js` (use `import { renderNav, renderFooter } from "./nav.js"`).
-3. Add the page to `PAGES` in `site/src/js/nav.js`.
+3. Add the page to `PAGES` in `site/src/js/nav.js`. Current pages: Home, Browse, Preview, Upload, Statistics, Create, Test Suites, Feedback.
 4. Rebuild (`python scripts/build_site.py`).

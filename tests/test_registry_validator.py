@@ -187,6 +187,19 @@ class TestSchemaPrimitives:
         assert isinstance(m.bounding_box, BoundingBox)
         assert m.bounding_box.max_lon == 1
 
+    def test_mesh_test_case_defaults_false(self):
+        m = Mesh(id="x@v1", filename="x.14")
+        assert m.test_case is False
+
+    def test_mesh_test_case_round_trip(self):
+        m = Mesh.from_dict({"id": "x@v1", "filename": "x.14", "test_case": True})
+        assert m.test_case is True
+        assert m.to_dict().get("test_case") is True
+
+    def test_mesh_test_case_omitted_when_false(self):
+        m = Mesh(id="x@v1", filename="x.14")
+        assert "test_case" not in m.to_dict()
+
 
 class TestManifestHelpers:
     def test_get_domain_case_insensitive(self, loaded_manifest):

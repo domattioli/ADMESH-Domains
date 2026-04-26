@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Upload — ADMESH-Domains</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header id="site-header"></header>
+  <main>
+    <h1>Upload a mesh</h1>
+    <p class="muted">Drop a mesh file, fill the form, click <strong>Open submission</strong>. We'll open a pre-filled GitHub issue you can submit — no command line needed.</p>
+
+    <label for="file" class="dropzone" id="dropzone">
+      <strong>Drop a mesh file</strong> or click to choose
+      <input id="file" type="file" accept=".14,.grd,.2dm,.fort" hidden />
+    </label>
+
+    <div id="form-section" hidden>
+      <h2>Suggested domain</h2>
+      <div id="suggestions"></div>
+
+      <h2>Mesh details</h2>
+      <form id="form">
+        <p>
+          <label>Filename<br><input name="filename" type="text" required /></label>
+        </p>
+        <p>
+          <label>Mesh ID <span class="muted">(e.g. <code>default@v1</code>)</span><br>
+            <input name="mesh_id" type="text" value="default@v1" required /></label>
+        </p>
+        <p>
+          <label>License<br>
+            <select name="license" required>
+              <option value="">—</option>
+              <option>MIT</option><option>Apache-2.0</option><option>BSD-3-Clause</option>
+              <option>CC0-1.0</option><option>CC-BY-4.0</option><option>Unknown</option>
+            </select>
+          </label>
+        </p>
+        <p>
+          <label>Description<br><textarea name="description"></textarea></label>
+        </p>
+        <p>
+          <label>Contributor (optional)<br><input name="contributor" type="text" /></label>
+        </p>
+
+        <h3>Domain choice</h3>
+        <p>
+          <label><input type="radio" name="mode" value="existing" checked /> Add to suggested domain</label>
+          <label style="margin-left:1rem;"><input type="radio" name="mode" value="new-domain" /> Propose a new domain</label>
+        </p>
+
+        <fieldset id="new-domain-fields" disabled>
+          <legend>New domain</legend>
+          <p><label>Name (no spaces)<br><input name="new_domain_name" type="text" /></label></p>
+          <p><label>Full name<br><input name="new_domain_full_name" type="text" /></label></p>
+          <p>
+            <label>Category
+              <select name="new_domain_category">
+                <option>real-world</option><option>synthetic</option>
+              </select>
+            </label>
+          </p>
+          <p><label>Region (e.g. North America)<br><input name="new_domain_region" type="text" /></label></p>
+          <p><label>Applications (comma-separated)<br><input name="new_domain_applications" type="text" /></label></p>
+        </fieldset>
+
+        <p><button type="submit">Open submission</button></p>
+      </form>
+
+      <div id="overflow" hidden>
+        <h2>Submission too large for direct link</h2>
+        <p>Copy the TOML block below, then click the button to open an empty issue and paste it in.</p>
+        <pre><code id="frag"></code></pre>
+        <p><button type="button" id="copy-frag">Copy TOML</button> <a id="empty-issue" class="btn secondary" target="_blank" rel="noopener">Open empty issue</a></p>
+      </div>
+    </div>
+
+    <p id="error" class="error" hidden></p>
+  </main>
+  <footer id="site-footer"></footer>
+  <script type="module" src="js/upload.js"></script>
+</body>
+</html>

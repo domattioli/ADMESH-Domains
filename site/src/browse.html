@@ -2,10 +2,47 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta http-equiv="refresh" content="0; url=./" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Browse — ADMESH-Domains</title>
+  <meta name="description" content="Search, filter, and explore every domain and mesh in the ADMESH-Domains registry." />
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <p>Redirecting to <a href="./">home</a>…</p>
+  <header id="site-header"></header>
+  <main>
+    <h1>Browse the registry</h1>
+    <p class="muted">Search across every domain and mesh. Click a card for details, or switch to the table view to sort by size, node count, or contributor.</p>
+
+    <label for="q" class="sr-only">Search</label>
+    <input id="q" type="search" placeholder="Search by name, region, application, contributor…" autocomplete="off" />
+    <p class="muted" id="result-count" style="margin:0.4rem 0 0.75rem;"></p>
+
+    <div class="view-toggle" role="tablist" aria-label="View mode">
+      <button type="button" id="view-cards" class="btn secondary" aria-pressed="true">Cards</button>
+      <button type="button" id="view-table" class="btn secondary" aria-pressed="false">Table</button>
+    </div>
+
+    <div id="domain-cards" class="cards"></div>
+    <div id="mesh-table-wrap" hidden>
+      <table id="mesh-table">
+        <thead>
+          <tr>
+            <th>Domain</th><th>Mesh</th><th>Type</th><th>Nodes</th><th>Size (MB)</th><th>License</th><th>Download</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <h2 style="margin-top:2rem;">Cite</h2>
+    <pre><code id="bibtex">@dataset{admesh_domains,
+  title  = {ADMESH-Domains: a registry of ADCIRC mesh domains},
+  author = {Mattioli, Dominik},
+  year   = {2026},
+  url    = {https://huggingface.co/datasets/domattioli/ADMESH-Domains}
+}</code></pre>
+  </main>
+  <footer id="site-footer"></footer>
+  <script type="module" src="js/browse.js"></script>
 </body>
 </html>

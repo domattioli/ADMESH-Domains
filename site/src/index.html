@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>ADMESH-Domains — registry of ADCIRC mesh domains</title>
-  <meta name="description" content="A searchable registry of ADCIRC-compatible mesh domains. Browse, preview, and contribute meshes." />
+  <meta name="description" content="An open registry of ADCIRC-compatible mesh domains. Browse, preview, upload, and download meshes for coastal modeling and hydrodynamics research." />
   <link rel="stylesheet" href="styles.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
         integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
@@ -13,31 +13,27 @@
   <header id="site-header"></header>
   <main>
     <h1>ADMESH-Domains</h1>
-    <p class="muted">A registry of ADCIRC-compatible mesh domains. Two-level model: <strong>Domain</strong> → <strong>Meshes</strong>.</p>
+    <p id="mission" class="mission">
+      An open registry of ADCIRC-compatible mesh domains for the
+      <a href="https://github.com/domattioli/ADMESH" target="_blank" rel="noopener">ADMESH</a> project &mdash;
+      a curated catalog for coastal modeling, hydrodynamics research, and reproducible simulation.
+    </p>
+    <p class="muted">Two-level model: <strong>Domain</strong> &rarr; <strong>Meshes</strong>.
+      <a href="browse.html">Browse the full registry &rarr;</a></p>
 
     <section class="totals" aria-label="Registry totals">
-      <div class="stat"><span class="num" id="total-domains">—</span><span class="label">Domains</span></div>
-      <div class="stat"><span class="num" id="total-meshes">—</span><span class="label">Meshes</span></div>
-      <div class="stat"><span class="num" id="total-size">—</span><span class="label">Total MB</span></div>
+      <div class="stat"><span class="num" id="total-domains">&mdash;</span><span class="label">Domains</span></div>
+      <div class="stat"><span class="num" id="total-meshes">&mdash;</span><span class="label">Meshes</span></div>
+      <div class="stat"><span class="num" id="total-size">&mdash;</span><span class="label">Total MB</span></div>
+      <div class="stat"><span class="num" id="total-contributors">&mdash;</span><span class="label">Contributors</span></div>
     </section>
 
     <h2>World map</h2>
-    <p class="muted">Click a Domain to view it.</p>
+    <p class="muted">Geographic domains only. Click a rectangle to open the domain page.</p>
     <div id="map" role="region" aria-label="Domain bounding-box map"></div>
 
-    <h2 style="margin-top:2rem;">Browse</h2>
-    <label for="q" class="sr-only">Search</label>
-    <input id="q" type="search" placeholder="Search domains by name, region, application…" autocomplete="off" />
-    <p class="muted" id="result-count" style="margin:0.4rem 0 0.75rem;"></p>
-    <div id="domain-cards" class="cards"></div>
-
-    <h2 style="margin-top:2rem;">Cite</h2>
-    <pre><code id="bibtex">@dataset{admesh_domains,
-  title  = {ADMESH-Domains: a registry of ADCIRC mesh domains},
-  author = {Mattioli, Dominik},
-  year   = {2026},
-  url    = {https://huggingface.co/datasets/domattioli/ADMESH-Domains}
-}</code></pre>
+    <h2 style="margin-top:2rem;">Highlights</h2>
+    <div id="superlatives" class="cards"></div>
   </main>
   <footer id="site-footer"></footer>
 

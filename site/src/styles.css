@@ -106,6 +106,8 @@ pre { padding: 0.85rem 1rem; border-radius: 6px; overflow-x: auto; }
 #geometry-canvas { width: 100%; height: 480px; border: 1px solid var(--border); border-radius: 6px; background: var(--card-bg); display: block; }
 
 .dropzone {
+  display: block;
+  margin: 1.25rem 0;
   border: 2px dashed var(--border);
   border-radius: 6px;
   padding: 2rem;
@@ -114,6 +116,39 @@ pre { padding: 0.85rem 1rem; border-radius: 6px; overflow-x: auto; }
   cursor: pointer;
 }
 .dropzone.drag { border-color: var(--accent); color: var(--accent); }
+
+.mission { font-size: 1.05rem; line-height: 1.55; margin: 0.5rem 0 1rem; }
+
+.terminal {
+  background: #0e1116;
+  color: #d6dde6;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.88rem;
+  padding: 0.85rem 1rem;
+  border-radius: 6px;
+  max-height: 380px;
+  overflow: auto;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+.terminal .muted { color: #7d8893; }
+.terminal .success { color: #6abf69; }
+.terminal .error { color: #f06262; }
+
+.view-toggle { display: flex; gap: 0.5rem; margin: 0.75rem 0; flex-wrap: wrap; }
+.view-toggle button[aria-pressed="true"] { background: var(--accent); color: var(--accent-fg); }
+
+.stat-section { margin: 0.5rem 0 1.5rem; }
+
+.bars { display: flex; flex-direction: column; gap: 0.35rem; margin: 0.5rem 0 1.5rem; }
+.bar-row { display: grid; grid-template-columns: minmax(8rem, 14rem) 1fr 3rem; align-items: center; gap: 0.75rem; font-size: 0.9rem; }
+.bar-label { color: var(--fg); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bar-track { background: var(--card-bg); border: 1px solid var(--border); border-radius: 3px; height: 0.85rem; overflow: hidden; }
+.bar-fill { background: var(--accent); height: 100%; }
+.bar-value { color: var(--muted); text-align: right; font-variant-numeric: tabular-nums; }
+
+ol.tight, ul.tight { margin: 0.25rem 0 0; padding-left: 1.25rem; }
+ol.tight li, ul.tight li { margin: 0.1rem 0; }
 
 .error { color: var(--error); }
 .success { color: var(--success); }

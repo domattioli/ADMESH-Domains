@@ -77,6 +77,7 @@ class Mesh:
     aliases: list[str] = field(default_factory=list)
     bounding_box: Optional[BoundingBox] = None
     license: str = "unknown"
+    test_case: bool = False
 
     _domain_name: Optional[str] = field(default=None, repr=False, compare=False)
     _base_dir: Optional[Path] = field(default=None, repr=False, compare=False)
@@ -163,7 +164,7 @@ class Mesh:
         d = asdict(self)
         d.pop("_base_dir", None)
         d.pop("_domain_name", None)
-        return {k: v for k, v in d.items() if v is not None and v != []}
+        return {k: v for k, v in d.items() if v is not None and v != [] and v is not False}
 
     @classmethod
     def from_dict(

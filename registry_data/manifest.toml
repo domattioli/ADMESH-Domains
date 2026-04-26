@@ -354,6 +354,7 @@ filename = "Test_Case_4.14"
 license = "MIT"
 bounding_box = { min_lon = -15.992345, min_lat = -30.000241, max_lon = 15.981827, max_lat = 30.000000 }
 size_mb = 0.39
+test_case = true
 
 [[domains.meshes]]
 id = "case-4.2@v1"
@@ -361,6 +362,7 @@ filename = "Test_Case_4.2.14"
 license = "MIT"
 bounding_box = { min_lon = -30.000241, min_lat = -15.992345, max_lon = 30.000000, max_lat = 15.981827 }
 size_mb = 0.26
+test_case = true
 
 [[domains.meshes]]
 id = "case-2@v1"
@@ -368,6 +370,7 @@ filename = "Test_Case_2.14"
 license = "MIT"
 bounding_box = { min_lon = 1.015373, min_lat = 1.000000, max_lon = 12.003913, max_lat = 10.981018 }
 size_mb = 0.22
+test_case = true
 
 [[domains.meshes]]
 id = "case-1@v1"
@@ -375,6 +378,7 @@ filename = "Test_Case_1.14"
 license = "MIT"
 bounding_box = { min_lon = 1.000000, min_lat = 1.000000, max_lon = 4.414214, max_lat = 4.414214 }
 size_mb = 0.16
+test_case = true
 
 [[domains.meshes]]
 id = "case-3@v1"
@@ -382,6 +386,7 @@ filename = "Test_Case_3.14"
 license = "MIT"
 bounding_box = { min_lon = 1.000802, min_lat = -1.499226, max_lon = 8.001755, max_lat = 4.998047 }
 size_mb = 0.11
+test_case = true
 
 # Domain: Western North Atlantic
 [[domains]]

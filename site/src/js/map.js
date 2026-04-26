@@ -16,6 +16,7 @@ export function bboxToLatLngBounds(bbox) {
 export function addDomainBboxes(map, domains, { onClick } = {}) {
   const layer = L.featureGroup().addTo(map);
   for (const d of domains) {
+    if (d.category === "synthetic") continue;
     const meshBboxes = (d.meshes || []).filter((m) => m.geographic && m.bounding_box);
     if (!meshBboxes.length) continue;
     const lons = meshBboxes.flatMap((m) => [m.bounding_box.min_lon, m.bounding_box.max_lon]);

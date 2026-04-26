@@ -24,6 +24,19 @@ DEFAULT_HF_REPO = "domattioli/ADMESH-Domains"
 DEFAULT_REVISION = "main"
 SIDECAR_FILENAME = "manifest.parquet"
 README_FILENAME = "README.md"
+BBOX_MAP_FILENAME = "bbox_map.png"
+
+
+def _is_geographic_bbox(bb) -> bool:
+    """True iff the bbox lives in plausible decimal-degree lat/lon ranges."""
+    if bb is None:
+        return False
+    return (
+        -180.0 <= bb.min_lon <= 180.0
+        and -180.0 <= bb.max_lon <= 180.0
+        and -90.0 <= bb.min_lat <= 90.0
+        and -90.0 <= bb.max_lat <= 90.0
+    )
 
 
 class PublisherError(Exception):
@@ -211,6 +224,85 @@ def build_parquet_sidecar(
     return buf.getvalue()
 
 
+def render_bbox_map(manifest: Manifest) -> Optional[bytes]:
+    """Render a PNG world map showing each Domain's bounding box.
+
+    Only includes Domains whose meshes have geographic (lat/lon) bboxes —
+    test/synthetic meshes in projected or arbitrary coords are skipped.
+
+    Returns PNG bytes, or None if matplotlib isn't installed or no
+    geographic Domains exist.
+    """
+    try:
+        import matplotlib
+        matplotlib.use("Agg")  # headless
+        import matplotlib.pyplot as plt
+        from matplotlib.patches import Rectangle
+    except ImportError:
+        return None
+
+    # Only plot real-world Domains with lat/lon-range bboxes. Synthetic
+    # categories often have numeric coords that happen to fall in [-180, 180]
+    # but aren't geographic (e.g. test cases centered at the origin).
+    plottable = []
+    for d in manifest.domains:
+        if d.category != "real-world":
+            continue
+        for m in d.meshes:
+            if _is_geographic_bbox(m.bounding_box):
+                plottable.append((d, m.bounding_box))
+                break
+    if not plottable:
+        return None
+
+    fig, ax = plt.subplots(figsize=(12, 6), dpi=120)
+    ax.set_xlim(-180, 180)
+    ax.set_ylim(-90, 90)
+    ax.set_xlabel("longitude")
+    ax.set_ylabel("latitude")
+    ax.set_aspect("equal")
+    ax.grid(True, linestyle=":", linewidth=0.4, color="gray", alpha=0.5)
+    ax.axhline(0, color="gray", linewidth=0.3)
+    ax.axvline(0, color="gray", linewidth=0.3)
+
+    color = "#1f77b4"
+    for d, bb in plottable:
+        rect = Rectangle(
+            (bb.min_lon, bb.min_lat),
+            bb.max_lon - bb.min_lon,
+            bb.max_lat - bb.min_lat,
+            linewidth=1.2,
+            edgecolor=color,
+            facecolor=color,
+            alpha=0.35,
+        )
+        ax.add_patch(rect)
+        # Place label slightly above the bbox so small bboxes are still readable.
+        cx = (bb.min_lon + bb.max_lon) / 2
+        ax.annotate(
+            d.name,
+            xy=(cx, bb.max_lat + 1.5),
+            ha="center",
+            va="bottom",
+            fontsize=7,
+            color="black",
+        )
+
+    n_real = sum(1 for d in manifest.domains if d.category == "real-world")
+    ax.set_title(
+        f"ADMESH Domains — geographic coverage "
+        f"({len(plottable)} of {n_real} real-world domains shown; "
+        f"synthetic/projected domains omitted)",
+        fontsize=9,
+    )
+    fig.tight_layout()
+
+    buf = io.BytesIO()
+    fig.savefig(buf, format="png", bbox_inches="tight")
+    plt.close(fig)
+    return buf.getvalue()
+
+
 def render_dataset_card(manifest: Manifest, tag: str, hf_repo: str = DEFAULT_HF_REPO) -> str:
     """Render the HF dataset card README from the bundled Jinja template."""
     try:
@@ -286,6 +378,7 @@ def publish(
     # Build the always-rewritten artifacts.
     parquet_bytes = build_parquet_sidecar(manifest, current_hashes, tag)
     readme_text = render_dataset_card(manifest, tag, hf_repo=hf_repo)
+    map_bytes = render_bbox_map(manifest)  # None if matplotlib missing or no geo bboxes
 
     total_size_mb = sum(m.size_mb for m in manifest.all_meshes())
     result = PublishResult(
@@ -326,6 +419,11 @@ def publish(
         path_in_repo=README_FILENAME,
         path_or_fileobj=readme_text.encode("utf-8"),
     ))
+    if map_bytes is not None:
+        operations.append(CommitOperationAdd(
+            path_in_repo=BBOX_MAP_FILENAME,
+            path_or_fileobj=map_bytes,
+        ))
 
     commit_info = api.create_commit(
         repo_id=hf_repo,

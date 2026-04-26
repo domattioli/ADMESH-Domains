@@ -164,8 +164,8 @@ venv.bak/
 # Rope project settings
 .ropeproject
 
-# mkdocs documentation
-/site
+# mkdocs documentation (was /site, but /site is now the GH Pages source — only ignore dist)
+/site/dist/
 
 # mypy
 .mypy_cache/

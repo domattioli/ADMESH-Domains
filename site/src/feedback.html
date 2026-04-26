@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Feedback — ADMESH-Domains</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header id="site-header"></header>
+  <main>
+    <h1>Feedback</h1>
+    <p class="muted">Submitting opens a new GitHub issue with your message pre-filled. You'll need a GitHub account to post it.</p>
+    <form id="form">
+      <p>
+        <label>Category<br>
+          <select name="category" required>
+            <option value="bug">Bug</option>
+            <option value="suggestion">Suggestion</option>
+            <option value="question">Question</option>
+            <option value="other">Other</option>
+          </select>
+        </label>
+      </p>
+      <p><label>Title<br><input name="title" type="text" required /></label></p>
+      <p><label>Message<br><textarea name="body" required placeholder="What's on your mind?"></textarea></label></p>
+      <p><label>Page URL (auto-included)<br><input name="page" type="url" readonly /></label></p>
+      <p><button type="submit">Open issue on GitHub</button></p>
+    </form>
+  </main>
+  <footer id="site-footer"></footer>
+  <script type="module" src="js/feedback.js"></script>
+</body>
+</html>

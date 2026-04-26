@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Preview — ADMESH-Domains</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+</head>
+<body>
+  <header id="site-header"></header>
+  <main>
+    <h1>Preview a mesh</h1>
+    <p class="muted">Drop a <code>.14</code>, <code>.grd</code>, or <code>.2dm</code> file. Parsing happens in your browser — no upload.</p>
+
+    <label for="file" class="dropzone" id="dropzone">
+      <strong>Drop a mesh file</strong> or click to choose
+      <input id="file" type="file" accept=".14,.grd,.2dm,.fort" hidden />
+    </label>
+
+    <div id="result" hidden>
+      <h2>Suggested domain</h2>
+      <div id="suggestions"></div>
+
+      <h2>Bounding box</h2>
+      <div id="preview-map"></div>
+
+      <h2>Geometry</h2>
+      <p class="muted" id="geom-note"></p>
+      <canvas id="geometry-canvas" width="800" height="480"></canvas>
+    </div>
+
+    <p id="error" class="error" hidden></p>
+  </main>
+  <footer id="site-footer"></footer>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+          integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script type="module" src="js/preview.js"></script>
+</body>
+</html>

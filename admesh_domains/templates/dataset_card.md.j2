@@ -1,0 +1,106 @@
+---
+license: mit
+pretty_name: ADMESH Domains
+size_categories:
+  - n<1K
+tags:
+  - adcirc
+  - mesh
+  - coastal
+  - simulation
+  - geoscience
+---
+
+# ADMESH Domains
+
+A registry of ADCIRC-compatible coastal-simulation mesh domains, organized as
+**Domains** (geographic regions or logical groups) containing one or more
+**Meshes** (specific realizations).
+
+- **Release**: `{{ tag }}`
+- **Schema version**: `{{ schema_version }}`
+- **Domains**: {{ total_domains }}
+- **Meshes**: {{ total_meshes }}
+- **Total size**: {{ total_size_mb }} MB
+- **Source**: https://github.com/domattioli/ADMESH-Domains
+
+## Quickstart
+
+Install the Python package and load a mesh from this dataset:
+
+```bash
+pip install admesh-domains[hf]
+```
+
+```python
+from admesh_domains import get_mesh
+
+mesh = get_mesh("WNAT/hagen@v1")
+local_path = mesh.load()       # downloads + caches via huggingface_hub
+print(local_path)              # /Users/.../huggingface/hub/.../WNAT_Hagen.14
+```
+
+You can also use the HF CLI directly:
+
+```bash
+hf download {{ hf_repo }} --type dataset
+```
+
+Or load the Parquet sidecar to query without Python:
+
+```python
+import pyarrow.parquet as pq
+from huggingface_hub import hf_hub_download
+
+p = hf_hub_download(
+    repo_id="{{ hf_repo }}",
+    filename="manifest.parquet",
+    repo_type="dataset",
+)
+table = pq.read_table(p)
+print(table.to_pandas().head())
+```
+
+## Real-world domains ({{ real_world | length }})
+
+| Domain | Region | Meshes | Description |
+|---|---|---|---|
+{% for d in real_world -%}
+| `{{ d.name }}` | {{ d.region or "—" }} | {{ d.meshes | length }} | {{ d.full_name or d.description or "—" }} |
+{% endfor %}
+
+## Synthetic / test domains ({{ synthetic | length }})
+
+| Domain | Meshes | Description |
+|---|---|---|
+{% for d in synthetic -%}
+| `{{ d.name }}` | {{ d.meshes | length }} | {{ d.full_name or d.description or "—" }} |
+{% endfor %}
+
+## File layout
+
+```
+manifest.parquet              # flat one-row-per-mesh sidecar
+README.md                     # this file
+meshes/<domain>/<filename>    # original ADCIRC .14 / .2dm files
+```
+
+## License
+
+MIT (matches the upstream repo). Individual meshes were sourced from public
+GitHub repositories: CHILmesh, QuADMesh-MATLAB, chil_mesh-master.
+
+## Citation
+
+If you use this registry in research, please cite:
+
+```bibtex
+@misc{admesh_domains,
+  author       = {Mattioli, Dominik},
+  title        = {ADMESH Domains: A Registry of ADCIRC-Compatible Mesh Domains},
+  year         = {2026},
+  publisher    = {Hugging Face},
+  url          = {https://huggingface.co/datasets/{{ hf_repo }}},
+  note         = {Version {{ tag }}},
+}
+```

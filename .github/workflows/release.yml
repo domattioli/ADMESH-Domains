@@ -1,0 +1,78 @@
+name: Release
+
+# Triggers on strict-semver tag push (no -rc / -alpha suffixes).
+# Workflow_dispatch lets you re-run manually after a failure.
+
+on:
+  push:
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag to publish (e.g. v0.2.0). Must already exist."
+        required: true
+
+jobs:
+  release:
+    # Don't run on forks (avoids accidental publishes from PRs).
+    if: github.repository == 'domattioli/ADMESH-Domains'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Resolve tag
+        id: resolve
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "tag=${{ inputs.tag }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "tag=${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install build/publish deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[publish]"
+
+      - name: Validate manifest
+        run: admesh-domains validate
+
+      - name: Build sdist + wheel
+        run: python -m build
+
+      - name: Verify wheel/sdist metadata
+        run: twine check dist/*
+
+      - name: Upload to PyPI
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+        run: twine upload dist/*
+
+      - name: Publish to HuggingFace
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          admesh-domains publish \
+            --tag "${{ steps.resolve.outputs.tag }}" \
+            --manifest registry_data/manifest.toml \
+            --verbose
+
+      - name: Summary
+        run: |
+          TAG="${{ steps.resolve.outputs.tag }}"
+          echo "### Release ${TAG} published" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "- PyPI: https://pypi.org/project/admesh-domains/${TAG#v}/" >> "$GITHUB_STEP_SUMMARY"
+          echo "- HuggingFace: https://huggingface.co/datasets/domattioli/ADMESH-Domains/tree/${TAG}" >> "$GITHUB_STEP_SUMMARY"

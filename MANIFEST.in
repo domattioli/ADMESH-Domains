@@ -1,0 +1,20 @@
+# Source-distribution manifest.
+# Mesh files live in registry_data/meshes/ for the GitHub repo only — they're
+# mirrored to the HuggingFace dataset and downloaded on demand via Mesh.load().
+# Excluding them keeps the sdist small (was 18.8 MB in v0.1.1).
+
+include README.md
+include LICENSE
+include pyproject.toml
+include MANIFEST.in
+
+recursive-include admesh_domains *.py *.toml *.j2 py.typed
+
+# Exclude bulk data — meshes are only on HF, not in the wheel/sdist.
+prune registry_data
+prune admesh_domains/__pycache__
+prune tests
+prune scripts
+prune specs
+prune docs
+prune .github

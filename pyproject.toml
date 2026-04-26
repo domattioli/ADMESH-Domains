@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "admesh-domains"
-version = "0.1.1"
+version = "0.2.0"
 description = "ADCIRC mesh registry - domain management and validation for mesh data"
 readme = "README.md"
 license = {text = "MIT"}
@@ -40,6 +40,16 @@ dev = [
     "ruff>=0.1.0",
     "mypy>=1.0",
 ]
+hf = [
+    "huggingface_hub>=0.20",
+]
+publish = [
+    "huggingface_hub>=0.20",
+    "pyarrow>=14.0",
+    "jinja2>=3.0",
+    "twine>=4.0",
+    "build>=1.0",
+]
 
 [project.scripts]
 admesh-domains = "admesh_domains.cli:main"
@@ -49,4 +59,4 @@ packages = ["admesh_domains"]
 include-package-data = true
 
 [tool.setuptools.package-data]
-admesh_domains = ["py.typed", "data/*.toml"]
+admesh_domains = ["py.typed", "data/*.toml", "templates/*.j2"]

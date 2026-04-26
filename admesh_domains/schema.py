@@ -107,6 +107,34 @@ class Mesh:
             raise FileNotFoundError(f"Mesh file not found: {p}")
         return p.read_text()
 
+    def load(self, *, hf_repo: Optional[str] = None, token: Optional[str] = None) -> Path:
+        """Download this mesh from the HuggingFace mirror and return a local Path.
+
+        Uses ``huggingface_hub.hf_hub_download``, which handles caching, progress
+        bars, and resumable downloads. The cache lives at ``HF_HUB_CACHE``
+        (typically ``~/.cache/huggingface/hub`` on Linux).
+
+        Requires the ``[hf]`` extra: ``pip install admesh-domains[hf]``.
+        """
+        try:
+            from huggingface_hub import hf_hub_download
+        except ImportError as e:
+            raise ImportError(
+                "Mesh.load() requires huggingface_hub. "
+                "Install with: pip install admesh-domains[hf]"
+            ) from e
+        if hf_repo is None:
+            from .publisher import DEFAULT_HF_REPO
+            hf_repo = DEFAULT_HF_REPO
+        domain = self._domain_name or "_unknown"
+        local = hf_hub_download(
+            repo_id=hf_repo,
+            filename=f"meshes/{domain}/{self.filename}",
+            repo_type="dataset",
+            token=token,
+        )
+        return Path(local)
+
     def to_dict(self) -> dict:
         d = asdict(self)
         d.pop("_base_dir", None)

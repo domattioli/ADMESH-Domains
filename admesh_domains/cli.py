@@ -143,6 +143,53 @@ def cmd_applications(_args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_publish(args: argparse.Namespace) -> int:
+    """Publish the bundled manifest to HuggingFace Datasets."""
+    try:
+        from .publisher import (
+            publish, PublisherError, PublishTokenError,
+            PublishValidationError, DEFAULT_HF_REPO,
+        )
+    except ImportError as e:
+        print(f"ERROR: publisher unavailable: {e}", file=sys.stderr)
+        print("Install with: pip install admesh-domains[publish]", file=sys.stderr)
+        return 1
+
+    try:
+        manifest = load_manifest(Path(args.manifest) if args.manifest else None)
+    except (ManifestNotFoundError, ManifestValidationError) as e:
+        print(f"ERROR: {e}", file=sys.stderr)
+        return 1
+
+    repo = args.repo or DEFAULT_HF_REPO
+    try:
+        result = publish(
+            manifest=manifest,
+            tag=args.tag,
+            hf_repo=repo,
+            dry_run=args.dry_run,
+        )
+    except (PublishTokenError, PublishValidationError) as e:
+        print(f"ERROR: {e}", file=sys.stderr)
+        return 1
+    except PublisherError as e:
+        print(f"PUBLISH FAILED: {e}", file=sys.stderr)
+        return 2
+
+    print(result.summary())
+    if args.verbose:
+        for hp in result.uploaded:
+            print(f"  + {hp}")
+        for hp in result.skipped:
+            print(f"  = {hp}")
+        for hp in result.deleted:
+            print(f"  - {hp}")
+    if result.commit_sha:
+        print(f"  commit: {result.commit_sha}")
+        print(f"  view:   https://huggingface.co/datasets/{repo}/tree/{args.tag}")
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(
         prog="admesh-domains",
@@ -184,6 +231,14 @@ def build_parser() -> argparse.ArgumentParser:
 
     pa = sub.add_parser("applications", help="List unique applications")
     pa.set_defaults(func=cmd_applications)
+
+    pp = sub.add_parser("publish", help="Publish the registry to HuggingFace Datasets")
+    pp.add_argument("--tag", required=True, help="Release tag, e.g. v0.2.0")
+    pp.add_argument("--repo", default=None, help="HF dataset slug (default: DEFAULT_HF_REPO)")
+    pp.add_argument("--manifest", default=None, help="Manifest path (default: bundled)")
+    pp.add_argument("--dry-run", action="store_true", help="Print plan only; do not write to HF")
+    pp.add_argument("-v", "--verbose", action="store_true", help="Print per-file actions")
+    pp.set_defaults(func=cmd_publish)
 
     return p
 

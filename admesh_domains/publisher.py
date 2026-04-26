@@ -166,6 +166,7 @@ def build_parquet_sidecar(
         "aliases", "category", "region", "applications",
         "bbox_min_lon", "bbox_min_lat", "bbox_max_lon", "bbox_max_lat",
         "license", "mirror_eligible",
+        "kind", "test_case", "uploaded_date", "modified_date", "contributor",
         "content_sha256", "hf_path",
     )}
     for d in manifest.domains:
@@ -192,6 +193,11 @@ def build_parquet_sidecar(
             rows["bbox_max_lat"].append(bb.max_lat if bb else None)
             rows["license"].append(mesh.license)
             rows["mirror_eligible"].append(mesh.mirror_eligible)
+            rows["kind"].append(mesh.kind)
+            rows["test_case"].append(mesh.test_case)
+            rows["uploaded_date"].append(mesh.uploaded_date)
+            rows["modified_date"].append(mesh.modified_date)
+            rows["contributor"].append(mesh.contributor)
             rows["content_sha256"].append(hashes[hp])
             rows["hf_path"].append(hp)
 
@@ -216,6 +222,11 @@ def build_parquet_sidecar(
         pa.field("bbox_max_lat", pa.float64()),
         pa.field("license", pa.string()),
         pa.field("mirror_eligible", pa.bool_()),
+        pa.field("kind", pa.string()),
+        pa.field("test_case", pa.bool_()),
+        pa.field("uploaded_date", pa.string()),
+        pa.field("modified_date", pa.string()),
+        pa.field("contributor", pa.string()),
         pa.field("content_sha256", pa.string()),
         pa.field("hf_path", pa.string()),
     ], metadata={

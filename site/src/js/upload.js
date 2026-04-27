@@ -3,6 +3,7 @@ import { loadManifest } from "./manifest-loader.js";
 import { bboxFromFile, parseFort14Full } from "./mesh-parser.js";
 import { suggestDomain } from "./suggester.js";
 import { buildSubmission } from "./pr-builder.js";
+import { renderMeshElements } from "./geometry-render.js";
 
 renderNav();
 renderFooter();
@@ -50,11 +51,16 @@ async function handle(file) {
   }
   parsedBbox = bbox;
 
-  // Parse node count for fort.14 files (for comparison)
+  // Parse node count for fort.14 files (for comparison & preview)
   parsedNodeCount = null;
+  let parsedMesh = null;
   if (file.name.endsWith(".14") || file.name.endsWith(".fort")) {
-    const parsed = parseFort14Full(text);
-    if (parsed) parsedNodeCount = parsed.nodeCount;
+    parsedMesh = parseFort14Full(text);
+    if (parsedMesh) {
+      parsedNodeCount = parsedMesh.nodeCount;
+      // Render mesh preview
+      renderMeshPreview(parsedMesh);
+    }
   }
 
   const manifest = await manifestPromise;
@@ -148,6 +154,36 @@ function showMeshComparison(domainName, manifest, uploadedBbox, uploadedNodeCoun
   document.getElementById("comp-domain").textContent = domainName;
   document.getElementById("comp-count").textContent = domain.meshes.length;
   document.getElementById("comparison-results").style.display = "block";
+}
+
+// Render mesh geometry preview to canvas
+function renderMeshPreview(parsedMesh) {
+  const canvas = document.getElementById("mesh-canvas");
+  const statsEl = document.getElementById("mesh-stats");
+
+  if (!canvas || !parsedMesh) {
+    document.getElementById("mesh-preview").style.display = "none";
+    return;
+  }
+
+  try {
+    renderMeshElements(canvas, parsedMesh.nodes, parsedMesh.elements);
+
+    // Display mesh statistics
+    const elemCount = parsedMesh.elementCount || parsedMesh.renderedElements || "?";
+    const nodeCount = parsedMesh.nodeCount || "?";
+    const statsText = `<strong>${nodeCount.toLocaleString()}</strong> nodes, ` +
+                      `<strong>${elemCount.toLocaleString()}</strong> elements` +
+                      (parsedMesh.renderedElements && parsedMesh.renderedElements < parsedMesh.elementCount
+                        ? ` (showing first ${parsedMesh.renderedElements.toLocaleString()} for performance)`
+                        : "");
+    statsEl.innerHTML = statsText;
+
+    document.getElementById("mesh-preview").style.display = "block";
+  } catch (e) {
+    console.error("Mesh preview error:", e);
+    document.getElementById("mesh-preview").style.display = "none";
+  }
 }
 
 // Compute Intersection over Union (IoU) for two bboxes

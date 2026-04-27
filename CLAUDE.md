@@ -152,6 +152,28 @@ gh workflow run publish-data.yml -R domattioli/ADMESH-Domains
 gh workflow run publish-data.yml -R domattioli/ADMESH-Domains -f tag=data-special-rev
 ```
 
+## Branch Discipline & Naming Policy
+
+**Branch creation is ad-hoc** (no spec-kit workflow on this smaller project). When creating a feature branch:
+
+1. **Branch naming**: `feature/short-description` or `fix/issue-number` for clarity
+   - Example: `feature/cache-busting`, `fix/schema-validation`
+2. **All PRs must be merged to main** (no long-lived feature branches)
+   - Create PR on the branch
+   - Resolve conflicts against main
+   - Squash-merge (keeps main history clean)
+   - Delete the branch after merge
+
+**Policy enforcement**:
+- Main branch requires PR review before merge
+- No direct pushes to main
+- CI runs on every PR (`validate-pr.yml` checks Python versions 3.9–3.12)
+- Stale branches are cleaned up; don't force stale code through
+
+**Release workflow** (code/API changes):
+- Tag `v0.X.Y` on main → triggers `release.yml` → PyPI + HuggingFace with semantic version
+- Data-only changes (mesh additions/edits): No PyPI bump; push to main → triggers `publish-data.yml` → HF tagged `data-YYYY-MM-DD-<sha7>`
+
 ## Specs index
 
 Active and shipped specs live under `specs/`. Use the spec-kit-style format: `spec.md`, `plan.md`, `tasks.md`, plus optional `data-model.md`, `contracts/`, `quickstart.md`, `research.md`. The constitution at `.specify/memory/constitution.md` defines the principles that gate feature plans.

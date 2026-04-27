@@ -1,10 +1,19 @@
 # ADMESH Domains
 
-[![PyPI version](https://img.shields.io/pypi/v/admesh-domains.svg)](https://pypi.org/project/admesh-domains/)
-[![Python versions](https://img.shields.io/pypi/pyversions/admesh-domains.svg)](https://pypi.org/project/admesh-domains/)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![Tests](https://github.com/domattioli/ADMESH-Domains/actions/workflows/validate-pr.yml/badge.svg)](https://github.com/domattioli/ADMESH-Domains/actions)
-[![HuggingFace Dataset](https://img.shields.io/badge/%F0%9F%A4%97-Dataset-yellow)](https://huggingface.co/datasets/domattioli/ADMESH-Domains)
+<p align="center">
+  <a href="https://pypi.org/project/admesh-domains/">
+    <img src="https://img.shields.io/pypi/v/admesh-domains?style=flat-square&logo=python&logoColor=white" alt="PyPI">
+  </a>
+  <a href="https://pypi.org/project/admesh-domains/">
+    <img src="https://img.shields.io/pypi/pyversions/admesh-domains?style=flat-square&logo=python&logoColor=white" alt="Python">
+  </a>
+  <a href="https://github.com/domattioli/ADMESH-Domains/actions/workflows/validate-pr.yml">
+    <img src="https://img.shields.io/github/actions/workflow/status/domattioli/ADMESH-Domains/validate-pr.yml?branch=main&style=flat-square&logo=github" alt="CI Status">
+  </a>
+  <a href="https://huggingface.co/datasets/domattioli/ADMESH-Domains">
+    <img src="https://img.shields.io/badge/HuggingFace-dataset-yellow.svg?style=flat-square&logo=huggingface" alt="HuggingFace Dataset">
+  </a>
+</p>
 
 Source repository for the **ADCIRC mesh domain registry**: a curated catalog of coastal-simulation meshes with a Python loader, HuggingFace dataset mirror, and PR-based contribution workflow.
 

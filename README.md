@@ -1,6 +1,8 @@
 # ADMESH Domains
 
 [![PyPI version](https://img.shields.io/pypi/v/admesh-domains.svg)](https://pypi.org/project/admesh-domains/)
+[![Python versions](https://img.shields.io/pypi/pyversions/admesh-domains.svg)](https://pypi.org/project/admesh-domains/)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Tests](https://github.com/domattioli/ADMESH-Domains/actions/workflows/validate-pr.yml/badge.svg)](https://github.com/domattioli/ADMESH-Domains/actions)
 [![HuggingFace Dataset](https://img.shields.io/badge/%F0%9F%A4%97-Dataset-yellow)](https://huggingface.co/datasets/domattioli/ADMESH-Domains)
 
@@ -79,6 +81,14 @@ git add registry_data/ admesh_domains/data/manifest.toml
 git commit -m "Add foo.14 to <Domain>"
 git push origin main
 ```
+
+## Releases
+
+See [CHANGELOG.md](CHANGELOG.md) for:
+- Full release history (v0.1.0 – current)
+- Schema and API changes per release
+- Mesh metadata additions in v0.3.2
+- Data-only updates tagged on HuggingFace
 
 ## Contributing
 

@@ -1,5 +1,7 @@
 # CLAUDE.md
 
+<!-- maintained-by: maintain-claude-md skill -->
+
 Project-level guidance for Claude (and other coding agents) working on this repo.
 
 ## Stream Timeout Prevention

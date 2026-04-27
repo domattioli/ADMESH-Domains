@@ -518,6 +518,8 @@ license = "MIT"
 bounding_box = { min_lon = -97.856155, min_lat = 7.914458, max_lon = -60.039580, max_lat = 45.832838 }
 description = "Western North Atlantic mesh (Onur variant)"
 size_mb = 15.32
+provenance = "derivative-admesh"
+lineage = "Re-meshed from upstream Hagen original via ADmesh GUI; declared boundary count reduced from 113 to 1 (open boundary only; land boundaries/island topology stripped)."
 
 [[domains.meshes]]
 uploaded_date = "2026-04-26"
@@ -530,6 +532,8 @@ bounding_box = { min_lon = -97.856889, min_lat = 7.912906, max_lon = -60.040000,
 description = "Western North Atlantic mesh (Hagen variant)"
 size_mb = 5.48
 aliases = ["WNAT_53K_Nodes"]
+provenance = "upstream"
+lineage = "Original ADCIRC public-domain mesh (NSF-funded). Complete boundary topology preserved: 113 declared BC segments including all island rings (e.g., Bermuda at segment [99])."
 
 [[domains.meshes]]
 uploaded_date = "2026-04-26"
@@ -541,6 +545,8 @@ license = "MIT"
 bounding_box = { min_lon = -97.850032, min_lat = 8.001743, max_lon = -60.038337, max_lat = 45.769246 }
 description = "Western North Atlantic test mesh"
 size_mb = 1.17
+provenance = "derivative-admesh"
+lineage = "Coarse pedagogical mesh (9,934 nodes) re-meshed from upstream Hagen original via ADmesh GUI; declared boundary count reduced to 0 (all boundary topology/island rings stripped, including Bermuda). Use for testing/tutorials only."
 
 [[domains.meshes]]
 uploaded_date = "2026-04-26"

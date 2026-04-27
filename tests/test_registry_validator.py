@@ -151,16 +151,18 @@ license = "GPL-evangelist-3000"
         with pytest.raises(ManifestValidationError):
             load_manifest(self._write_manifest(tmp_path, body))
 
-    def test_domain_with_no_meshes_fails(self, tmp_path):
+    def test_domain_with_no_meshes_succeeds(self, tmp_path):
         body = """
-schema_version = "0.2"
+schema_version = "0.3"
 [metadata]
 version = "1.0.0"
 [[domains]]
 name = "Empty"
 """
-        with pytest.raises(ManifestValidationError):
-            load_manifest(self._write_manifest(tmp_path, body))
+        m = load_manifest(self._write_manifest(tmp_path, body))
+        assert len(m.domains) == 1
+        assert m.domains[0].name == "Empty"
+        assert len(m.domains[0].meshes) == 0
 
 
 class TestSchemaPrimitives:

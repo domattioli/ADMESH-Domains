@@ -33,6 +33,7 @@ def find_domains(
     category: Optional[str] = None,
     region: Optional[str] = None,
     application: Optional[str] = None,
+    has_meshes: Optional[bool] = None,
     manifest: Union[str, Path, Manifest, None] = None,
 ) -> list[Domain]:
     """Search for Domains matching all given filters.
@@ -42,6 +43,7 @@ def find_domains(
         category: "real-world" or "synthetic".
         region: Geographic region, e.g. "North America".
         application: Use case, e.g. "Coastal Circulation".
+        has_meshes: Filter by presence of meshes (True=with meshes, False=boundaries only).
         manifest: Optional manifest path / instance; defaults to bundled.
     """
     m = _get_manifest(manifest)
@@ -57,6 +59,10 @@ def find_domains(
         if application is not None:
             apps = [a.lower() for a in (d.applications or [])]
             if application.lower() not in apps:
+                continue
+        if has_meshes is not None:
+            has_mesh_data = len(d.meshes) > 0
+            if has_mesh_data != has_meshes:
                 continue
         out.append(d)
     return out

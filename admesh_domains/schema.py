@@ -17,7 +17,7 @@ from pathlib import Path
 from typing import Optional
 
 
-SCHEMA_VERSION = "0.2"
+SCHEMA_VERSION = "0.3"
 
 VALID_TYPES = {"ADCIRC", "SMS_2DM", "ADCIRC_GRD"}
 VALID_CATEGORIES = {"real-world", "synthetic"}
@@ -197,7 +197,13 @@ class Mesh:
 
 @dataclass
 class Domain:
-    """A geographic region or logical group containing one or more meshes."""
+    """A geographic region or logical group with optional mesh realizations.
+
+    A Domain represents the geographic extent and boundary conditions of a
+    coastal simulation area. A Domain can exist without Meshes (boundary
+    geometry only) or with one or more Meshes (discretized realizations).
+    Use `find_domains(has_meshes=True)` to filter for domains with meshes only.
+    """
 
     name: str
     full_name: Optional[str] = None
@@ -220,8 +226,6 @@ class Domain:
             )
         if self.bounding_box is not None:
             self.bounding_box.validate()
-        if not self.meshes:
-            raise SchemaError(f"Domain {self.name!r} must have at least one mesh")
         seen_ids: set[str] = set()
         for m in self.meshes:
             m.validate()

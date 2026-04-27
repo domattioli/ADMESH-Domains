@@ -1,7 +1,7 @@
 # ADMESH Domain Registry Manifest
 # Two-level model: Domain -> Meshes (one mesh per .14 file)
 
-schema_version = "0.2"
+schema_version = "0.3"
 
 [metadata]
 version = "1.0.0"

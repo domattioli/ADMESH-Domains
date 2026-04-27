@@ -15,6 +15,17 @@ Project-level guidance for Claude (and other coding agents) working on this repo
 5. If you do hit the timeout, retry the same step in a shorter form.
    Don't repeat the entire task from scratch.
 
+## Release Skills
+
+These two skills must be present in your global `~/.claude/skills/` inventory every session:
+
+| Skill | Trigger phrases | Script |
+|---|---|---|
+| `github-release` | "ship", "release", "ship vX.Y.Z", "create a release" | `python scripts/github_release.py` |
+| `pypi-publish` | "publish to PyPI", "upload the wheel", "push to PyPI" | `python scripts/pypi_publish.py` |
+
+Skills are installed at `~/.claude/skills/github-release/SKILL.md` and `~/.claude/skills/pypi-publish/SKILL.md`. If missing, reinstall: clone `https://github.com/anthropics/claude-plugins-official.git`, copy the skill-creator plugin, then recreate the two skill files above.
+
 ## What this repo is
 
 A Python package (`admesh-domains` on PyPI) plus a HuggingFace dataset (`domattioli/ADMESH-Domains`) that together form a registry of ADCIRC mesh domains. Two-level data model:

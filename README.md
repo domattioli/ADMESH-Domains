@@ -76,6 +76,14 @@ git commit -m "Add foo.14 to <Domain>"
 git push origin main
 ```
 
+## Releases
+
+See [CHANGELOG.md](CHANGELOG.md) for:
+- Full release history (v0.1.0 – current)
+- Schema and API changes per release
+- Mesh metadata additions in v0.3.2
+- Data-only updates tagged on HuggingFace
+
 ## Contributing
 
 Open an issue first if you're proposing a new domain, schema change, or behavior change. PRs welcome — the validator will run on every push.

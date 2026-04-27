@@ -156,7 +156,15 @@ function showMeshComparison(domainName, manifest, uploadedBbox, uploadedNodeCoun
   document.getElementById("comparison-results").style.display = "block";
 }
 
-// Render mesh geometry preview to canvas
+// Mesh preview state for zoom/pan
+let meshPreviewState = {
+  zoom: 1,
+  panX: 0,
+  panY: 0,
+  parsedMesh: null,
+};
+
+// Render mesh geometry preview to canvas with zoom/pan support
 function renderMeshPreview(parsedMesh) {
   const canvas = document.getElementById("mesh-canvas");
   const statsEl = document.getElementById("mesh-stats");
@@ -168,23 +176,90 @@ function renderMeshPreview(parsedMesh) {
   }
 
   try {
-    renderMesh(canvas, parsedMesh);
+    meshPreviewState.parsedMesh = parsedMesh;
+    meshPreviewState.zoom = 1;
+    meshPreviewState.panX = 0;
+    meshPreviewState.panY = 0;
 
-    // Display mesh statistics
+    renderMeshWithTransform();
+
+    // Display mesh statistics with controls
     const elemCount = parsedMesh.elementCount || parsedMesh.renderedElements || "?";
     const nodeCount = parsedMesh.nodeCount || "?";
     const statsText = `<strong>${nodeCount.toLocaleString()}</strong> nodes, ` +
                       `<strong>${elemCount.toLocaleString()}</strong> elements` +
                       (parsedMesh.renderedElements && parsedMesh.renderedElements < parsedMesh.elementCount
                         ? ` (showing first ${parsedMesh.renderedElements.toLocaleString()} for performance)`
-                        : "");
+                        : "") +
+                      ` <span style="color:#999; font-size:0.85rem;">· Scroll to zoom, drag to pan, double-click to reset</span>`;
     statsEl.innerHTML = statsText;
 
+    // Setup canvas interactions
+    setupMeshInteraction(canvas);
     previewEl.style.display = "block";
   } catch (e) {
     console.error("Mesh preview error:", e);
     previewEl.style.display = "none";
   }
+}
+
+// Render mesh with current zoom/pan transform
+function renderMeshWithTransform() {
+  const canvas = document.getElementById("mesh-canvas");
+  if (!canvas || !meshPreviewState.parsedMesh) return;
+
+  const ctx = canvas.getContext("2d");
+  const dpr = window.devicePixelRatio || 1;
+  const cssW = canvas.clientWidth, cssH = canvas.clientHeight;
+  canvas.width = cssW * dpr;
+  canvas.height = cssH * dpr;
+  ctx.scale(dpr, dpr);
+
+  // Apply zoom and pan
+  ctx.translate(meshPreviewState.panX, meshPreviewState.panY);
+  ctx.scale(meshPreviewState.zoom, meshPreviewState.zoom);
+  ctx.translate(cssW / (2 * meshPreviewState.zoom), cssH / (2 * meshPreviewState.zoom));
+
+  renderMesh(canvas, meshPreviewState.parsedMesh);
+}
+
+// Setup mouse interactions for zoom/pan
+function setupMeshInteraction(canvas) {
+  let isDragging = false;
+  let dragStartX = 0, dragStartY = 0;
+
+  canvas.addEventListener("wheel", (e) => {
+    e.preventDefault();
+    const zoomFactor = e.deltaY < 0 ? 1.1 : 0.9;
+    meshPreviewState.zoom *= zoomFactor;
+    meshPreviewState.zoom = Math.max(0.1, Math.min(10, meshPreviewState.zoom));
+    renderMeshWithTransform();
+  }, { passive: false });
+
+  canvas.addEventListener("mousedown", (e) => {
+    isDragging = true;
+    dragStartX = e.clientX;
+    dragStartY = e.clientY;
+  });
+
+  canvas.addEventListener("mousemove", (e) => {
+    if (!isDragging) return;
+    meshPreviewState.panX += e.clientX - dragStartX;
+    meshPreviewState.panY += e.clientY - dragStartY;
+    dragStartX = e.clientX;
+    dragStartY = e.clientY;
+    renderMeshWithTransform();
+  });
+
+  canvas.addEventListener("mouseup", () => { isDragging = false; });
+  canvas.addEventListener("mouseleave", () => { isDragging = false; });
+
+  canvas.addEventListener("dblclick", () => {
+    meshPreviewState.zoom = 1;
+    meshPreviewState.panX = 0;
+    meshPreviewState.panY = 0;
+    renderMeshWithTransform();
+  });
 }
 
 // Compute Intersection over Union (IoU) for two bboxes

@@ -3,7 +3,7 @@ import { loadManifest } from "./manifest-loader.js";
 import { bboxFromFile, parseFort14Full } from "./mesh-parser.js";
 import { suggestDomain } from "./suggester.js";
 import { buildSubmission } from "./pr-builder.js";
-import { renderMeshElements } from "./geometry-render.js";
+import { renderMesh } from "./geometry-render.js";
 
 renderNav();
 renderFooter();
@@ -160,14 +160,15 @@ function showMeshComparison(domainName, manifest, uploadedBbox, uploadedNodeCoun
 function renderMeshPreview(parsedMesh) {
   const canvas = document.getElementById("mesh-canvas");
   const statsEl = document.getElementById("mesh-stats");
+  const previewEl = document.getElementById("mesh-preview");
 
   if (!canvas || !parsedMesh) {
-    document.getElementById("mesh-preview").style.display = "none";
+    previewEl.style.display = "none";
     return;
   }
 
   try {
-    renderMeshElements(canvas, parsedMesh.nodes, parsedMesh.elements);
+    renderMesh(canvas, parsedMesh);
 
     // Display mesh statistics
     const elemCount = parsedMesh.elementCount || parsedMesh.renderedElements || "?";
@@ -179,10 +180,10 @@ function renderMeshPreview(parsedMesh) {
                         : "");
     statsEl.innerHTML = statsText;
 
-    document.getElementById("mesh-preview").style.display = "block";
+    previewEl.style.display = "block";
   } catch (e) {
     console.error("Mesh preview error:", e);
-    document.getElementById("mesh-preview").style.display = "none";
+    previewEl.style.display = "none";
   }
 }
 

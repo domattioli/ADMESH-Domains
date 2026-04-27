@@ -35,6 +35,12 @@
         </details>
       </div>
 
+      <h2>Mesh preview</h2>
+      <div id="mesh-preview" style="display:none;">
+        <canvas id="mesh-canvas" width="800" height="600" style="border: 1px solid #ccc; width:100%; max-width:800px; display:block; margin:0.5rem 0;"></canvas>
+        <p class="muted" id="mesh-stats" style="font-size:0.85rem;"></p>
+      </div>
+
       <h2>Mesh details</h2>
       <form id="form">
         <p>
@@ -83,6 +89,10 @@
 
         <p><button type="submit">Open submission</button></p>
       </form>
+
+      <h2>Mesh preview</h2>
+      <p class="muted" id="geom-note"></p>
+      <canvas id="geometry-canvas" width="800" height="480"></canvas>
 
       <div id="overflow" hidden>
         <h2>Submission too large for direct link</h2>

@@ -79,10 +79,32 @@ admesh-domains publish --tag v0.0.0-dryrun \
 ### Releasing code (bumps PyPI + HF)
 **Use this for code, API, schema, or publisher changes — NOT for adding meshes.**
 ```bash
-# Bump version in pyproject.toml AND admesh_domains/__init__.py
+# 1. Bump version in pyproject.toml AND admesh_domains/__init__.py
+# 2. Commit and create release:
+scripts/github-release.sh                 # Creates GitHub release, extracts notes from CHANGELOG.md
+scripts/pypi-publish.sh                   # Publishes to PyPI (builds if needed, retries on error)
+# Or together for CI/CD:
 git tag v0.X.Y && git push origin v0.X.Y
-# Triggers release.yml: PyPI release + HF tagged with same vX.Y.Z
+# Triggers release.yml: PyPI + HF tagged with same vX.Y.Z
 ```
+
+### Release Skills (Manual Publishing)
+
+**`github-release.sh`** — Non-interactive GitHub release creation
+- Auto-detects: credentials (gh auth), version (pyproject.toml), repo (git remote), release notes (CHANGELOG.md)
+- Creates git tag and GitHub release with release notes and dist packages
+- Validates: gh CLI authenticated, dist files exist, version format valid
+- Output: One-line success with release URL, exit code 0/1
+- Suitable for: CI/CD workflows, manual releases, automated release gates
+
+**`pypi-publish.sh`** — Non-interactive PyPI publishing
+- Auto-detects: credentials (PYPI_TOKEN env var or ~/.pypirc), package name/version (pyproject.toml)
+- Builds packages if missing (python -m build)
+- Uploads to PyPI via twine with 3-attempt retry (exponential backoff 2s/4s/8s)
+- Validates: PyPI credentials exist, package files match expected naming
+- Verifies: Polls PyPI endpoint to confirm package appears (up to 5 attempts)
+- Output: One-line success with PyPI URL, exit code 0/1
+- Suitable for: CI/CD workflows, independent PyPI publishes (without GitHub release)
 
 ### Mesh schema fields (added in 0.3.2, all optional/additive)
 

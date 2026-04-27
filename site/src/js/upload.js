@@ -3,6 +3,7 @@ import { loadManifest } from "./manifest-loader.js";
 import { bboxFromFile, parseFort14Full } from "./mesh-parser.js";
 import { suggestDomain } from "./suggester.js";
 import { buildSubmission } from "./pr-builder.js";
+import { renderMesh } from "./geometry-render.js";
 
 renderNav();
 renderFooter();
@@ -50,11 +51,16 @@ async function handle(file) {
   }
   parsedBbox = bbox;
 
-  // Parse node count for fort.14 files (for comparison)
+  // Parse node count for fort.14 files (for comparison & preview)
   parsedNodeCount = null;
+  let parsedMesh = null;
   if (file.name.endsWith(".14") || file.name.endsWith(".fort")) {
-    const parsed = parseFort14Full(text);
-    if (parsed) parsedNodeCount = parsed.nodeCount;
+    parsedMesh = parseFort14Full(text);
+    if (parsedMesh) {
+      parsedNodeCount = parsedMesh.nodeCount;
+      // Render mesh preview
+      renderMeshPreview(parsedMesh);
+    }
   }
 
   const manifest = await manifestPromise;
@@ -81,6 +87,24 @@ async function handle(file) {
   form.elements.filename.value = file.name;
   form.elements.size_mb = form.elements.size_mb;
   formSection.hidden = false;
+
+  const geomNote = document.getElementById("geom-note");
+  const canvas = document.getElementById("geometry-canvas");
+  if (file.name.toLowerCase().endsWith(".2dm")) {
+    geomNote.textContent = "Geometry rendering for .2dm is not implemented yet.";
+    canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height);
+    return;
+  }
+  const full = parseFort14Full(text);
+  if (!full) {
+    geomNote.textContent = "Could not parse mesh elements.";
+    return;
+  }
+  const truncated = full.renderedElements < full.elementCount;
+  geomNote.textContent = truncated
+    ? `Rendering first ${full.renderedElements.toLocaleString()} of ${full.elementCount.toLocaleString()} elements.`
+    : `${full.elementCount.toLocaleString()} elements, ${full.nodeCount.toLocaleString()} nodes.`;
+  renderMesh(canvas, full);
 }
 
 form.addEventListener("submit", (e) => {
@@ -148,6 +172,112 @@ function showMeshComparison(domainName, manifest, uploadedBbox, uploadedNodeCoun
   document.getElementById("comp-domain").textContent = domainName;
   document.getElementById("comp-count").textContent = domain.meshes.length;
   document.getElementById("comparison-results").style.display = "block";
+}
+
+// Mesh preview state for zoom/pan
+let meshPreviewState = {
+  zoom: 1,
+  panX: 0,
+  panY: 0,
+  parsedMesh: null,
+};
+
+// Render mesh geometry preview to canvas with zoom/pan support
+function renderMeshPreview(parsedMesh) {
+  const canvas = document.getElementById("mesh-canvas");
+  const statsEl = document.getElementById("mesh-stats");
+  const previewEl = document.getElementById("mesh-preview");
+
+  if (!canvas || !parsedMesh) {
+    previewEl.style.display = "none";
+    return;
+  }
+
+  try {
+    meshPreviewState.parsedMesh = parsedMesh;
+    meshPreviewState.zoom = 1;
+    meshPreviewState.panX = 0;
+    meshPreviewState.panY = 0;
+
+    renderMeshWithTransform();
+
+    // Display mesh statistics with controls
+    const elemCount = parsedMesh.elementCount || parsedMesh.renderedElements || "?";
+    const nodeCount = parsedMesh.nodeCount || "?";
+    const statsText = `<strong>${nodeCount.toLocaleString()}</strong> nodes, ` +
+                      `<strong>${elemCount.toLocaleString()}</strong> elements` +
+                      (parsedMesh.renderedElements && parsedMesh.renderedElements < parsedMesh.elementCount
+                        ? ` (showing first ${parsedMesh.renderedElements.toLocaleString()} for performance)`
+                        : "") +
+                      ` <span style="color:#999; font-size:0.85rem;">· Scroll to zoom, drag to pan, double-click to reset</span>`;
+    statsEl.innerHTML = statsText;
+
+    // Setup canvas interactions
+    setupMeshInteraction(canvas);
+    previewEl.style.display = "block";
+  } catch (e) {
+    console.error("Mesh preview error:", e);
+    previewEl.style.display = "none";
+  }
+}
+
+// Render mesh with current zoom/pan transform
+function renderMeshWithTransform() {
+  const canvas = document.getElementById("mesh-canvas");
+  if (!canvas || !meshPreviewState.parsedMesh) return;
+
+  const ctx = canvas.getContext("2d");
+  const dpr = window.devicePixelRatio || 1;
+  const cssW = canvas.clientWidth, cssH = canvas.clientHeight;
+  canvas.width = cssW * dpr;
+  canvas.height = cssH * dpr;
+  ctx.scale(dpr, dpr);
+
+  // Apply zoom and pan
+  ctx.translate(meshPreviewState.panX, meshPreviewState.panY);
+  ctx.scale(meshPreviewState.zoom, meshPreviewState.zoom);
+  ctx.translate(cssW / (2 * meshPreviewState.zoom), cssH / (2 * meshPreviewState.zoom));
+
+  renderMesh(canvas, meshPreviewState.parsedMesh);
+}
+
+// Setup mouse interactions for zoom/pan
+function setupMeshInteraction(canvas) {
+  let isDragging = false;
+  let dragStartX = 0, dragStartY = 0;
+
+  canvas.addEventListener("wheel", (e) => {
+    e.preventDefault();
+    const zoomFactor = e.deltaY < 0 ? 1.1 : 0.9;
+    meshPreviewState.zoom *= zoomFactor;
+    meshPreviewState.zoom = Math.max(0.1, Math.min(10, meshPreviewState.zoom));
+    renderMeshWithTransform();
+  }, { passive: false });
+
+  canvas.addEventListener("mousedown", (e) => {
+    isDragging = true;
+    dragStartX = e.clientX;
+    dragStartY = e.clientY;
+  });
+
+  canvas.addEventListener("mousemove", (e) => {
+    if (!isDragging) return;
+    meshPreviewState.panX += e.clientX - dragStartX;
+    meshPreviewState.panY += e.clientY - dragStartY;
+    dragStartX = e.clientX;
+    dragStartY = e.clientY;
+    renderMeshWithTransform();
+  });
+
+  canvas.addEventListener("mouseup", () => { isDragging = false; });
+  canvas.addEventListener("mouseleave", () => { isDragging = false; });
+
+  canvas.addEventListener("dblclick", () => {
+    meshPreviewState.zoom = 1;
+    meshPreviewState.panX = 0;
+    meshPreviewState.panY = 0;
+    renderMeshWithTransform();
+  });
 }
 
 // Compute Intersection over Union (IoU) for two bboxes

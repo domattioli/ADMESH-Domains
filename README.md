@@ -1,5 +1,11 @@
 # ADMESH Domains
 
+[![PyPI version](https://img.shields.io/pypi/v/admesh-domains.svg)](https://pypi.org/project/admesh-domains/)
+[![Python versions](https://img.shields.io/pypi/pyversions/admesh-domains.svg)](https://pypi.org/project/admesh-domains/)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Tests](https://github.com/domattioli/ADMESH-Domains/actions/workflows/validate-pr.yml/badge.svg)](https://github.com/domattioli/ADMESH-Domains/actions)
+[![HuggingFace Dataset](https://img.shields.io/badge/%F0%9F%A4%97-Dataset-yellow)](https://huggingface.co/datasets/domattioli/ADMESH-Domains)
+
 Source repository for the **ADCIRC mesh domain registry**: a curated catalog of coastal-simulation meshes with a Python loader, HuggingFace dataset mirror, and PR-based contribution workflow.
 
 **🌐 Browse the registry: [domattioli.github.io/ADMESH-Domains](https://domattioli.github.io/ADMESH-Domains/)** — interactive map, search, preview, download, and contribute.

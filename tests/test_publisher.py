@@ -81,6 +81,24 @@ class TestBuildParquetSidecar:
         assert licenses == {"MIT"}
         assert all(table["mirror_eligible"].to_pylist())
 
+    def test_includes_new_schema_fields(self, loaded_manifest):
+        """kind, test_case, uploaded_date, modified_date, contributor survive round-trip."""
+        hashes = {hf_path_for(m): "x" * 64 for m in loaded_manifest.all_meshes()}
+        blob = build_parquet_sidecar(loaded_manifest, hashes, tag="v0.3.3")
+
+        import pyarrow.parquet as pq
+        table = pq.read_table(io.BytesIO(blob))
+        for col in ("kind", "test_case", "uploaded_date", "modified_date", "contributor"):
+            assert col in table.schema.names, f"column {col!r} missing from Parquet sidecar"
+
+        # kind defaults to "mesh" for all current registry entries
+        kinds = set(table["kind"].to_pylist())
+        assert kinds <= {"mesh", "boundary"}, f"unexpected kind values: {kinds}"
+
+        # test_case is bool; TestCases domain meshes should all be True
+        tc_col = table["test_case"].to_pylist()
+        assert all(isinstance(v, bool) for v in tc_col)
+
     def test_metadata_includes_tag_and_schema(self, loaded_manifest):
         hashes = {hf_path_for(m): "x" * 64 for m in loaded_manifest.all_meshes()}
         blob = build_parquet_sidecar(loaded_manifest, hashes, tag="v9.9.9")

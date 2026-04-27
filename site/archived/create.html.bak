@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Create — ADMESH-Domains</title>
+  <meta name="description" content="Coming soon: tools for authoring ADCIRC mesh files in the browser." />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header id="site-header"></header>
+  <main>
+    <h1>Create &mdash; Coming Soon</h1>
+    <p>The Create tab is under construction. The plan is to bring mesh-authoring into the browser:</p>
+    <ul>
+      <li><strong>Click-a-waterbody</strong> &mdash; SAM-style segmentation: click a lake or coastline on a basemap and the boundary is extracted into a fort.14 outline.
+        Tracking: <a href="https://github.com/domattioli/ADMESH-Domains/issues/1" target="_blank" rel="noopener">issue #1</a>.</li>
+      <li><strong>Freehand draw &rarr; fort.14</strong> &mdash; sketch a polygon, get a starter mesh.
+        Tracking: <a href="https://github.com/domattioli/ADMESH-Domains/issues/2" target="_blank" rel="noopener">issue #2</a>.</li>
+      <li><strong>Natural-language prompts</strong> &mdash; describe a domain in English, get a mesh draft.</li>
+    </ul>
+
+    <p>For now, you can drop a mesh file below and the page will run the existing client-side parser
+      and print the results to the mock terminal. Use it to sanity-check a mesh before contributing it.</p>
+
+    <label for="file" class="dropzone" id="dropzone">
+      <strong>Drop a mesh file</strong> or click to choose
+      <input id="file" type="file" accept=".14,.grd,.2dm,.fort" hidden />
+    </label>
+
+    <h2 style="margin-top:1.5rem;">Console</h2>
+    <pre id="terminal" class="terminal" aria-live="polite"><span class="muted">$ admesh-create&nbsp;ready &mdash; awaiting file...</span></pre>
+
+    <p class="muted">Want to suggest a feature? <a href="feedback.html">Open a feedback issue</a>.</p>
+  </main>
+  <footer id="site-footer"></footer>
+  <script type="module" src="js/create.js"></script>
+</body>
+</html>

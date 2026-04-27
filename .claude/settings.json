@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(gh api *)",
+      "Bash(curl -s https://raw.githubusercontent.com/wiki/domattioli/ADMESH/Home.md)",
+      "WebFetch(domain:github.com)",
+      "Bash(python -m pytest tests/ -q)",
+      "Bash(python scripts/build_site.py)",
+      "Bash(mv .claude/settings.local.json .claude/settings.json)",
+      "Bash(cat)",
+      "Bash(git add *)"
+    ]
+  }
+}

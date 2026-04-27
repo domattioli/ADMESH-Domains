@@ -75,6 +75,8 @@ def find_meshes(
     min_size_mb: Optional[float] = None,
     max_size_mb: Optional[float] = None,
     min_node_count: Optional[int] = None,
+    kind: Optional[str] = None,
+    test_case: Optional[bool] = None,
     manifest: Union[str, Path, Manifest, None] = None,
 ) -> list[Mesh]:
     """Search for individual Meshes across all (or one) Domain(s).
@@ -88,6 +90,8 @@ def find_meshes(
         refinement_level: e.g. "high", "medium".
         min_size_mb / max_size_mb: inclusive bounds on file size.
         min_node_count: minimum mesh node count (skips meshes without one).
+        kind: Mesh kind ("mesh" or "boundary").
+        test_case: If True, return only meshes marked for testing.
     """
     m = _get_manifest(manifest)
     out: list[Mesh] = []
@@ -119,6 +123,10 @@ def find_meshes(
             if min_node_count is not None:
                 if mesh.node_count is None or mesh.node_count < min_node_count:
                     continue
+            if kind is not None and mesh.kind != kind:
+                continue
+            if test_case is not None and mesh.test_case != test_case:
+                continue
             out.append(mesh)
     return out
 
@@ -166,6 +174,36 @@ def get_mesh(full_id: str, manifest: Union[str, Path, Manifest, None] = None) ->
         )
     return matches[0]
 
+
+def test_meshes(
+    *,
+    download: bool = False,
+    manifest: Union[str, Path, Manifest, None] = None,
+) -> list[Mesh]:
+    """Return all Mesh instances marked for testing (test_case=True).
+
+    Useful for downstream libraries wiring registry test meshes into pytest
+    fixtures.
+
+    Args:
+        download: If True, eagerly download all test meshes and return local
+                  file Paths via Mesh.load(). If False (default), return Mesh
+                  instances (lazy downloads via Mesh.load() on demand).
+        manifest: Optional manifest path / instance; defaults to bundled.
+
+    Returns:
+        List of Mesh instances where test_case=True, sorted by full_id.
+        If download=True, the Mesh.local_path will be set to the cache location.
+    """
+    meshes = find_meshes(manifest=manifest)
+    test_cases = [m for m in meshes if m.test_case]
+    test_cases.sort(key=lambda m: m.full_id)
+
+    if download:
+        for mesh in test_cases:
+            mesh.load()
+
+    return test_cases
 
 def list_domains(manifest: Union[str, Path, Manifest, None] = None) -> list[Domain]:
     """Return every Domain in the registry."""

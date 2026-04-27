@@ -12,6 +12,7 @@ from admesh_domains import (
     list_domains,
     list_regions,
     list_applications,
+    test_meshes,
 )
 
 
@@ -87,6 +88,23 @@ class TestFindMeshes:
         out = find_meshes(refinement_level="high", manifest=loaded_manifest)
         assert len(out) == 1
         assert "DelawareBay" in out[0].full_id
+
+    def test_filter_by_kind_mesh(self, loaded_manifest):
+        out = find_meshes(kind="mesh", manifest=loaded_manifest)
+        assert all(m.kind == "mesh" or m.kind is None for m in out)
+
+    def test_filter_by_kind_boundary(self, loaded_manifest):
+        out = find_meshes(kind="boundary", manifest=loaded_manifest)
+        assert all(m.kind == "boundary" for m in out)
+
+    def test_filter_by_test_case_true(self, loaded_manifest):
+        out = find_meshes(test_case=True, manifest=loaded_manifest)
+        assert len(out) == 5
+        assert all(m.test_case for m in out)
+
+    def test_filter_by_test_case_false(self, loaded_manifest):
+        out = find_meshes(test_case=False, manifest=loaded_manifest)
+        assert all(not m.test_case for m in out)
 
 
 class TestGetters:
@@ -169,3 +187,23 @@ class TestLicenseFilter:
         assert len(eligible) + len(ineligible) == loaded_manifest.total_meshes
         # All current meshes are MIT, which is redistributable
         assert len(ineligible) == 0
+
+
+class TestTestMeshes:
+    def test_returns_all_test_case_meshes(self, loaded_manifest):
+        out = test_meshes(manifest=loaded_manifest)
+        assert all(m.test_case for m in out)
+        assert len(out) == 5  # Current registry has 5 test_case=True meshes
+
+    def test_returns_sorted_by_full_id(self, loaded_manifest):
+        out = test_meshes(manifest=loaded_manifest)
+        ids = [m.full_id for m in out]
+        assert ids == sorted(ids)
+
+    def test_no_filters_applied(self, loaded_manifest):
+        all_test = test_meshes(manifest=loaded_manifest)
+        # Verify they are exactly the subset where test_case=True
+        all_meshes = find_meshes(manifest=loaded_manifest)
+        expected = [m for m in all_meshes if m.test_case]
+        assert len(all_test) == len(expected)
+        assert {m.full_id for m in all_test} == {m.full_id for m in expected}

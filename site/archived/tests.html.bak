@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Test Suites — ADMESH-Domains</title>
+  <meta name="description" content="Curated test meshes from ADMESH-Domains for use as pytest fixtures or with mesh-tooling libraries like madmeshr." />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header id="site-header"></header>
+  <main>
+    <h1>Test suites</h1>
+    <p>Meshes flagged <code>test_case = true</code> in the registry. Drop them into your pytest fixtures
+      or wire them into a mesh-tooling library (e.g. <code>madmeshr</code>) for golden-output regression checks.
+      All files live on the HuggingFace dataset and are fetched on demand.</p>
+
+    <h2>Bulk download</h2>
+    <p class="muted">Pick a tool, click <strong>Copy</strong>, paste into a clean directory.</p>
+    <div class="view-toggle" role="tablist" aria-label="Bulk download tool">
+      <button type="button" id="tool-curl" class="btn secondary" aria-pressed="true">curl</button>
+      <button type="button" id="tool-wget" class="btn secondary" aria-pressed="false">wget</button>
+      <button type="button" id="copy-bulk" class="btn">Copy</button>
+    </div>
+    <pre id="bulk-snippet" class="terminal"></pre>
+
+    <h2>All test meshes</h2>
+    <table id="tests-table">
+      <thead>
+        <tr><th>Domain</th><th>Mesh</th><th>Filename</th><th>Nodes</th><th>Size (MB)</th><th>Download</th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </main>
+  <footer id="site-footer"></footer>
+  <script type="module" src="js/tests.js"></script>
+</body>
+</html>

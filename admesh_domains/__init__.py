@@ -28,9 +28,10 @@ from .query import (
     list_applications,
     list_domains,
     list_regions,
+    test_meshes,
 )
 
-__version__ = "0.3.2"
+__version__ = "0.3.4"
 
 __all__ = [
     "__version__",
@@ -51,4 +52,5 @@ __all__ = [
     "list_applications",
     "list_domains",
     "list_regions",
+    "test_meshes",
 ]

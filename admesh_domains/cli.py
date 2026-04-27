@@ -78,6 +78,8 @@ def cmd_meshes(args: argparse.Namespace) -> int:
         min_size_mb=args.min_size,
         max_size_mb=args.max_size,
         min_node_count=args.min_nodes,
+        kind=args.kind,
+        test_case=args.test_case if args.test_case else None,
     )
     if not meshes:
         print("(no meshes matched)")
@@ -389,6 +391,8 @@ def build_parser() -> argparse.ArgumentParser:
     pm.add_argument("--min-size", type=float, dest="min_size")
     pm.add_argument("--max-size", type=float, dest="max_size")
     pm.add_argument("--min-nodes", type=int, dest="min_nodes")
+    pm.add_argument("--kind", choices=["mesh", "boundary"])
+    pm.add_argument("--test-case", action="store_true", dest="test_case")
     pm.set_defaults(func=cmd_meshes)
 
     psd = sub.add_parser("show-domain", help="Show details for one domain")

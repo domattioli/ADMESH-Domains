@@ -87,6 +87,24 @@ async function handle(file) {
   form.elements.filename.value = file.name;
   form.elements.size_mb = form.elements.size_mb;
   formSection.hidden = false;
+
+  const geomNote = document.getElementById("geom-note");
+  const canvas = document.getElementById("geometry-canvas");
+  if (file.name.toLowerCase().endsWith(".2dm")) {
+    geomNote.textContent = "Geometry rendering for .2dm is not implemented yet.";
+    canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height);
+    return;
+  }
+  const full = parseFort14Full(text);
+  if (!full) {
+    geomNote.textContent = "Could not parse mesh elements.";
+    return;
+  }
+  const truncated = full.renderedElements < full.elementCount;
+  geomNote.textContent = truncated
+    ? `Rendering first ${full.renderedElements.toLocaleString()} of ${full.elementCount.toLocaleString()} elements.`
+    : `${full.elementCount.toLocaleString()} elements, ${full.nodeCount.toLocaleString()} nodes.`;
+  renderMesh(canvas, full);
 }
 
 form.addEventListener("submit", (e) => {

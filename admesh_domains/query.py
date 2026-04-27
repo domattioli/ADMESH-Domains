@@ -167,6 +167,36 @@ def get_mesh(full_id: str, manifest: Union[str, Path, Manifest, None] = None) ->
     return matches[0]
 
 
+def test_meshes(
+    *,
+    download: bool = False,
+    manifest: Union[str, Path, Manifest, None] = None,
+) -> list[Mesh]:
+    """Return all Mesh instances marked for testing (test_case=True).
+
+    Useful for downstream libraries wiring registry test meshes into pytest
+    fixtures.
+
+    Args:
+        download: If True, eagerly download all test meshes and return local
+                  file Paths via Mesh.load(). If False (default), return Mesh
+                  instances (lazy downloads via Mesh.load() on demand).
+        manifest: Optional manifest path / instance; defaults to bundled.
+
+    Returns:
+        List of Mesh instances where test_case=True, sorted by full_id.
+        If download=True, the Mesh.local_path will be set to the cache location.
+    """
+    meshes = find_meshes(manifest=manifest)
+    test_cases = [m for m in meshes if m.test_case]
+    test_cases.sort(key=lambda m: m.full_id)
+
+    if download:
+        for mesh in test_cases:
+            mesh.load()
+
+    return test_cases
+
 def list_domains(manifest: Union[str, Path, Manifest, None] = None) -> list[Domain]:
     """Return every Domain in the registry."""
     return list(_get_manifest(manifest).domains)

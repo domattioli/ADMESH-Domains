@@ -12,6 +12,7 @@ from admesh_domains import (
     list_domains,
     list_regions,
     list_applications,
+    test_meshes,
 )
 
 
@@ -169,3 +170,23 @@ class TestLicenseFilter:
         assert len(eligible) + len(ineligible) == loaded_manifest.total_meshes
         # All current meshes are MIT, which is redistributable
         assert len(ineligible) == 0
+
+
+class TestTestMeshes:
+    def test_returns_all_test_case_meshes(self, loaded_manifest):
+        out = test_meshes(manifest=loaded_manifest)
+        assert all(m.test_case for m in out)
+        assert len(out) == 5  # Current registry has 5 test_case=True meshes
+
+    def test_returns_sorted_by_full_id(self, loaded_manifest):
+        out = test_meshes(manifest=loaded_manifest)
+        ids = [m.full_id for m in out]
+        assert ids == sorted(ids)
+
+    def test_no_filters_applied(self, loaded_manifest):
+        all_test = test_meshes(manifest=loaded_manifest)
+        # Verify they are exactly the subset where test_case=True
+        all_meshes = find_meshes(manifest=loaded_manifest)
+        expected = [m for m in all_meshes if m.test_case]
+        assert len(all_test) == len(expected)
+        assert {m.full_id for m in all_test} == {m.full_id for m in expected}

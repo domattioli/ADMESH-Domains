@@ -23,7 +23,7 @@ pip install admesh-domains
 pip install admesh-domains[hf]
 ```
 
-The user-facing API (`find_domains`, `find_meshes`, `get_mesh`, `Mesh.load`) is documented on the HF dataset card.
+The user-facing API (`find_domains`, `find_meshes`, `get_mesh`, `test_meshes`, `Mesh.load`) is documented on the HF dataset card. For pytest fixtures, use `from admesh_domains import test_meshes` — it returns all registry meshes marked for testing.
 
 ## Repo layout
 

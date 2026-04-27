@@ -10,7 +10,9 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
+import re
 import shutil
 import sys
 from datetime import datetime, timezone
@@ -39,6 +41,45 @@ def _is_geographic(bbox: dict | None) -> bool:
         and -90.0 <= bbox["min_lat"] <= 90.0
         and -90.0 <= bbox["max_lat"] <= 90.0
     )
+
+
+def _compute_hash(file_path: Path) -> str:
+    """Compute SHA256 hash of file contents; return first 8 chars."""
+    sha = hashlib.sha256(file_path.read_bytes()).hexdigest()
+    return sha[:8]
+
+
+def _rename_asset_with_hash(src_file: Path, dest_file: Path) -> tuple[str, str]:
+    """
+    Copy asset and rename with content hash.
+    Returns (original_name, hashed_name).
+    For JS/CSS: script.js -> script.{hash}.js
+    For others: copy unchanged.
+    """
+    file_hash = _compute_hash(src_file)
+    stem = dest_file.stem
+    suffix = dest_file.suffix
+
+    if suffix in {".js", ".css"}:
+        hashed_name = f"{stem}.{file_hash}{suffix}"
+        hashed_path = dest_file.parent / hashed_name
+        shutil.copy2(src_file, hashed_path)
+        return (dest_file.name, hashed_name)
+    else:
+        shutil.copy2(src_file, dest_file)
+        return (dest_file.name, dest_file.name)
+
+
+def _update_html_asset_refs(out_dir: Path, asset_map: dict[str, str]) -> None:
+    """Update HTML files to reference hashed asset names."""
+    for html_file in out_dir.glob("*.html"):
+        content = html_file.read_text()
+        for original, hashed in asset_map.items():
+            if original != hashed:
+                pattern = rf'(["\'])(?P<path>(?:[a-zA-Z0-9/_.-]*/)?)' + re.escape(original)
+                replacement = r'\g<1>\g<path>' + hashed
+                content = re.sub(pattern, replacement, content)
+        html_file.write_text(content)
 
 
 def build_manifest_json(manifest_toml: Path) -> dict:
@@ -97,11 +138,32 @@ def build_manifest_json(manifest_toml: Path) -> dict:
     }
 
 
-def copy_assets(src: Path, out: Path) -> int:
+def copy_assets(src: Path, out: Path) -> tuple[int, dict[str, str]]:
+    """Copy assets from src to out, hashing JS/CSS files for cache-busting.
+    Returns (file_count, asset_map) where asset_map is {original_name: hashed_name}.
+    """
     if out.exists():
         shutil.rmtree(out)
-    shutil.copytree(src, out)
-    return sum(1 for _ in out.rglob("*") if _.is_file())
+    out.mkdir(parents=True)
+
+    asset_map = {}
+    file_count = 0
+
+    for src_file in src.rglob("*"):
+        if not src_file.is_file():
+            continue
+        rel_path = src_file.relative_to(src)
+        dest_file = out / rel_path
+
+        if not dest_file.parent.exists():
+            dest_file.parent.mkdir(parents=True)
+
+        original, hashed = _rename_asset_with_hash(src_file, dest_file)
+        if original != hashed:
+            asset_map[original] = hashed
+        file_count += 1
+
+    return file_count, asset_map
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -118,13 +180,15 @@ def main(argv: list[str] | None = None) -> int:
         print(f"error: site src not found: {args.src}", file=sys.stderr)
         return 2
 
-    file_count = copy_assets(args.src, args.out)
+    file_count, asset_map = copy_assets(args.src, args.out)
+    _update_html_asset_refs(args.out, asset_map)
     manifest = build_manifest_json(args.manifest)
     (args.out / "manifest.json").write_text(json.dumps(manifest, indent=2))
 
     t = manifest["totals"]
+    hashed_count = len(asset_map)
     print(
-        f"built site: {file_count} static files + manifest.json "
+        f"built site: {file_count} static files ({hashed_count} hashed) + manifest.json "
         f"({t['domains']} domains, {t['meshes']} meshes, {t['size_mb']} MB) -> {args.out}"
     )
     return 0

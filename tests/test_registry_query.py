@@ -89,6 +89,23 @@ class TestFindMeshes:
         assert len(out) == 1
         assert "DelawareBay" in out[0].full_id
 
+    def test_filter_by_kind_mesh(self, loaded_manifest):
+        out = find_meshes(kind="mesh", manifest=loaded_manifest)
+        assert all(m.kind == "mesh" or m.kind is None for m in out)
+
+    def test_filter_by_kind_boundary(self, loaded_manifest):
+        out = find_meshes(kind="boundary", manifest=loaded_manifest)
+        assert all(m.kind == "boundary" for m in out)
+
+    def test_filter_by_test_case_true(self, loaded_manifest):
+        out = find_meshes(test_case=True, manifest=loaded_manifest)
+        assert len(out) == 5
+        assert all(m.test_case for m in out)
+
+    def test_filter_by_test_case_false(self, loaded_manifest):
+        out = find_meshes(test_case=False, manifest=loaded_manifest)
+        assert all(not m.test_case for m in out)
+
 
 class TestGetters:
     def test_get_mesh_by_composite_id(self, loaded_manifest):

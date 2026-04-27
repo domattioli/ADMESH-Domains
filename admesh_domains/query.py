@@ -75,6 +75,8 @@ def find_meshes(
     min_size_mb: Optional[float] = None,
     max_size_mb: Optional[float] = None,
     min_node_count: Optional[int] = None,
+    kind: Optional[str] = None,
+    test_case: Optional[bool] = None,
     manifest: Union[str, Path, Manifest, None] = None,
 ) -> list[Mesh]:
     """Search for individual Meshes across all (or one) Domain(s).
@@ -88,6 +90,8 @@ def find_meshes(
         refinement_level: e.g. "high", "medium".
         min_size_mb / max_size_mb: inclusive bounds on file size.
         min_node_count: minimum mesh node count (skips meshes without one).
+        kind: Mesh kind ("mesh" or "boundary").
+        test_case: If True, return only meshes marked for testing.
     """
     m = _get_manifest(manifest)
     out: list[Mesh] = []
@@ -119,6 +123,10 @@ def find_meshes(
             if min_node_count is not None:
                 if mesh.node_count is None or mesh.node_count < min_node_count:
                     continue
+            if kind is not None and mesh.kind != kind:
+                continue
+            if test_case is not None and mesh.test_case != test_case:
+                continue
             out.append(mesh)
     return out
 

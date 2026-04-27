@@ -7,9 +7,6 @@
   <a href="https://pypi.org/project/admesh-domains/">
     <img src="https://img.shields.io/pypi/pyversions/admesh-domains?style=flat-square&logo=python&logoColor=white" alt="Python">
   </a>
-  <a href="https://github.com/domattioli/ADMESH-Domains/blob/main/LICENSE">
-    <img src="https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square" alt="License: MIT">
-  </a>
   <a href="https://github.com/domattioli/ADMESH-Domains/actions/workflows/validate-pr.yml">
     <img src="https://img.shields.io/github/actions/workflow/status/domattioli/ADMESH-Domains/validate-pr.yml?branch=main&style=flat-square&logo=github" alt="CI Status">
   </a>

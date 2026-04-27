@@ -21,6 +21,20 @@
       <h2>Suggested domain</h2>
       <div id="suggestions"></div>
 
+      <h2>Mesh comparison</h2>
+      <p class="muted">How this mesh compares to others in the registry:</p>
+      <div id="comparison-results" style="display:none;">
+        <details>
+          <summary>Similar meshes in <span id="comp-domain">–</span> (<span id="comp-count">–</span>)</summary>
+          <table id="comparison-table">
+            <thead>
+              <tr><th>Mesh ID</th><th>IoU</th><th>Δ Nodes</th><th>Size</th></tr>
+            </thead>
+            <tbody id="comparison-tbody"></tbody>
+          </table>
+        </details>
+      </div>
+
       <h2>Mesh details</h2>
       <form id="form">
         <p>

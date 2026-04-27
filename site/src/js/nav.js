@@ -3,11 +3,14 @@ const PAGES = [
   ["", "Home"],
   ["browse.html", "Browse"],
   ["upload.html", "Upload"],
-  ["statistics.html", "Statistics"],
-  ["create.html", "Create"],
-  ["tests.html", "Test Suites"],
-  ["feedback.html", "Feedback"],
 ];
+
+// Archived pages (hidden from nav, code preserved for future restoration):
+// ["statistics.html", "Statistics"],  // → site/archived/statistics.html.bak
+// ["create.html", "Create"],          // → site/archived/create.html.bak
+// ["tests.html", "Test Suites"],      // → site/archived/tests.html.bak
+// ["feedback.html", "Feedback"],      // → site/archived/feedback.html.bak
+// See specs/010-site-mvp-redesign/RETIRED.md for restoration notes.
 
 export function renderNav(currentPath) {
   const el = document.getElementById("site-header");

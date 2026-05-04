@@ -22,6 +22,7 @@ from admesh_domains.geometry import (
     suggest_domain,
     union,
     IoUScore,
+    _split_antimeridian_bbox,
 )
 
 
@@ -81,11 +82,35 @@ class TestComputeIoU:
         iou = compute_iou(bb(0, 0, 10, 10), bb(5, 0, 15, 10))
         assert iou == pytest.approx(50 / 150)
 
-    def test_antimeridian_returns_zero(self, capsys):
-        iou = compute_iou(bb(170, 0, -170, 10), bb(-180, 0, 180, 10))
+    def test_antimeridian_wrapping_split(self):
+        pacific = bb(170, -10, -170, 10)
+        parts = _split_antimeridian_bbox(pacific)
+        assert len(parts) == 2
+        assert parts[0] == bb(170, -10, 180, 10)
+        assert parts[1] == bb(-180, -10, -170, 10)
+
+    def test_antimeridian_non_wrapping_no_split(self):
+        normal = bb(-170, -10, 170, 10)
+        parts = _split_antimeridian_bbox(normal)
+        assert len(parts) == 1
+        assert parts[0] == normal
+
+    def test_antimeridian_iou_with_itself(self):
+        pacific = bb(170, -10, -170, 10)
+        iou = compute_iou(pacific, pacific)
+        assert iou == pytest.approx(1.0)
+
+    def test_antimeridian_iou_vs_normal_bbox(self):
+        pacific = bb(170, -10, -170, 10)
+        wnat = bb(-85, 15, -50, 45)
+        iou = compute_iou(pacific, wnat)
         assert iou == 0.0
-        captured = capsys.readouterr()
-        assert "antimeridian" in captured.err.lower()
+
+    def test_antimeridian_iou_with_overlap(self):
+        pacific_east = bb(170, -10, -170, 10)
+        overlap_box = bb(175, 0, 180, 5)
+        iou = compute_iou(pacific_east, overlap_box)
+        assert iou > 0.0
 
     def test_centroid_distance(self):
         d = centroid_distance(bb(0, 0, 2, 2), bb(4, 0, 6, 2))

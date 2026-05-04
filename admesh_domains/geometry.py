@@ -68,28 +68,47 @@ def centroid(bb: BoundingBox) -> tuple[float, float]:
     return ((bb.min_lon + bb.max_lon) / 2, (bb.min_lat + bb.max_lat) / 2)
 
 
-def compute_iou(a: BoundingBox, b: BoundingBox) -> float:
-    """Intersection-over-union of two bboxes.
+def _split_antimeridian_bbox(bb: BoundingBox) -> list[BoundingBox]:
+    """Split an antimeridian-wrapping bbox into east/west halves around the dateline.
 
-    Returns 0.0 for disjoint or zero-area inputs. Antimeridian-wrapping
-    bboxes are treated as zero-area; a warning is emitted to stderr the
-    first time one is encountered (callers can detect via
-    ``is_antimeridian_wrapping``).
+    For a bbox with min_lon > max_lon (wrapping), returns two non-wrapping bboxes:
+    - East: [min_lon, min_lat, 180, max_lat]
+    - West: [-180, min_lat, max_lon, max_lat]
+
+    For non-wrapping bboxes, returns [bb] unchanged.
     """
-    if is_antimeridian_wrapping(a) or is_antimeridian_wrapping(b):
-        print(
-            "[warn] antimeridian-wrapping bbox encountered; IoU=0 (deferred to a future spec)",
-            file=sys.stderr,
-        )
-        return 0.0
-    inter = intersection(a, b)
-    if inter is None:
-        return 0.0
-    inter_area = area(inter)
-    union_area = area(a) + area(b) - inter_area
+    if not is_antimeridian_wrapping(bb):
+        return [bb]
+    return [
+        BoundingBox(bb.min_lon, bb.min_lat, 180, bb.max_lat),
+        BoundingBox(-180, bb.min_lat, bb.max_lon, bb.max_lat),
+    ]
+
+
+def compute_iou(a: BoundingBox, b: BoundingBox) -> float:
+    """Intersection-over-union of two bboxes, supporting antimeridian-wrapping.
+
+    Handles antimeridian-wrapping bboxes (min_lon > max_lon) by splitting them
+    into east/west halves and computing the combined intersection and union areas.
+    Returns 0.0 for disjoint or zero-area inputs.
+    """
+    parts_a = _split_antimeridian_bbox(a)
+    parts_b = _split_antimeridian_bbox(b)
+
+    total_inter_area = 0.0
+    for pa in parts_a:
+        for pb in parts_b:
+            inter = intersection(pa, pb)
+            if inter is not None:
+                total_inter_area += area(inter)
+
+    total_area_a = sum(area(pa) for pa in parts_a)
+    total_area_b = sum(area(pb) for pb in parts_b)
+    union_area = total_area_a + total_area_b - total_inter_area
+
     if union_area <= 0:
         return 0.0
-    return inter_area / union_area
+    return total_inter_area / union_area
 
 
 def centroid_distance(a: BoundingBox, b: BoundingBox) -> float:

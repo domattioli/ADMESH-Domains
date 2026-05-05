@@ -34,7 +34,14 @@ function renderCards(domains, q = "") {
   `).join("");
 }
 
-function bboxSvg(m) {
+function bboxSvg(m, thumbnailUrl) {
+  if (thumbnailUrl) {
+    return `<img src="${thumbnailUrl}" alt="${m.full_id}" class="thumb-img" onerror="this.outerHTML='${bboxSvgFallback(m).replace(/'/g, "\\'")}'"/>`;
+  }
+  return bboxSvgFallback(m);
+}
+
+function bboxSvgFallback(m) {
   if (!m.bounding_box) {
     return `<svg viewBox="0 0 100 70" class="thumb-svg" aria-hidden="true"><rect x="5" y="5" width="90" height="60" fill="none" stroke="currentColor" stroke-dasharray="4 3" opacity="0.4"/><text x="50" y="40" text-anchor="middle" font-size="10" fill="currentColor" opacity="0.5">no bbox</text></svg>`;
   }
@@ -66,13 +73,19 @@ function renderThumbs(domains, q = "") {
     for (const m of d.meshes || []) items.push({ d, m });
   }
   count.textContent = `${items.length} mesh${items.length === 1 ? "" : "es"}`;
-  el.innerHTML = items.map(({ d, m }) => `
+  el.innerHTML = items.map(({ d, m }) => {
+    const thumbUrl = m.thumbnail_url || null;
+    const thumbHtml = thumbUrl
+      ? `<img src="${thumbUrl}" alt="${m.full_id}" class="thumb-img" onerror="this.outerHTML='${bboxSvgFallback(m).replace(/'/g, "\\'")}'"/>`
+      : bboxSvgFallback(m);
+    return `
     <a class="thumb-card" href="mesh.html?d=${encodeURIComponent(d.name)}&m=${encodeURIComponent(m.id)}">
-      ${bboxSvg(m)}
+      ${thumbHtml}
       <div class="thumb-title">${d.name}/${m.id}</div>
       <div class="meta">${m.kind === "boundary" ? "Boundary" : "Mesh"} · ${m.size_mb != null ? m.size_mb.toFixed(2) + " MB" : "—"}</div>
     </a>
-  `).join("");
+  `;
+  }).join("");
 }
 
 function renderTable(domains, q = "") {

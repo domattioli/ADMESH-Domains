@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "admesh-domains"
-version = "0.4.0"
+version = "0.4.1"
 description = "ADCIRC mesh registry - domain management and validation for mesh data"
 readme = "README.md"
 license = {text = "MIT"}

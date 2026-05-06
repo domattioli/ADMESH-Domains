@@ -175,3 +175,16 @@ footer a { color: var(--muted); text-decoration: underline; }
 .confidence-confident { color: var(--success); font-weight: 600; }
 .confidence-uncertain { color: #c47a00; font-weight: 600; }
 .confidence-low { color: var(--muted); }
+
+.quality-badge {
+  display: inline-block;
+  padding: 0.1rem 0.5rem;
+  border-radius: 0.75rem;
+  font-size: 0.85em;
+  font-weight: 600;
+  border: 1px solid transparent;
+}
+.quality-badge.high { color: #0a6e2c; background: #d8f3dc; border-color: #b7e4c7; }
+.quality-badge.medium { color: #8a5a00; background: #fff3cd; border-color: #ffe69c; }
+.quality-badge.low { color: #6b6b6b; background: #f1f1f1; border-color: #d9d9d9; }
+.quality-badge.na { color: var(--muted); background: transparent; border-color: var(--border); font-weight: 400; }

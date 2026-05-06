@@ -78,6 +78,35 @@ class TestDomainSuggest:
         assert "<TBD>" in out
         assert "synthetic.14" in out
 
+    def test_tier2_same_mesh_ranks_first(self, capsys, dev_manifest_path):
+        """Test that tier 2 correctly ranks the same mesh first (boundary matching works)."""
+        path = dev_manifest_path.parent / "meshes" / "WNAT_Hagen.14"
+        code, out, _ = _run(
+            ["domain", "suggest", str(path), "--manifest", str(dev_manifest_path), "--tier", "2", "--non-interactive"],
+            capsys,
+        )
+        assert code == 0
+        assert "WNAT" in out
+        assert "confident" in out
+        assert "[TIER 2]" in out
+        # Should show boundary metrics
+        assert "boundary:" in out
+        assert "polygon IoU" in out
+
+    def test_tier2_json_includes_boundary_metrics(self, capsys, dev_manifest_path):
+        """Test that tier 2 JSON output includes boundary metrics."""
+        path = dev_manifest_path.parent / "meshes" / "WNAT_Hagen.14"
+        code, out, _ = _run(
+            ["domain", "suggest", str(path), "--manifest", str(dev_manifest_path), "--tier", "2", "--json"],
+            capsys,
+        )
+        data = json.loads(out)
+        assert data["tier"] == 2
+        assert data["candidates"][0]["domain"] == "WNAT"
+        assert "boundary_hausdorff_km" in data["candidates"][0]
+        assert "boundary_polygon_iou" in data["candidates"][0]
+        assert data["candidates"][0]["boundary_polygon_iou"] == pytest.approx(1.0, abs=0.01)
+
 
 class TestDomainAudit:
     def test_full_registry_zero_disagreements(self, capsys):

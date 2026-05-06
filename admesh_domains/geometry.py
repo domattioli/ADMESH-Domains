@@ -494,7 +494,7 @@ def suggest_domain(
     # Sort by Tier 2 metrics if available, else by Tier 1.
     if tier == 2:
         scores.sort(key=lambda s: (
-            -s.boundary_polygon_iou if s.boundary_polygon_iou is not None else -float('inf'),
+            -(s.boundary_polygon_iou if s.boundary_polygon_iou is not None else 0.0),
             -s.per_mesh_iou,
         ))
     else:

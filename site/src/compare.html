@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Compare Meshes — ADMESH-Domains</title>
+  <meta name="description" content="Compare triangle, quad-dominant, and mixed mesh strategies side-by-side for any domain in the ADMESH-Domains registry." />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header id="site-header"></header>
+  <main>
+    <h1>Compare Mesh Strategies</h1>
+    <p class="muted">Select a domain and click Compare to see available mesh variants side-by-side with metrics.</p>
+
+    <div class="compare-controls">
+      <label for="domain-select">
+        Domain
+        <select id="domain-select" aria-label="Select domain to compare"></select>
+      </label>
+      <button type="button" id="compare-btn" class="btn">Compare</button>
+    </div>
+
+    <div id="compare-panels" aria-live="polite"></div>
+    <div id="compare-banner" aria-live="polite"></div>
+  </main>
+  <footer id="site-footer"></footer>
+  <script type="module" src="js/compare.js"></script>
+</body>
+</html>

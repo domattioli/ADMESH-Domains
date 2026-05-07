@@ -2,6 +2,7 @@
 const PAGES = [
   ["", "Home"],
   ["browse.html", "Browse"],
+  ["compare.html", "Compare"],
   ["upload.html", "Upload"],
 ];
 

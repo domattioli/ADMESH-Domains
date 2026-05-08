@@ -4,6 +4,24 @@
 
 Project-level guidance for Claude (and other coding agents) working on this repo.
 
+## DomI Sync Contract
+
+This repo is a downstream consumer of [`domattioli/DomI`](https://github.com/domattioli/DomI), which provides shared skills and policy via Claude Code plugins.
+
+**On every session start**, `scripts/instructions_on_start.sh` invokes the `sync-from-domi` skill's `check_pin.sh` to compare the local `.domi-pin` against `domattioli/DomI@main`. If this repo is **behind** upstream (drift), the hook **HARD STOPS** the session and refuses write work until the operator says `> sync from DomI` (or runs `update_pin.sh` manually). A forked pin (manifest hash mismatch) also hard-stops.
+
+**Plugins installed at user scope**:
+- `sync-from-domi@DomI` — drift check, pin refresh, sync issue closure
+- `request-from-domi@DomI` — file/vote on `request-skill` issues upstream
+- `introspect@DomI` — end-of-session retrospective + feedback to DomI
+
+**Pin file**: `.domi-pin` (committed). Records upstream SHA + `MANIFEST.md` sha256. Regenerate with:
+```bash
+bash ~/.claude/plugins/cache/DomI/sync-from-domi/*/skills/sync-from-domi/scripts/update_pin.sh
+```
+
+DomI's side: `.github/workflows/notify-downstream.yml` opens a `chore: sync DomI@<sha>` issue here on every push to `main` that touches skills/manifest/policy. After syncing, comment the new pin SHA on the issue and close it.
+
 ## Stream Timeout Prevention
 
 1. Do each numbered task ONE AT A TIME. Complete one task fully,

@@ -74,6 +74,16 @@ When the registry needs human judgment (which Domain a new mesh belongs to, what
 
 The PR review is the curation gate.
 
+## VII. External Upstream (DomI)
+
+`ADMESH-Domains` is a downstream consumer of [`domattioli/DomI`](https://github.com/domattioli/DomI), which governs shared skills, MANIFEST, and cross-repo policy.
+
+1. `.domi-pin` (committed) records the upstream SHA + MANIFEST.md sha256. Never hand-edit; regenerate via `update_pin.sh`.
+2. `scripts/instructions_on_start.sh` hard-stops on drift (exit 1 or 3). Run `/sync-from-domi` before any write work when blocked.
+3. DomI skills take precedence over inline reimplementation. Submit changes upstream via `request-from-domi`; this repo is pull-only.
+4. **Publish gate**: sync from DomI before any data publish (`publish-data.yml`), PyPI release, or HuggingFace update if drift is detected at session start.
+5. ADMESH is the primary consumer of this registry. Coordinate domain additions affecting ADMESH pipelines with the ADMESH maintainers.
+
 ## Constitution version
 
-1.0 — established 2026-04-26. Amend by editing this file in a PR with rationale; bump the version on substantial changes.
+1.1 — 2026-05-08: Added § VII External Upstream (DomI).

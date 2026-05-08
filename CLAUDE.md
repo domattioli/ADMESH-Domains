@@ -32,19 +32,6 @@ Standard routine bootstrap for cloud / scheduled sessions on this repo:
 
 DomI governs cross-repo skills + policy. `.specify/memory/constitution.md` governs feature design within this repo. CLAUDE.md (this file) is the local governance doc — there is no separate `constitution.md` at repo root.
 
-## Stream Timeout Prevention
-
-1. Do each numbered task ONE AT A TIME. Complete one task fully,
-   confirm it worked, then move to the next.
-2. Never write a file longer than ~150 lines in a single tool call.
-   If a file will be longer, write it in multiple append/edit passes.
-3. Start a fresh session if the conversation gets long (20+ tool calls).
-   The error gets worse as the session grows.
-4. Keep individual grep/search outputs short. Use flags like
-   `--include` and `-l` (list files only) to limit output size.
-5. If you do hit the timeout, retry the same step in a shorter form.
-   Don't repeat the entire task from scratch.
-
 ## Release Skills
 
 The Claude Code **skill definitions** for `github-release` and `pypi-publish` are **DomI-managed** — they ship from `domattioli/DomI` via the `sync-from-domi` plugin. Do not edit the local `SKILL.md` files; edit upstream and re-sync.
@@ -72,6 +59,8 @@ A Python package (`admesh-domains` on PyPI) plus a HuggingFace dataset (`domatti
 - **Mesh** — a specific realization of a Domain (one `.14` or `.2dm` file with its own resolution, contributor, etc.)
 
 Composite IDs look like `WNAT/hagen@v1`. The registry currently holds 13 Domains and 40 Meshes (~59 MB).
+
+ADMESH is the primary consumer of this registry. Coordinate domain additions affecting ADMESH pipelines with the ADMESH maintainers.
 
 ## Key conventions
 

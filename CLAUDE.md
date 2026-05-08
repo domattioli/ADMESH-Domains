@@ -1,6 +1,26 @@
 # CLAUDE.md
 
+<!-- maintained-by: maintain-claude-md skill -->
+
 Project-level guidance for Claude (and other coding agents) working on this repo.
+
+## DomI Sync Contract
+
+This repo is a downstream consumer of [`domattioli/DomI`](https://github.com/domattioli/DomI), which provides shared skills and policy via Claude Code plugins.
+
+**On every session start**, `scripts/instructions_on_start.sh` invokes the `sync-from-domi` skill's `check_pin.sh` to compare the local `.domi-pin` against `domattioli/DomI@main`. If this repo is **behind** upstream (drift), the hook **HARD STOPS** the session and refuses write work until the operator says `> sync from DomI` (or runs `update_pin.sh` manually). A forked pin (manifest hash mismatch) also hard-stops.
+
+**Plugins installed at user scope**:
+- `sync-from-domi@DomI` — drift check, pin refresh, sync issue closure
+- `request-from-domi@DomI` — file/vote on `request-skill` issues upstream
+- `introspect@DomI` — end-of-session retrospective + feedback to DomI
+
+**Pin file**: `.domi-pin` (committed). Records upstream SHA + `MANIFEST.md` sha256. Regenerate with:
+```bash
+bash ~/.claude/plugins/cache/DomI/sync-from-domi/*/skills/sync-from-domi/scripts/update_pin.sh
+```
+
+DomI's side: `.github/workflows/notify-downstream.yml` opens a `chore: sync DomI@<sha>` issue here on every push to `main` that touches skills/manifest/policy. After syncing, comment the new pin SHA on the issue and close it.
 
 ## Stream Timeout Prevention
 
@@ -151,6 +171,28 @@ gh workflow run publish-data.yml -R domattioli/ADMESH-Domains
 # Or with a custom tag:
 gh workflow run publish-data.yml -R domattioli/ADMESH-Domains -f tag=data-special-rev
 ```
+
+## Branch Discipline & Naming Policy
+
+**Branch creation is ad-hoc** (no spec-kit workflow on this smaller project). When creating a feature branch:
+
+1. **Branch naming**: `feature/short-description` or `fix/issue-number` for clarity
+   - Example: `feature/cache-busting`, `fix/schema-validation`
+2. **All PRs must be merged to main** (no long-lived feature branches)
+   - Create PR on the branch
+   - Resolve conflicts against main
+   - Squash-merge (keeps main history clean)
+   - Delete the branch after merge
+
+**Policy enforcement**:
+- Main branch requires PR review before merge
+- No direct pushes to main
+- CI runs on every PR (`validate-pr.yml` checks Python versions 3.9–3.12)
+- Stale branches are cleaned up; don't force stale code through
+
+**Release workflow** (code/API changes):
+- Tag `v0.X.Y` on main → triggers `release.yml` → PyPI + HuggingFace with semantic version
+- Data-only changes (mesh additions/edits): No PyPI bump; push to main → triggers `publish-data.yml` → HF tagged `data-YYYY-MM-DD-<sha7>`
 
 ## Specs index
 

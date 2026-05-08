@@ -12,6 +12,20 @@ function flattenMeshes(manifest) {
   );
 }
 
+// Element density (elements/km²) using equirectangular bbox area.
+// Returns null for non-geographic, antimeridian-wrapping, or missing-element-count meshes.
+function computeDensity(m) {
+  if (m.element_count == null) return null;
+  if (!m.geographic) return null;
+  const bb = m.bounding_box;
+  if (!bb || bb.min_lon > bb.max_lon) return null;
+  const meanLat = (bb.min_lat + bb.max_lat) / 2;
+  const widthKm = (bb.max_lon - bb.min_lon) * 111.0 * Math.cos(meanLat * Math.PI / 180);
+  const heightKm = (bb.max_lat - bb.min_lat) * 111.0;
+  const area = widthKm * heightKm;
+  return area > 0 ? m.element_count / area : null;
+}
+
 function topN(rows, key, n = 5) {
   return rows.filter((r) => r[key] != null).sort((a, b) => b[key] - a[key]).slice(0, n);
 }
@@ -101,6 +115,15 @@ function renderContributors(elId, entries) {
     renderTopTable("top-nodes", topN(rows, "node_count"), "node_count", (m) => fmt(m.node_count));
     renderTopTable("top-elements", topN(rows, "element_count"), "element_count", (m) => fmt(m.element_count));
     renderTopTable("top-size", topN(rows, "size_mb"), "size_mb", (m) => `${m.size_mb.toFixed(2)} MB`);
+
+    // Element density (elements/km²) — derived proxy for mesh refinement.
+    for (const r of rows) r._density = computeDensity(r);
+    renderTopTable(
+      "top-density",
+      topN(rows, "_density"),
+      "elements/km²",
+      (m) => `${m._density >= 1000 ? Math.round(m._density).toLocaleString() : m._density.toFixed(1)} elem/km²`,
+    );
 
     renderBarChart("refinement-chart", tally(rows, (r) => r.refinement_level || "unspecified"));
     renderBarChart("license-chart", tally(rows, (r) => r.license || "unknown"));

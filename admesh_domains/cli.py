@@ -217,7 +217,8 @@ def cmd_domain_suggest(args: argparse.Namespace) -> int:
         return 3
 
     manifest = load_manifest(Path(args.manifest) if args.manifest else None)
-    scores = suggest_domain(bb, manifest)
+    tier = getattr(args, "tier", 1)
+    scores = suggest_domain(bb, manifest, tier=tier, new_mesh_path=path)
 
     confident = [s for s in scores if s.confidence == "confident"]
     exit_code = 0 if len(confident) == 1 else (2 if len(confident) > 1 else 1)
@@ -225,6 +226,7 @@ def cmd_domain_suggest(args: argparse.Namespace) -> int:
     if args.json:
         out = {
             "path": str(path),
+            "tier": tier,
             "bbox": [bb.min_lon, bb.min_lat, bb.max_lon, bb.max_lat],
             "candidates": [s.to_dict() for s in scores],
             "exit_code": exit_code,
@@ -238,9 +240,10 @@ def cmd_domain_suggest(args: argparse.Namespace) -> int:
     GRAY = "\033[90m" if use_color else ""
     RESET = "\033[0m" if use_color else ""
 
+    tier_label = f" [TIER {tier}]" if tier > 1 else ""
     print(
         f"Suggestions for {path.name} "
-        f"(bbox: {bb.min_lon:.2f}, {bb.min_lat:.2f}, {bb.max_lon:.2f}, {bb.max_lat:.2f}):"
+        f"(bbox: {bb.min_lon:.2f}, {bb.min_lat:.2f}, {bb.max_lon:.2f}, {bb.max_lat:.2f}){tier_label}:"
     )
     if not scores:
         print("  (no Domains have geographic-bbox meshes; cannot rank)")
@@ -250,11 +253,17 @@ def cmd_domain_suggest(args: argparse.Namespace) -> int:
             else YELLOW if s.confidence == "uncertain"
             else GRAY
         )
-        print(
-            f"  {i}. {color}{s.domain_name:20}{RESET}  "
-            f"per_mesh IoU={s.per_mesh_iou:.3f}  union IoU={s.union_iou:.3f}  "
-            f"({s.confidence})"
-        )
+        bbox_info = f"per_mesh IoU={s.per_mesh_iou:.3f}  union IoU={s.union_iou:.3f}"
+        print(f"  {i}. {color}{s.domain_name:20}{RESET}  {bbox_info}  ({s.confidence})")
+
+        if tier > 1 and (s.boundary_hausdorff_km is not None or s.boundary_polygon_iou is not None):
+            boundary_info = []
+            if s.boundary_hausdorff_km is not None:
+                boundary_info.append(f"hausdorff={s.boundary_hausdorff_km:.1f} km")
+            if s.boundary_polygon_iou is not None:
+                boundary_info.append(f"polygon IoU={s.boundary_polygon_iou:.3f}")
+            if boundary_info:
+                print(f"       boundary: {', '.join(boundary_info)}")
 
     is_no_match = not scores or scores[0].per_mesh_iou < CONFIDENT_THRESHOLD
     if is_no_match:
@@ -333,11 +342,13 @@ def cmd_domain_audit(args: argparse.Namespace) -> int:
 
     manifest = load_manifest()
     disagreements = []
+    tier = getattr(args, "tier", 1)
     for d in manifest.domains:
         for mesh in d.meshes:
             if mesh.bounding_box is None:
                 continue
-            scores = suggest_domain(mesh.bounding_box, manifest)
+            mesh_path = mesh.path if hasattr(mesh, "path") and mesh.path else None
+            scores = suggest_domain(mesh.bounding_box, manifest, tier=tier, new_mesh_path=mesh_path)
             if not scores:
                 continue
             top = scores[0]
@@ -437,6 +448,8 @@ def build_parser() -> argparse.ArgumentParser:
     )
     pds.add_argument("path", help="Path to a fort.14 / .grd / .2dm mesh file")
     pds.add_argument("--manifest", default=None, help="Manifest path (default: bundled)")
+    pds.add_argument("--tier", type=int, default=1, choices=[1, 2],
+                     help="Matching tier: 1 (bbox only, default) or 2 (bbox + boundary polygon)")
     pds.add_argument("--json", action="store_true", help="Emit JSON output")
     pds.add_argument(
         "--non-interactive", action="store_true",
@@ -452,6 +465,8 @@ def build_parser() -> argparse.ArgumentParser:
         "--threshold", type=float, default=UNCERTAIN_THRESHOLD_DEFAULT,
         help="Minimum per-mesh IoU to count as a real disagreement (default 0.05)",
     )
+    pda.add_argument("--tier", type=int, default=1, choices=[1, 2],
+                     help="Matching tier: 1 (bbox only, default) or 2 (bbox + boundary polygon)")
     pda.add_argument("--json", action="store_true", help="Emit JSON output")
     pda.set_defaults(func=cmd_domain_audit)
 

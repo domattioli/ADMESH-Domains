@@ -87,13 +87,14 @@ def build_manifest_json(manifest_toml: Path) -> dict:
     domains_out = []
     total_meshes = 0
     total_size_mb = 0.0
+    thumb_dir = manifest_toml.parent / "thumbnails"
 
     for d in raw.get("domains", []):
         meshes = []
         for m in d.get("meshes", []):
             bbox = m.get("bounding_box")
             filename = m["filename"]
-            meshes.append({
+            mesh_dict = {
                 "id": m["id"],
                 "full_id": f"{d['name']}/{m['id']}",
                 "filename": filename,
@@ -112,7 +113,11 @@ def build_manifest_json(manifest_toml: Path) -> dict:
                 "test_case": bool(m.get("test_case", False)),
                 "kind": m.get("kind", "mesh"),
                 "download_url": f"{HF_BASE}/{d['name']}/{filename}",
-            })
+            }
+            thumb_path = thumb_dir / d["name"] / f"{m['id']}.png"
+            if thumb_path.exists():
+                mesh_dict["thumbnail_url"] = f"https://huggingface.co/datasets/domattioli/ADMESH-Domains/resolve/main/thumbnails/{d['name']}/{m['id']}.png"
+            meshes.append(mesh_dict)
             total_meshes += 1
             total_size_mb += float(m.get("size_mb") or 0.0)
         domains_out.append({

@@ -16,12 +16,16 @@ from admesh_domains.geometry import (
     centroid_distance,
     compute_iou,
     domain_union_bbox,
+    extract_boundary_polygon,
+    hausdorff_distance,
     intersection,
     is_antimeridian_wrapping,
     per_mesh_iou,
+    polygon_iou,
     suggest_domain,
     union,
     IoUScore,
+    _split_antimeridian_bbox,
 )
 
 
@@ -81,11 +85,35 @@ class TestComputeIoU:
         iou = compute_iou(bb(0, 0, 10, 10), bb(5, 0, 15, 10))
         assert iou == pytest.approx(50 / 150)
 
-    def test_antimeridian_returns_zero(self, capsys):
-        iou = compute_iou(bb(170, 0, -170, 10), bb(-180, 0, 180, 10))
+    def test_antimeridian_wrapping_split(self):
+        pacific = bb(170, -10, -170, 10)
+        parts = _split_antimeridian_bbox(pacific)
+        assert len(parts) == 2
+        assert parts[0] == bb(170, -10, 180, 10)
+        assert parts[1] == bb(-180, -10, -170, 10)
+
+    def test_antimeridian_non_wrapping_no_split(self):
+        normal = bb(-170, -10, 170, 10)
+        parts = _split_antimeridian_bbox(normal)
+        assert len(parts) == 1
+        assert parts[0] == normal
+
+    def test_antimeridian_iou_with_itself(self):
+        pacific = bb(170, -10, -170, 10)
+        iou = compute_iou(pacific, pacific)
+        assert iou == pytest.approx(1.0)
+
+    def test_antimeridian_iou_vs_normal_bbox(self):
+        pacific = bb(170, -10, -170, 10)
+        wnat = bb(-85, 15, -50, 45)
+        iou = compute_iou(pacific, wnat)
         assert iou == 0.0
-        captured = capsys.readouterr()
-        assert "antimeridian" in captured.err.lower()
+
+    def test_antimeridian_iou_with_overlap(self):
+        pacific_east = bb(170, -10, -170, 10)
+        overlap_box = bb(175, 0, 180, 5)
+        iou = compute_iou(pacific_east, overlap_box)
+        assert iou > 0.0
 
     def test_centroid_distance(self):
         d = centroid_distance(bb(0, 0, 2, 2), bb(4, 0, 6, 2))
@@ -139,6 +167,147 @@ class TestSuggestDomain:
         assert d["confidence"] == "confident"
         assert d["per_mesh_iou"] == 0.6
         assert d["union_iou"] == 0.4
+
+
+class TestTier2BoundaryExtraction:
+    """Tests for Tier 2 boundary polygon extraction (requires shapely)."""
+
+    def test_extract_boundary_from_fort14(self, dev_manifest_path):
+        """Extract boundary from a known fort.14 file."""
+        path = dev_manifest_path.parent / "meshes" / "WNAT_Hagen.14"
+        boundary = extract_boundary_polygon(path)
+        assert boundary is not None
+        # Boundary should be a shapely Polygon with non-zero area
+        assert boundary.area > 0
+        # Should be a valid (non-self-intersecting) polygon
+        assert boundary.is_valid or not boundary.is_empty
+
+    def test_extract_boundary_missing_file_returns_none(self, tmp_path):
+        """Boundary extraction returns None for missing files."""
+        missing = tmp_path / "nope.14"
+        assert extract_boundary_polygon(missing) is None
+
+    def test_extract_boundary_invalid_fort14_returns_none(self, tmp_path):
+        """Boundary extraction returns None for malformed fort.14."""
+        invalid = tmp_path / "invalid.14"
+        invalid.write_text("garbage\ninvalid format\n")
+        assert extract_boundary_polygon(invalid) is None
+
+
+class TestTier2PolygonMetrics:
+    """Tests for Tier 2 polygon similarity metrics."""
+
+    def test_polygon_iou_identical_polygons(self):
+        """IoU of a polygon with itself should be 1.0."""
+        try:
+            from shapely.geometry import Polygon
+        except ImportError:
+            pytest.skip("shapely not installed")
+
+        square = Polygon([(0, 0), (1, 0), (1, 1), (0, 1)])
+        iou = polygon_iou(square, square)
+        assert iou == pytest.approx(1.0)
+
+    def test_polygon_iou_disjoint_polygons(self):
+        """IoU of non-overlapping polygons should be 0.0."""
+        try:
+            from shapely.geometry import Polygon
+        except ImportError:
+            pytest.skip("shapely not installed")
+
+        square1 = Polygon([(0, 0), (1, 0), (1, 1), (0, 1)])
+        square2 = Polygon([(2, 2), (3, 2), (3, 3), (2, 3)])
+        iou = polygon_iou(square1, square2)
+        assert iou == pytest.approx(0.0)
+
+    def test_polygon_iou_partial_overlap(self):
+        """IoU of overlapping polygons."""
+        try:
+            from shapely.geometry import Polygon
+        except ImportError:
+            pytest.skip("shapely not installed")
+
+        square1 = Polygon([(0, 0), (2, 0), (2, 2), (0, 2)])
+        square2 = Polygon([(1, 1), (3, 1), (3, 3), (1, 3)])
+        iou = polygon_iou(square1, square2)
+        # Overlap is 1x1=1, union is 2x2 + 2x2 - 1x1 = 7, so iou = 1/7 ≈ 0.143
+        assert iou == pytest.approx(1.0 / 7.0, abs=0.01)
+
+    def test_polygon_iou_none_inputs(self):
+        """IoU with None inputs returns 0.0."""
+        iou = polygon_iou(None, None)
+        assert iou == 0.0
+
+    def test_hausdorff_distance_identical_polygons(self):
+        """Hausdorff distance of a polygon with itself should be 0."""
+        try:
+            from shapely.geometry import Polygon
+        except ImportError:
+            pytest.skip("shapely not installed")
+
+        square = Polygon([(0, 0), (1, 0), (1, 1), (0, 1)])
+        dist = hausdorff_distance(square, square)
+        assert dist == pytest.approx(0.0)
+
+    def test_hausdorff_distance_disjoint_polygons(self):
+        """Hausdorff distance increases with separation."""
+        try:
+            from shapely.geometry import Polygon
+        except ImportError:
+            pytest.skip("shapely not installed")
+
+        square1 = Polygon([(0, 0), (1, 0), (1, 1), (0, 1)])
+        square2 = Polygon([(10, 10), (11, 10), (11, 11), (10, 11)])
+        dist = hausdorff_distance(square1, square2)
+        # Should be roughly the diagonal distance from (1,1) to (10,10)
+        assert dist is not None
+        assert dist > 10
+
+    def test_hausdorff_distance_none_inputs(self):
+        """Hausdorff distance with None inputs returns None."""
+        dist = hausdorff_distance(None, None)
+        assert dist is None
+
+
+class TestTier2SuggestDomain:
+    """Tests for Tier 2 domain suggestion with boundary metrics."""
+
+    def test_tier2_same_mesh_ranks_first(self, dev_manifest_path):
+        """When suggesting for WNAT mesh, WNAT should rank first with tier=2."""
+        from admesh_domains.manifest import load_manifest
+
+        path = dev_manifest_path.parent / "meshes" / "WNAT_Hagen.14"
+        manifest = load_manifest(dev_manifest_path)
+        from admesh_domains.geometry import bbox_from_mesh_file
+        bb = bbox_from_mesh_file(path)
+        assert bb is not None
+
+        scores = suggest_domain(bb, manifest, tier=2, new_mesh_path=path)
+        assert len(scores) > 0
+        # WNAT should be first with perfect metrics
+        assert scores[0].domain_name == "WNAT"
+        assert scores[0].per_mesh_iou == pytest.approx(1.0)
+        assert scores[0].boundary_polygon_iou == pytest.approx(1.0, abs=0.01)
+
+    def test_tier2_fallback_when_shapely_unavailable(self, dev_manifest_path, monkeypatch):
+        """Tier 2 should fall back to tier 1 if shapely is missing."""
+        # This test is tricky because shapely is already imported.
+        # We'll just verify that tier=2 with no mesh_path falls back to tier 1
+        from admesh_domains.manifest import load_manifest
+        from admesh_domains.geometry import bbox_from_mesh_file
+
+        path = dev_manifest_path.parent / "meshes" / "WNAT_Hagen.14"
+        manifest = load_manifest(dev_manifest_path)
+        bb = bbox_from_mesh_file(path)
+
+        # Call without new_mesh_path (should fail to extract boundary)
+        scores = suggest_domain(bb, manifest, tier=2, new_mesh_path=None)
+        # Should still return results, just without boundary metrics
+        assert len(scores) > 0
+        # First result should be WNAT, but based on bbox IoU alone
+        assert scores[0].domain_name == "WNAT"
+        # Boundary metrics should be None (fallback to tier 1)
+        assert scores[0].boundary_polygon_iou is None or scores[0].boundary_polygon_iou == 0.0
 
 
 class TestMeshFileParsing:

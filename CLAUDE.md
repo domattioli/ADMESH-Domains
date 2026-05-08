@@ -22,6 +22,16 @@ bash ~/.claude/plugins/cache/DomI/sync-from-domi/*/skills/sync-from-domi/scripts
 
 DomI's side: `.github/workflows/notify-downstream.yml` opens a `chore: sync DomI@<sha>` issue here on every push to `main` that touches skills/manifest/policy. After syncing, comment the new pin SHA on the issue and close it.
 
+**Publish-gate rule**: if DomI drift is detected at session start, sync from DomI **before** any data publish (`publish-data.yml`, mesh add/edit) or code/release publish (PyPI, HuggingFace, `release.yml`, `pypi-publish.sh`, `github-release.sh`). No exceptions.
+
+## Routine Session Instructions
+
+Standard routine bootstrap for cloud / scheduled sessions on this repo:
+
+> Read https://raw.githubusercontent.com/domattioli/DomI/main/claude_routine_instructions.md then CLAUDE.md. Data-only changes (mesh add/edit) never trigger PyPI bump. Code/API/schema changes require tag → release.yml.
+
+DomI governs cross-repo skills + policy. `.specify/memory/constitution.md` governs feature design within this repo. CLAUDE.md (this file) is the local governance doc — there is no separate `constitution.md` at repo root.
+
 ## Stream Timeout Prevention
 
 1. Do each numbered task ONE AT A TIME. Complete one task fully,
@@ -37,14 +47,23 @@ DomI's side: `.github/workflows/notify-downstream.yml` opens a `chore: sync DomI
 
 ## Release Skills
 
-These two skills must be present in your global `~/.claude/skills/` inventory every session:
+The Claude Code **skill definitions** for `github-release` and `pypi-publish` are **DomI-managed** — they ship from `domattioli/DomI` via the `sync-from-domi` plugin. Do not edit the local `SKILL.md` files; edit upstream and re-sync.
 
-| Skill | Trigger phrases | Script |
+| Skill | Trigger phrases | Standalone script (always present) |
 |---|---|---|
-| `github-release` | "ship", "release", "ship vX.Y.Z", "create a release" | `python scripts/github_release.py` |
-| `pypi-publish` | "publish to PyPI", "upload the wheel", "push to PyPI" | `python scripts/pypi_publish.py` |
+| `github-release` | "ship", "release", "ship vX.Y.Z", "create a release" | `scripts/github-release.sh` / `scripts/github_release.py` |
+| `pypi-publish` | "publish to PyPI", "upload the wheel", "push to PyPI" | `scripts/pypi-publish.sh` / `scripts/pypi_publish.py` |
 
-Skills are installed at `~/.claude/skills/github-release/SKILL.md` and `~/.claude/skills/pypi-publish/SKILL.md`. If missing, reinstall: clone `https://github.com/anthropics/claude-plugins-official.git`, copy the skill-creator plugin, then recreate the two skill files above.
+The `scripts/github-release.sh` and `scripts/pypi-publish.sh` shell scripts remain in this repo as **standalone, non-skill release tooling** — runnable directly from CI, terminal, or `gh workflow`. They are not DomI-managed and don't depend on the skill being installed.
+
+If the DomI skill definitions are missing locally:
+```bash
+> sync from DomI                     # operator-invoked
+# or:
+claude plugin install sync-from-domi@DomI && bash ~/.claude/plugins/cache/DomI/sync-from-domi/*/skills/sync-from-domi/scripts/update_pin.sh
+```
+
+**Never publish (PyPI/HF/GitHub release) while DomI drift is open** — see the publish-gate rule in DomI Sync Contract above.
 
 ## What this repo is
 

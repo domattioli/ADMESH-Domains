@@ -74,6 +74,16 @@ When the registry needs human judgment (which Domain a new mesh belongs to, what
 
 The PR review is the curation gate.
 
+## VII. External Upstream (DomI)
+
+Foundational skills and policy governed by [domattioli/DomI](https://github.com/domattioli/DomI).
+
+1. `.domi-pin` ledger MUST be committed and current.
+2. Session start auto-checks drift via `scripts/instructions_on_start.sh`. Hard stop on drift; `/sync-from-domi` unblocks.
+3. Skills from DomI take precedence over inline implementations. Local repo-specific skills (those NOT shipped by DomI) are exempt.
+4. Repo-specific principles in this constitution override DomI universal defaults where they conflict.
+5. This section does NOT affect existing repo-specific algorithmic principles.
+
 ## Constitution version
 
-1.0 — established 2026-04-26. Amend by editing this file in a PR with rationale; bump the version on substantial changes.
+1.1 — established 2026-04-26. Amended 2026-05-08: added principle VII (External Upstream: DomI). Amend by editing this file in a PR with rationale; bump the version on substantial changes.

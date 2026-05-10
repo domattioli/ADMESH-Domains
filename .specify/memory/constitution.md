@@ -1,79 +1,79 @@
 # ADMESH-Domains Constitution
 
-The non-negotiable principles that gate every feature plan in `specs/`. Plans must explicitly address each principle (PASS / N/A justified / FAIL → don't proceed).
+Non-negotiable principles gating every feature plan in `specs/`. Plans must explicitly address each principle (PASS / N/A justified / FAIL → don't proceed).
 
 ## I. The TOML manifest is the source of truth
 
-The Domain → Meshes hierarchy in `registry_data/manifest.toml` is the only authoritative state. All other artifacts are *derived*:
+Domain → Meshes hierarchy in `registry_data/manifest.toml` = only authoritative state. All other artifacts *derived*:
 
-- `admesh_domains/data/manifest.toml` — bundled copy in the wheel
+- `admesh_domains/data/manifest.toml` — bundled copy in wheel
 - `manifest.parquet` on HF — flat sidecar for queryability
 - `README.md` on HF — auto-rendered dataset card
 - Anything in PyPI metadata
 
-If a feature wants to change registry state, it edits the TOML. Schema-changing features must update both manifest copies AND the parser AND the Parquet builder in one PR. Any drift between these is a bug.
+If feature wants to change registry state, edits TOML. Schema-changing features must update both manifest copies AND parser AND Parquet builder in one PR. Any drift between these = bug.
 
 ## II. Pure-Python, optional heavy deps
 
-Base install (`pip install admesh-domains`) must stay under ~100 KB and pull only:
+Base install (`pip install admesh-domains`) must stay under ~100 KB + pull only:
 
 - `tomli ; python_version < '3.11'`
 
-Anything heavier (`huggingface_hub`, `pyarrow`, `jinja2`, `pandas`, `shapely`, `matplotlib`, `folium`, ...) must live behind an optional extra (`[hf]`, `[publish]`, future `[viz]`, etc.). Extras are imported lazily inside the function that needs them, with a clear `ImportError` pointing at the install command.
+Anything heavier (`huggingface_hub`, `pyarrow`, `jinja2`, `pandas`, `shapely`, `matplotlib`, `folium`, ...) must live behind optional extra (`[hf]`, `[publish]`, future `[viz]`, etc.). Extras imported lazily inside function needing them, with clear `ImportError` pointing at install command.
 
-Justification for any new base-install dep must appear in the spec.
+Justification for any new base-install dep must appear in spec.
 
 ## III. Schema changes are explicit
 
-Schema version (`admesh_domains.SCHEMA_VERSION`) is bumped only for breaking changes:
+Schema version (`admesh_domains.SCHEMA_VERSION`) bumped only for breaking changes:
 
-- Removing a field
-- Changing a field's type
-- Renaming a field
-- Changing a constraint that rejects previously-valid data
+- Removing field
+- Changing field's type
+- Renaming field
+- Changing constraint that rejects previously-valid data
 
-Adding optional fields is **not** a breaking change and stays at the same SCHEMA_VERSION. The Parquet sidecar gains columns silently — readers must tolerate unknown columns.
+Adding optional fields = **not** breaking change, stays at same SCHEMA_VERSION. Parquet sidecar gains columns silently — readers must tolerate unknown columns.
 
-Schema version is **independent** of the package version (PyPI) and the manifest data version (`metadata.version`). Don't conflate them.
+Schema version = **independent** of package version (PyPI) + manifest data version (`metadata.version`). Don't conflate.
 
 ## IV. Atomic releases — and separate code from data
 
-There are **two release tracks** with strictly separate concerns:
+**Two release tracks** with strictly separate concerns:
 
 **Code track** (PyPI + HF together):
 
-- Triggered by a strict-semver git tag (`v[0-9]+.[0-9]+.[0-9]+`)
+- Triggered by strict-semver git tag (`v[0-9]+.[0-9]+.[0-9]+`)
 - `release.yml` runs PyPI upload first; HF publish runs only on PyPI success
 - HF writes go through one `create_commit` (no partial state)
-- HF tag and `main` branch update happen in the same workflow run
-- Use this for: code, API, schema, publisher, dataset-card-template changes
-- Hot-fixes follow the same path — bump the patch version, push the tag
+- HF tag + `main` branch update happen in same workflow run
+- Use for: code, API, schema, publisher, dataset-card-template changes
+- Hot-fixes follow same path — bump patch version, push tag
 
 **Data track** (HF only):
 
 - Triggered by push to `main` touching `registry_data/**` or `admesh_domains/data/manifest.toml` (or manual `workflow_dispatch`)
-- `publish-data.yml` publishes to HF with a `data-YYYY-MM-DD-<sha7>` tag
-- **PyPI is not touched.** Bumping the package version for a data change misleads users about what's in the wheel.
-- Use this for: adding/removing/editing meshes or Domain metadata
-- Every data change still gets a reproducible HF revision; readers can pin to `data-2026-04-26-abcdef0` exactly like a code release
+- `publish-data.yml` publishes to HF with `data-YYYY-MM-DD-<sha7>` tag
+- **PyPI not touched.** Bumping package version for data change misleads users about what's in wheel.
+- Use for: adding/removing/editing meshes or Domain metadata
+- Every data change still gets reproducible HF revision; readers can pin to `data-2026-04-26-abcdef0` exactly like code release
 
-Never edit a published artifact in place. PyPI is immutable; HF revisions are git-style commits.
+Never edit published artifact in place. PyPI immutable; HF revisions = git-style commits.
 
 ## V. Test before tagging
 
-Every PR runs `validate-pr.yml`: manifest validation + pytest matrix (3.9/3.11/3.12) + publisher dry-run. Releases skip none of these — `release.yml` re-validates and re-tests before any upload.
+Every PR runs `validate-pr.yml`: manifest validation + pytest matrix (3.9/3.11/3.12) + publisher dry-run. Releases skip none — `release.yml` re-validates + re-tests before any upload.
 
-When adding a feature:
+When adding feature:
 - Public functions need at least one unit test (mock external services).
-- Schema changes need a roundtrip test (write → read → equality).
-- Publisher changes need a dry-run snapshot test.
+- Schema changes need roundtrip test (write → read → equality).
+- Publisher changes need dry-run snapshot test.
 
 ## VI. Curation over auto-magic
 
-When the registry needs human judgment (which Domain a new mesh belongs to, what its `applications` are, whether a mesh is `real-world` vs `synthetic`), prefer **suggest-then-approve** tools over fully automatic resolution. Auto-suggesters are fine; auto-mergers are not.
+When registry needs human judgment (which Domain new mesh belongs to, what its `applications` are, whether mesh = `real-world` vs `synthetic`), prefer **suggest-then-approve** tools over fully automatic resolution. Auto-suggesters fine; auto-mergers not.
 
-The PR review is the curation gate.
+PR review = curation gate.
 
 ## Constitution version
 
-1.0 — established 2026-04-26. Amend by editing this file in a PR with rationale; bump the version on substantial changes.
+1.0 — established 2026-04-26. Amend by editing this file in PR with rationale; bump version on substantial changes.

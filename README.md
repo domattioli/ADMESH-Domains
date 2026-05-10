@@ -15,39 +15,39 @@
   </a>
 </p>
 
-Source repository for the **ADCIRC mesh domain registry**: a curated catalog of coastal-simulation meshes with a Python loader, HuggingFace dataset mirror, and PR-based contribution workflow.
+Source repository for **ADCIRC mesh domain registry**: curated catalog of coastal-simulation meshes with Python loader, HuggingFace dataset mirror, PR-based contribution workflow.
 
-**🌐 Browse the registry: [domattioli.github.io/ADMESH-Domains](https://domattioli.github.io/ADMESH-Domains/)** — interactive map, search, preview, download, and contribute.
+**🌐 Browse registry: [domattioli.github.io/ADMESH-Domains](https://domattioli.github.io/ADMESH-Domains/)** — interactive map, search, preview, download, contribute.
 
 | Where to go | What you'll find |
 |---|---|
-| 🌐 [domattioli.github.io/ADMESH-Domains](https://domattioli.github.io/ADMESH-Domains/) | The website (browse / preview / download / contribute) |
-| 📦 [pypi.org/project/admesh-domains](https://pypi.org/project/admesh-domains/) | The Python package |
-| 🤗 [huggingface.co/datasets/domattioli/ADMESH-Domains](https://huggingface.co/datasets/domattioli/ADMESH-Domains) | The mesh files + Parquet sidecar + auto-generated dataset card (start here if you just want data) |
-| 🧪 [domattioli/ADMESH](https://github.com/domattioli/ADMESH) | The parent ADMESH library this registry complements |
+| 🌐 [domattioli.github.io/ADMESH-Domains](https://domattioli.github.io/ADMESH-Domains/) | Website (browse / preview / download / contribute) |
+| 📦 [pypi.org/project/admesh-domains](https://pypi.org/project/admesh-domains/) | Python package |
+| 🤗 [huggingface.co/datasets/domattioli/ADMESH-Domains](https://huggingface.co/datasets/domattioli/ADMESH-Domains) | Mesh files + Parquet sidecar + auto-generated dataset card (start here if you just want data) |
+| 🧪 [domattioli/ADMESH](https://github.com/domattioli/ADMESH) | Parent ADMESH library this registry complements |
 
-This repo is for **contributors and maintainers** of the registry — the data, schema, publisher pipeline, and CI live here. End users normally don't need to clone it; `pip install admesh-domains[hf]` is enough.
+This repo for **contributors + maintainers** of registry — data, schema, publisher pipeline, CI live here. End users normally don't need to clone; `pip install admesh-domains[hf]` enough.
 
 ## Quick install
 
 ```bash
-# Read the bundled manifest only (no mesh downloads, ~50 KB install)
+# Read bundled manifest only (no mesh downloads, ~50 KB install)
 pip install admesh-domains
 
-# Add Mesh.load() — fetches mesh files from the HF mirror on demand
+# Add Mesh.load() — fetches mesh files from HF mirror on demand
 pip install admesh-domains[hf]
 ```
 
-The user-facing API (`find_domains`, `find_meshes`, `get_mesh`, `test_meshes`, `Mesh.load`) is documented on the HF dataset card. For pytest fixtures, use `from admesh_domains import test_meshes` — it returns all registry meshes marked for testing.
+User-facing API (`find_domains`, `find_meshes`, `get_mesh`, `test_meshes`, `Mesh.load`) documented on HF dataset card. For pytest fixtures, use `from admesh_domains import test_meshes` — returns all registry meshes marked for testing.
 
 ## Repo layout
 
 ```
 admesh_domains/          Python package (schema, manifest loader, query API,
                          CLI, HF publisher, dataset-card template)
-admesh_domains/data/     Bundled manifest.toml shipped in the wheel
+admesh_domains/data/     Bundled manifest.toml shipped in wheel
 registry_data/           Source-of-truth manifest + mesh files (.14, .2dm)
-                         excluded from the wheel/sdist; mirrored to HF
+                         excluded from wheel/sdist; mirrored to HF
 specs/                   Spec-driven design docs (one folder per feature)
 scripts/                 One-shot data tooling (mesh import, bbox extractor)
 tests/                   pytest suite (mocked huggingface_hub)
@@ -58,27 +58,27 @@ tests/                   pytest suite (mocked huggingface_hub)
 
 ```bash
 pip install -e ".[publish]" pytest
-admesh-domains validate                 # check the bundled manifest parses
-admesh-domains validate registry_data/manifest.toml   # ...and the dev one
+admesh-domains validate                 # check bundled manifest parses
+admesh-domains validate registry_data/manifest.toml   # ...and dev one
 pytest tests/                           # full suite
 admesh-domains publish --tag v0.0.0-dryrun \
     --manifest registry_data/manifest.toml --dry-run --verbose
 ```
 
-Every push and PR is validated by `.github/workflows/validate-pr.yml` (matrix across Python 3.9 / 3.11 / 3.12).
+Every push + PR validated by `.github/workflows/validate-pr.yml` (matrix across Python 3.9 / 3.11 / 3.12).
 
 ## Releasing — code vs. data
 
-Two separate tracks; **don't conflate them**:
+Two separate tracks; **don't conflate**:
 
 | Type of change | What to do | Workflow | Effect |
 |---|---|---|---|
 | Code, API, schema, publisher, template | Bump `pyproject.toml` + `__init__.py`, tag `vX.Y.Z`, push | `release.yml` | PyPI release + HF tagged `vX.Y.Z` |
-| Add / remove / edit a mesh (data only) | Edit `registry_data/`, commit, push to `main` | `publish-data.yml` | HF tagged `data-YYYY-MM-DD-<sha7>`; **PyPI untouched** |
+| Add / remove / edit mesh (data only) | Edit `registry_data/`, commit, push to `main` | `publish-data.yml` | HF tagged `data-YYYY-MM-DD-<sha7>`; **PyPI untouched** |
 
-PyPI versions reflect *code/API* changes only. Data updates flow through HF without forcing a wheel bump (which would mislead users about what changed). Both tracks produce reproducible, pinned HF revisions.
+PyPI versions reflect *code/API* changes only. Data updates flow through HF without forcing wheel bump (would mislead users about what changed). Both tracks produce reproducible, pinned HF revisions.
 
-See [specs/006-huggingface-publisher/quickstart.md](specs/006-huggingface-publisher/quickstart.md) for the full maintainer recipe.
+See [specs/006-huggingface-publisher/quickstart.md](specs/006-huggingface-publisher/quickstart.md) for full maintainer recipe.
 
 ```bash
 # Code release (bumps PyPI):
@@ -95,13 +95,13 @@ git push origin main
 
 See [CHANGELOG.md](CHANGELOG.md) for:
 - Full release history (v0.1.0 – current)
-- Schema and API changes per release
+- Schema + API changes per release
 - Mesh metadata additions in v0.3.2
 - Data-only updates tagged on HuggingFace
 
 ## Contributing
 
-Open an issue first if you're proposing a new domain, schema change, or behavior change. PRs welcome — the validator will run on every push.
+Open issue first if proposing new domain, schema change, or behavior change. PRs welcome — validator runs on every push.
 
 Currently filed:
 - [#1 Natural-language → fort.14 generation](https://github.com/domattioli/ADMESH-Domains/issues/1)
@@ -110,14 +110,14 @@ Currently filed:
 
 ## Data quality & mesh lineage
 
-Every mesh in the registry includes optional `provenance` and `lineage` fields to distinguish original upstream sources from downstream re-meshes:
+Every mesh in registry includes optional `provenance` + `lineage` fields to distinguish original upstream sources from downstream re-meshes:
 
-- **`provenance`**: One of `"upstream"` (original published source, complete topology) or `"derivative-admesh"` (regenerated via the ADmesh GUI, may be structurally simplified).
-- **`lineage`**: A one-sentence note on the mesh's origin and any processing that affected it (e.g., boundary simplification).
+- **`provenance`**: One of `"upstream"` (original published source, complete topology) or `"derivative-admesh"` (regenerated via ADmesh GUI, may be structurally simplified).
+- **`lineage`**: One-sentence note on mesh's origin + any processing affecting it (e.g. boundary simplification).
 
 ### Western North Atlantic (WNAT) — lineage caveat
 
-The WNAT domain contains three meshes with different provenance:
+WNAT domain contains three meshes with different provenance:
 
 | Mesh | Nodes | BC Segments | Provenance | Use case |
 |------|-------|-------------|-----------|----------|
@@ -125,13 +125,13 @@ The WNAT domain contains three meshes with different provenance:
 | `WNAT_Test.14` | 9,934 | 0 | derivative-admesh | Pedagogical; ADmesh-regenerated for tutorials; Bermuda + island rings **stripped** |
 | `WNAT_Onur.14` | 127,572 | 1 | derivative-admesh | Fine grid; ADmesh-regenerated; land boundary segments **stripped** |
 
-**⚠️ Important:** `WNAT_Test.14` and `WNAT_Onur.14` are not faithful mesh densifications of `WNAT_Hagen.14`. When regenerated by the ADmesh GUI, their declared boundary sections (BC) were discarded. Downstream tools (e.g., ADMESH's `Domain.from_mesh()`) that pull a Test or Onur variant expecting the complete Hagen topology will lose Bermuda and 112 other island rings. If you need the original upstream-faithful mesh, use `WNAT_Hagen.14` explicitly.
+**⚠️ Important:** `WNAT_Test.14` + `WNAT_Onur.14` aren't faithful mesh densifications of `WNAT_Hagen.14`. When regenerated by ADmesh GUI, declared boundary sections (BC) discarded. Downstream tools (e.g. ADMESH's `Domain.from_mesh()`) pulling Test or Onur variant expecting complete Hagen topology will lose Bermuda + 112 other island rings. If you need original upstream-faithful mesh, use `WNAT_Hagen.14` explicitly.
 
-See [issue #13](https://github.com/domattioli/ADMESH-Domains/issues/13) for the technical audit and reproduction script.
+See [issue #13](https://github.com/domattioli/ADMESH-Domains/issues/13) for technical audit + reproduction script.
 
 ## Specs
 
-Active and shipped specs live under [`specs/`](specs/). Each folder contains `spec.md`, `plan.md`, `tasks.md`, and supporting docs.
+Active + shipped specs live under [`specs/`](specs/). Each folder contains `spec.md`, `plan.md`, `tasks.md`, supporting docs.
 
 | Spec | Status |
 |---|---|

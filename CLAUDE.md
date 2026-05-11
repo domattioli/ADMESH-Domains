@@ -10,6 +10,17 @@ This repo = downstream consumer of [`domattioli/DomI`](https://github.com/domatt
 
 **On every session start**, `scripts/instructions_on_start.sh` invokes `sync-from-domi` skill's `check_pin.sh` to compare local `.domi-pin` against `domattioli/DomI@main`. If repo **behind** upstream (drift), hook **HARD STOPS** session + refuses write work until operator says `> sync from DomI` (or runs `update_pin.sh` manually). Forked pin (manifest hash mismatch) also hard-stops.
 
+**Skills:** Foundational skills (`github-release`, `pypi-publish`, `api-key-rotation`, `send-email`, `act-autonomously`, `speckit-*`) come from DomI. Don't implement inline. Vote for missing skills: comment `+1 from ADMESH-Domains: <1-2 sentence incident context>` on the relevant DomI issue, then `/request-from-domi`.
+
+**Caveman mode:** Auto-activates via DomI SessionStart hook. Main thread / orchestrator only — never sub-agent prompts, academic prose, or non-technical user messages.
+
+**Routine session instructions (universal one-liner):**
+```
+Read https://raw.githubusercontent.com/domattioli/DomI/main/claude_routine_instructions.md then CLAUDE.md. Data-only changes (mesh add/edit) never trigger PyPI bump. Code/API/schema changes require tag → release.yml.
+```
+
+**ADMESH relationship:** `domattioli/ADMESH` spec-005 is the primary consumer of this registry; breaking schema changes require coordinating with the ADMESH maintainer before publish.
+
 **Plugins installed at user scope**:
 - `sync-from-domi@DomI` — drift check, pin refresh, sync issue closure
 - `request-from-domi@DomI` — file/vote on `request-skill` issues upstream
@@ -67,6 +78,8 @@ Python package (`admesh-domains` on PyPI) + HuggingFace dataset (`domattioli/ADM
 - **Mesh** — specific realization of Domain (one `.14` or `.2dm` file with own resolution, contributor, etc.)
 
 Composite IDs look like `WNAT/hagen@v1`. Registry currently holds 13 Domains + 40 Meshes (~59 MB).
+
+ADMESH is the primary consumer of this registry. Coordinate domain additions affecting ADMESH pipelines with the ADMESH maintainers.
 
 ## Key conventions
 

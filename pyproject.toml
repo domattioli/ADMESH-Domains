@@ -39,6 +39,7 @@ dev = [
     "black>=22.0",
     "ruff>=0.1.0",
     "mypy>=1.0",
+    "shapely>=2.0",
 ]
 hf = [
     "huggingface_hub>=0.20",

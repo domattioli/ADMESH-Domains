@@ -34,6 +34,7 @@ VALID_LICENSES = {
 REDISTRIBUTABLE_LICENSES = {
     "public-domain", "CC0-1.0", "CC-BY-4.0", "CC-BY-SA-4.0", "MIT",
 }
+VALID_ELEMENT_TYPES = {"triangle", "quadrilateral", "Mixed-Element"}
 
 
 class SchemaError(ValueError):
@@ -104,6 +105,11 @@ class Mesh:
         if self.kind not in VALID_KINDS:
             raise SchemaError(
                 f"Mesh.kind must be one of {sorted(VALID_KINDS)}, got {self.kind!r}"
+            )
+        if self.element_type is not None and self.element_type not in VALID_ELEMENT_TYPES:
+            raise SchemaError(
+                f"Mesh.element_type must be one of {sorted(VALID_ELEMENT_TYPES)} or None, "
+                f"got {self.element_type!r}"
             )
 
     @property

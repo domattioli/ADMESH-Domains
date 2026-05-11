@@ -1,111 +1,36 @@
 #!/bin/bash
-# instructions_on_start.sh — session-start health checks for ADMESH-Domains
-#
-# USAGE: bash "$(git rev-parse --show-toplevel)"/scripts/instructions_on_start.sh
-#
-# WHAT THIS RUNS (in order):
-#   1. DomI drift check (HARD STOP if behind upstream domattioli/DomI@main)
-#   2. CLAUDE.md presence audit
-#   3. Git hygiene snapshot (current branch, dirty files)
-#
-# DomI sync contract: see CLAUDE.md → "DomI Sync Contract" section.
-# Hook source: ~/.claude/plugins/cache/DomI/sync-from-domi/<version>/skills/sync-from-domi/templates/downstream_startup_hook.sh
-
+# scripts/instructions_on_start.sh — session startup health check
 set -euo pipefail
 
-# ============================================================================
-# DomI drift check (pasted from sync-from-domi skill template)
-# ============================================================================
-# --- locate sync-from-domi ---
-DOMI_SKILL_PATH="${DOMI_SKILL_PATH:-}"
-if [ -z "$DOMI_SKILL_PATH" ]; then
-  for cached in "${HOME}"/.claude/plugins/cache/DomI/sync-from-domi/*/skills/sync-from-domi; do
-    if [ -f "${cached}/scripts/check_pin.sh" ]; then
-      DOMI_SKILL_PATH="$cached"
-      break
-    fi
-  done
-fi
-if [ -z "$DOMI_SKILL_PATH" ]; then
-  for candidate in \
-    "${HOME}/.claude/plugins/marketplaces/domattioli/DomI/plugins/sync-from-domi/skills/sync-from-domi" \
-    "./plugins/sync-from-domi/skills/sync-from-domi" \
-    "./skills/sync-from-domi" \
-    "${HOME}/.claude/skills/sync-from-domi"; do
-    if [ -f "${candidate}/scripts/check_pin.sh" ]; then
-      DOMI_SKILL_PATH="$candidate"
-      break
-    fi
-  done
-fi
+REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || echo ".")" 
+cd "$REPO_ROOT" || exit 1
 
-if [ -z "$DOMI_SKILL_PATH" ] || [ ! -f "${DOMI_SKILL_PATH}/scripts/check_pin.sh" ]; then
-  echo "⚠ sync-from-domi skill not found locally; skipping DomI drift check"
-  echo "  → install via: claude plugin marketplace add domattioli/DomI && claude plugin install sync-from-domi@DomI"
-else
-  set +e
-  bash "${DOMI_SKILL_PATH}/scripts/check_pin.sh"
-  DOMI_DRIFT_RC=$?
-  set -e
-
-  case $DOMI_DRIFT_RC in
-    0)
-      : # synced; continue
-      ;;
-    1)
-      echo ""
-      echo "============================================================"
-      echo "🛑 HARD STOP: downstream is BEHIND DomI"
-      echo "============================================================"
-      echo "Invoke the sync-from-domi skill before any write work:"
-      echo "  > sync from DomI"
-      echo "Or run manually:"
-      echo "  bash ${DOMI_SKILL_PATH}/scripts/update_pin.sh"
-      echo "  (then commit .domi-pin and any updated skills)"
-      echo "============================================================"
-      if [ "${DOMI_BLOCK_ON_DRIFT:-1}" = "1" ]; then
-        exit 1
-      fi
-      ;;
-    2)
-      echo "ⓘ First-time DomI pin needed; will create on next sync"
-      ;;
-    3)
-      echo ""
-      echo "============================================================"
-      echo "🛑 HARD STOP: DomI pin FORKED (manifest hash mismatch)"
-      echo "============================================================"
-      echo "Local edits to vendored DomI artifacts suspected."
-      echo "Operator must resolve manually before continuing."
-      echo "============================================================"
-      exit 1
-      ;;
-    4)
-      echo "⚠ DomI drift check skipped (gh unavailable); continuing"
-      ;;
-  esac
-fi
-# --- end DomI drift check ---
-
-# ============================================================================
-# Audit checks
-# ============================================================================
-REPO_ROOT="${REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || echo ".")}"
-
+echo "=== Session Start: ADMESH-Domains ==="
+echo "Branch: $(git rev-parse --abbrev-ref HEAD 2>/dev/null) | Dirty: $(git status --porcelain 2>/dev/null | wc -l | tr -d ' ') files"
 echo ""
-echo "=== ADMESH-Domains On-Start Checks ==="
 
-# CLAUDE.md presence
-if [ ! -f "$REPO_ROOT/CLAUDE.md" ]; then
-  echo "  ❌ CLAUDE.md missing — bootstrap with /maintain-claude-md init"
-  exit 1
+# DomI drift check (plugin cache → skills marketplace → vendored)
+_find_check_pin() {
+  for d in "$HOME/.claude/plugins/cache/DomI/sync-from-domi" \
+            "$HOME/.claude/skills/sync-from-domi" \
+            "$REPO_ROOT/plugins/sync-from-domi"; do
+    local f; f=$(find "$d" -name "check_pin.sh" -maxdepth 5 2>/dev/null | head -1)
+    [ -n "$f" ] && echo "$f" && return 0
+  done; return 1
+}
+
+CHECK_PIN=$(_find_check_pin 2>/dev/null || true)
+if [ -n "$CHECK_PIN" ]; then
+  set +e; bash "$CHECK_PIN"; rc=$?; set -e
+  case $rc in
+    0) echo "✓ DomI pin current" ;;
+    1|3) echo "HARD STOP: DomI drift (exit $rc). Run '/sync-from-domi' before write work." >&2; exit 1 ;;
+    2) echo "⚠ .domi-pin absent — run update_pin.sh to initialize" ;;
+    4) echo "⚠ gh unavailable — DomI drift check skipped" ;;
+  esac
 else
-  echo "  ✓ CLAUDE.md present"
+  echo "⚠ sync-from-domi not installed. Run: claude plugin install sync-from-domi@DomI"
 fi
+echo ""
 
-# Git hygiene snapshot
-BRANCH=$(git -C "$REPO_ROOT" rev-parse --abbrev-ref HEAD 2>/dev/null || echo "?")
-DIRTY=$(git -C "$REPO_ROOT" status --porcelain 2>/dev/null | wc -l | tr -d ' ')
-echo "  ✓ Branch: $BRANCH ($DIRTY uncommitted file(s))"
-
-echo "=== Done ==="
+echo "=== ✓ Health check passed ==="

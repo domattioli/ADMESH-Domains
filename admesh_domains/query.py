@@ -211,6 +211,10 @@ def test_meshes(
 
     return test_cases
 
+
+test_meshes.__test__ = False  # prevent pytest from collecting this as a test function
+
+
 def list_domains(manifest: Union[str, Path, Manifest, None] = None) -> list[Domain]:
     """Return every Domain in the registry."""
     return list(_get_manifest(manifest).domains)

@@ -75,7 +75,8 @@ class TestFindMeshes:
 
     def test_filter_by_element_type_quadrilateral(self, loaded_manifest):
         out = find_meshes(element_type="quadrilateral", manifest=loaded_manifest)
-        assert len(out) == 2
+        # Rectangles domain (2 quad meshes) + MiscTests/Mixed_Test.14 (confirmed quad by file inspection)
+        assert len(out) == 3
         assert all(m.element_type == "quadrilateral" for m in out)
 
     def test_filter_by_min_size_returns_subset(self, loaded_manifest):

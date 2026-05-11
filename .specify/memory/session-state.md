@@ -20,7 +20,7 @@
 ## Next Issues to Tackle
 1. **Issue #10** — Pre-bake mesh thumbnails (medium scope)
    - Requires: render_thumbnails.py script, matplotlib integration, ~41 PNG renders
-   - Scope: Suggest starting fresh session for this
+   - Scope: Suggest starting fresh session
 
 2. **Issue #5** — Tier 2 auto-suggester (boundary polygon similarity)
    - Requires: shapely dep behind [suggest] extra
@@ -28,7 +28,7 @@
 
 3. **Issue #4** — Antimeridian-safe IoU (Pacific meshes)
    - Low priority: no Pacific meshes yet
-   - Can defer to next milestone
+   - Defer to next milestone
 
 ## Blocked Issues
 - **Issue #27** — Awaiting Thomas input (feature pruning)

@@ -97,6 +97,18 @@ Comparison helps build intuition: "Mixed mesh is best balance for Gibraltar; Qua
 **In**: 3-panel layout, mesh visualization, metrics, recommendation banner, responsive design, toggles
 **Out**: Advanced analytics, custom generation, export, history, multi-domain comparison, 3D visualization
 
+## Constitution Check
+
+| Principle | Status | Justification |
+|---|---|---|
+| I. TOML manifest is source of truth | PASS | Displays manifest data; no writes or mutations |
+| II. Pure-Python, optional heavy deps | N/A | Site-only specification; no Python runtime |
+| III. Schema changes are explicit | N/A | No schema changes |
+| IV. Atomic releases — and separate code from data | PASS | Code track; site changes only, no manifest mutations |
+| V. Test before tagging | PASS | UI tested via browser rendering; coordinated with spec 031 testing |
+| VI. Curation over auto-magic | PASS | Recommendation based on element count; manual selection of strategies |
+| VII. External Upstream (DomI) | PASS | No DomI interaction changes |
+
 ## Release Track
 
 Code Track (site changes + UI logic)

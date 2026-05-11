@@ -29,3 +29,15 @@ None—these are one-shot utilities with no remaining dependencies.
 
 ## Release Track
 Code (cleanup, no schema/data changes)
+
+## Constitution Check
+
+| Principle | Status | Justification |
+|---|---|---|
+| I. TOML manifest is source of truth | N/A | No manifest touched; cleanup only |
+| II. Pure-Python, optional heavy deps | PASS | Removes utility scripts; no new base deps added |
+| III. Schema changes are explicit | N/A | No schema changes |
+| IV. Atomic releases — and separate code from data | PASS | Code-only cleanup; no data mutation, no PyPI bump in this cleanup phase (if bundled with a release, no separate tag) |
+| V. Test before tagging | PASS | Existing pytest tests still pass; no new code |
+| VI. Curation over auto-magic | N/A | No runtime manifest mutation |
+| VII. External Upstream (DomI) | PASS | No changes to DomI interaction; pinned DomI version maintained |

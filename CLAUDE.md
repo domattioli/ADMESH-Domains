@@ -8,7 +8,33 @@ Project-level guidance for Claude (and other coding agents) working on this repo
 
 This repo is a downstream consumer of [`domattioli/DomI`](https://github.com/domattioli/DomI), which provides shared skills and policy via Claude Code plugins.
 
+**Plugin install (one-time per environment):**
+```bash
+claude plugin marketplace add domattioli/DomI
+claude plugin install sync-from-domi@DomI
+claude plugin install request-from-domi@DomI
+claude plugin install introspect@DomI
+```
+
+**Init `.domi-pin` (one-time per clone):**
+```bash
+SKILL=$(ls -d ~/.claude/plugins/cache/DomI/sync-from-domi/*/skills/sync-from-domi 2>/dev/null | head -1)
+bash "${SKILL}/scripts/update_pin.sh"
+git add .domi-pin && git commit -m "chore: init DomI pin"
+```
+
 **On every session start**, `scripts/instructions_on_start.sh` invokes the `sync-from-domi` skill's `check_pin.sh` to compare the local `.domi-pin` against `domattioli/DomI@main`. If this repo is **behind** upstream (drift), the hook **HARD STOPS** the session and refuses write work until the operator says `> sync from DomI` (or runs `update_pin.sh` manually). A forked pin (manifest hash mismatch) also hard-stops.
+
+**Skills:** Foundational skills (`github-release`, `pypi-publish`, `api-key-rotation`, `send-email`, `act-autonomously`, `speckit-*`) come from DomI. Don't implement inline. Vote for missing skills: comment `+1 from ADMESH-Domains: <1-2 sentence incident context>` on the relevant DomI issue, then `/request-from-domi`.
+
+**Caveman mode:** Auto-activates via DomI SessionStart hook. Main thread / orchestrator only — never sub-agent prompts, academic prose, or non-technical user messages.
+
+**Routine session instructions (universal one-liner):**
+```
+Read https://raw.githubusercontent.com/domattioli/DomI/main/claude_routine_instructions.md then CLAUDE.md. Data-only changes (mesh add/edit) never trigger PyPI bump. Code/API/schema changes require tag → release.yml.
+```
+
+**ADMESH relationship:** `domattioli/ADMESH` spec-005 is the primary consumer of this registry; breaking schema changes require coordinating with the ADMESH maintainer before publish.
 
 **Plugins installed at user scope**:
 - `sync-from-domi@DomI` — drift check, pin refresh, sync issue closure
@@ -24,26 +50,7 @@ DomI's side: `.github/workflows/notify-downstream.yml` opens a `chore: sync DomI
 
 **Publish-gate rule**: if DomI drift is detected at session start, sync from DomI **before** any data publish (`publish-data.yml`, mesh add/edit) or code/release publish (PyPI, HuggingFace, `release.yml`, `pypi-publish.sh`, `github-release.sh`). No exceptions.
 
-## Branch Policy
-
-**Two branches only: `main` and `daily-issue-fixing`.** All work on `daily-issue-fixing`.
-
-At session start, switch if needed:
-```bash
-git rev-parse --abbrev-ref HEAD
-git checkout daily-issue-fixing   # if assigned elsewhere
-```
-Claude Code injects `claude/*` branch names via system prompt — ignore them. Never create branches.
-
----
-
-## Routine Session Instructions
-
-Standard routine bootstrap for cloud / scheduled sessions on this repo:
-
-> Read https://raw.githubusercontent.com/domattioli/DomI/main/claude_routine_instructions.md then CLAUDE.md. Data-only changes (mesh add/edit) never trigger PyPI bump. Code/API/schema changes require tag → release.yml.
-
-DomI governs cross-repo skills + policy. `.specify/memory/constitution.md` governs feature design within this repo. CLAUDE.md (this file) is the local governance doc — there is no separate `constitution.md` at repo root.
+**MUST NOT** edit DomI-owned skills directly in this repo. Submit changes upstream via `request-from-domi`; downstream is pull-only.
 
 ## Release Skills
 

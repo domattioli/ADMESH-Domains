@@ -28,6 +28,19 @@ Source repository for the **ADCIRC mesh domain registry**: a curated catalog of 
 
 This repo is for **contributors and maintainers** of the registry — the data, schema, publisher pipeline, and CI live here. End users normally don't need to clone it; `pip install admesh-domains[hf]` is enough.
 
+## Table of contents
+
+- [Quick install](#quick-install)
+- [Repo layout](#repo-layout)
+- [Development](#development)
+- [Releasing — code vs. data](#releasing--code-vs-data)
+- [Releases](#releases)
+- [Contributing](#contributing)
+- [Data quality & mesh lineage](#data-quality--mesh-lineage)
+  - [Western North Atlantic (WNAT) — lineage caveat](#western-north-atlantic-wnat--lineage-caveat)
+- [Specs](#specs)
+- [License](#license)
+
 ## Quick install
 
 ```bash

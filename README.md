@@ -54,6 +54,19 @@ tests/                   pytest suite (mocked huggingface_hub)
 .github/workflows/       release.yml (tag → PyPI + HF) + validate-pr.yml (CI)
 ```
 
+## Element Type Support
+
+`element_type` field on each mesh entry encodes element geometry:
+
+| Value | Description |
+|---|---|
+| `"triangle"` | All 3-node triangular elements |
+| `"quadrilateral"` | All 4-node quadrilateral elements |
+| `"Mixed-Element"` | Mix of triangles and quadrilaterals |
+| omitted | Unspecified — always accepted (backward compatible) |
+
+Field is optional; existing entries without `element_type` remain valid. `Mesh.validate()` enforces the enum for any non-null value. See [`docs/CATALOG_SCHEMA.md`](docs/CATALOG_SCHEMA.md) for full field reference and registration examples.
+
 ## Development
 
 ```bash

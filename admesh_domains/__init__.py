@@ -8,6 +8,7 @@ realization (one .14 file with its own resolution, contributor, etc.).
 
 from .schema import (
     SCHEMA_VERSION,
+    VALID_ELEMENT_TYPES,
     BoundingBox,
     Domain,
     Mesh,
@@ -36,6 +37,7 @@ __version__ = "0.4.1"
 __all__ = [
     "__version__",
     "SCHEMA_VERSION",
+    "VALID_ELEMENT_TYPES",
     "BoundingBox",
     "Domain",
     "Mesh",

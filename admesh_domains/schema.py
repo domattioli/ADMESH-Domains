@@ -22,6 +22,7 @@ SCHEMA_VERSION = "0.3"
 VALID_TYPES = {"ADCIRC", "SMS_2DM", "ADCIRC_GRD"}
 VALID_CATEGORIES = {"real-world", "synthetic"}
 VALID_KINDS = {"mesh", "boundary"}
+VALID_ELEMENT_TYPES = {"triangle", "quadrilateral", "mixed"}
 VALID_LICENSES = {
     "public-domain",
     "CC0-1.0",
@@ -104,6 +105,11 @@ class Mesh:
         if self.kind not in VALID_KINDS:
             raise SchemaError(
                 f"Mesh.kind must be one of {sorted(VALID_KINDS)}, got {self.kind!r}"
+            )
+        if self.element_type is not None and self.element_type not in VALID_ELEMENT_TYPES:
+            raise SchemaError(
+                f"Mesh.element_type must be one of {sorted(VALID_ELEMENT_TYPES)}, "
+                f"got {self.element_type!r}"
             )
 
     @property

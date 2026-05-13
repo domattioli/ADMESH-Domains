@@ -10,7 +10,7 @@ Meshes in the ADMESH-Domains catalog can specify their element composition via t
 |------|---------|----------|-------------------|
 | `"triangle"` | Pure triangular elements | Generic coastal modeling, flexible geometry | All elements use 3 nodes |
 | `"quadrilateral"` | Pure quad elements | Structured/refined regions, channel alignment | All elements use 4 nodes |
-| `"Mixed-Element"` | Triangles + quads in same mesh | Hybrid refinement (coarse quads + fine triangles) | Both 3-node and 4-node elements in same mesh |
+| `"mixed"` | Triangles + quads in same mesh | Hybrid refinement (coarse quads + fine triangles) | Both 3-node and 4-node elements in same mesh |
 
 ### Field Details
 
@@ -41,7 +41,7 @@ element_type = "quadrilateral"
 [[domains.meshes]]
 id = "hybrid@v1"
 filename = "hybrid_mesh.14"
-element_type = "Mixed-Element"
+element_type = "mixed"
 node_count = 10000
 element_count = 18000
 ```
@@ -68,7 +68,7 @@ domain = m.get_domain("MyDomain")
 mesh = domain.get_mesh("hybrid@v1")
 
 # Access element type
-if mesh.element_type == "Mixed-Element":
+if mesh.element_type == "mixed":
     print(f"Hybrid mesh: {mesh.node_count} nodes, {mesh.element_count} elements")
 
 # Round-trip (external system like CHILmesh)

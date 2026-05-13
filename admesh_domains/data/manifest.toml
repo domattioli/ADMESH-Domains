@@ -29,6 +29,7 @@ license = "MIT"
 bounding_box = { min_lon = 6553298.963500, min_lat = 5070669.699400, max_lon = 6554897.860200, max_lat = 5072223.659400 }
 description = "Baranja Hill region mesh"
 size_mb = 0.08
+element_type = "triangle"
 
 [[domains.meshes]]
 uploaded_date = "2026-04-26"
@@ -40,6 +41,7 @@ license = "MIT"
 bounding_box = { min_lon = 6553297.013900, min_lat = 5070671.556200, max_lon = 6554897.990500, max_lat = 5072224.219700 }
 description = "Baranja Hill mesh - ADMESH v2 variant"
 size_mb = 0.09
+element_type = "triangle"
 
 # Domain: Chesapeake Bay
 [[domains]]
@@ -59,6 +61,7 @@ license = "MIT"
 bounding_box = { min_lon = -81.487709, min_lat = 28.017990, max_lon = -62.999817, max_lat = 45.833164 }
 description = "Chesapeake Bay region mesh"
 size_mb = 9.47
+element_type = "triangle"
 
 # Domain: Delaware Bay
 [[domains]]
@@ -78,6 +81,7 @@ license = "MIT"
 bounding_box = { min_lon = -75.615127, min_lat = 37.934355, max_lon = -73.693529, max_lat = 40.029191 }
 description = "Delaware Bay mesh"
 size_mb = 1.72
+element_type = "triangle"
 
 [[domains.meshes]]
 uploaded_date = "2026-04-26"
@@ -89,6 +93,7 @@ license = "MIT"
 bounding_box = { min_lon = -75.615127, min_lat = 37.934355, max_lon = -73.693529, max_lat = 40.029191 }
 description = "Delaware Bay mesh - refined version"
 size_mb = 1.72
+element_type = "triangle"
 refinement_level = "high"
 
 # Domain: Great Lakes
@@ -110,6 +115,7 @@ license = "MIT"
 bounding_box = { min_lon = -92.109894, min_lat = 41.381063, max_lon = -75.763391, max_lat = 49.020740 }
 description = "Great Lakes region mesh"
 size_mb = 15.16
+element_type = "triangle"
 
 # Domain: Italy coastal region
 [[domains]]
@@ -129,6 +135,7 @@ license = "MIT"
 bounding_box = { min_lon = 11.163465, min_lat = 34.992968, max_lon = 20.298273, max_lat = 45.762892 }
 description = "Italy region mesh"
 size_mb = 1.45
+element_type = "triangle"
 
 # Domain: Lake Erie
 [[domains]]
@@ -148,6 +155,7 @@ license = "MIT"
 bounding_box = { min_lon = -83.484170, min_lat = 41.378718, max_lon = -78.859364, max_lat = 42.926953 }
 description = "Lake Erie mesh - 5k nodes variant"
 size_mb = 1.57
+element_type = "triangle"
 
 [[domains.meshes]]
 uploaded_date = "2026-04-26"
@@ -159,6 +167,7 @@ license = "MIT"
 bounding_box = { min_lon = -83.484143, min_lat = 41.378194, max_lon = -78.859096, max_lat = 42.926741 }
 description = "Lake Erie refined mesh"
 size_mb = 0.57
+element_type = "triangle"
 refinement_level = "medium"
 
 # Domain: Lake Michigan
@@ -179,6 +188,7 @@ license = "MIT"
 bounding_box = { min_lon = -88.040937, min_lat = 41.620997, max_lon = -84.779017, max_lat = 46.108227 }
 description = "Lake Michigan mesh"
 size_mb = 2.47
+element_type = "triangle"
 
 # Domain: Miscellaneous test meshes
 [[domains]]
@@ -196,6 +206,7 @@ filename = "simple_test_case.14"
 license = "MIT"
 bounding_box = { min_lon = -1.000320, min_lat = -1.000000, max_lon = 1.001642, max_lat = 1.000000 }
 size_mb = 0.09
+element_type = "triangle"
 
 [[domains.meshes]]
 uploaded_date = "2026-04-26"
@@ -206,6 +217,7 @@ filename = "test1.14"
 license = "MIT"
 bounding_box = { min_lon = 546.000000, min_lat = -13755.000000, max_lon = 30972.579431, max_lat = 15170.617903 }
 size_mb = 0.09
+element_type = "triangle"
 
 [[domains.meshes]]
 uploaded_date = "2026-04-26"
@@ -216,6 +228,7 @@ filename = "wetting_and_drying_test.14"
 license = "MIT"
 bounding_box = { min_lon = -10178.107531, min_lat = -13799.870083, max_lon = 49914.809892, max_lat = 50091.911765 }
 size_mb = 0.31
+element_type = "triangle"
 
 [[domains.meshes]]
 uploaded_date = "2026-04-26"
@@ -226,6 +239,7 @@ filename = "test2.14"
 license = "MIT"
 bounding_box = { min_lon = 18229.911146, min_lat = -4908.524772, max_lon = 49914.809892, max_lat = 18694.852941 }
 size_mb = 0.04
+element_type = "triangle"
 
 [[domains.meshes]]
 uploaded_date = "2026-04-26"
@@ -236,6 +250,7 @@ filename = "test3.14"
 license = "MIT"
 bounding_box = { min_lon = 18229.911146, min_lat = -4908.524772, max_lon = 49914.809892, max_lat = 18694.852941 }
 size_mb = 0.04
+element_type = "triangle"
 
 [[domains.meshes]]
 uploaded_date = "2026-04-26"
@@ -246,6 +261,7 @@ filename = "test4.14"
 license = "MIT"
 bounding_box = { min_lon = 18229.911146, min_lat = -4908.524772, max_lon = 49914.809892, max_lat = 18694.852941 }
 size_mb = 0.04
+element_type = "triangle"
 
 [[domains.meshes]]
 uploaded_date = "2026-04-26"
@@ -256,6 +272,7 @@ filename = "Mixed_Test.14"
 license = "MIT"
 bounding_box = { min_lon = 1.000000, min_lat = 1.000000, max_lon = 4.000000, max_lat = 4.000000 }
 size_mb = 0.0
+element_type = "quadrilateral"
 
 [[domains.meshes]]
 uploaded_date = "2026-04-26"
@@ -320,6 +337,17 @@ bounding_box = { min_lon = 40000.000000, min_lat = 10000.000000, max_lon = 15000
 size_mb = 0.0
 element_type = "quadrilateral"
 
+[[domains.meshes]]
+uploaded_date = "2026-05-11"
+modified_date = "2026-05-11"
+contributor = "Dominik O Mattioli"
+id = "mixed-hybrid@v1"
+filename = "rectangular_mixed_hybrid_mesh.14"
+license = "MIT"
+bounding_box = { min_lon = 40000.000000, min_lat = 10000.000000, max_lon = 150000.000000, max_lat = 55000.000000 }
+size_mb = 0.0
+element_type = "mixed"
+
 # Domain: Simple geometric shapes
 [[domains]]
 name = "Shapes"
@@ -337,6 +365,7 @@ license = "MIT"
 bounding_box = { min_lon = 4.998625, min_lat = -0.000577, max_lon = 49.000841, max_lat = 54.001028 }
 description = "Block-shaped structured mesh"
 size_mb = 0.33
+element_type = "triangle"
 
 [[domains.meshes]]
 uploaded_date = "2026-04-26"
@@ -347,6 +376,7 @@ filename = "islands1.14"
 license = "MIT"
 bounding_box = { min_lon = 1.016230, min_lat = 1.000000, max_lon = 12.000000, max_lat = 10.972002 }
 size_mb = 0.22
+element_type = "triangle"
 
 [[domains.meshes]]
 uploaded_date = "2026-04-26"
@@ -357,6 +387,7 @@ filename = "circle.14"
 license = "MIT"
 bounding_box = { min_lon = 24.000239, min_lat = 24.001096, max_lon = 39.999647, max_lat = 39.999784 }
 size_mb = 0.17
+element_type = "triangle"
 
 [[domains.meshes]]
 uploaded_date = "2026-04-26"
@@ -367,6 +398,7 @@ filename = "square_mesh_test.14"
 license = "MIT"
 bounding_box = { min_lon = -1.000847, min_lat = -1.000000, max_lon = 1.000000, max_lat = 1.000783 }
 size_mb = 0.04
+element_type = "triangle"
 
 [[domains.meshes]]
 uploaded_date = "2026-04-26"
@@ -378,6 +410,7 @@ license = "MIT"
 bounding_box = { min_lon = -1.000000, min_lat = -1.000000, max_lon = 1.000000, max_lat = 1.000000 }
 description = "Annulus mesh with 200 points"
 size_mb = 0.02
+element_type = "triangle"
 
 [[domains.meshes]]
 uploaded_date = "2026-04-26"
@@ -389,6 +422,7 @@ license = "MIT"
 bounding_box = { min_lon = -1.000000, min_lat = -0.998993, max_lon = 1.000000, max_lat = 0.998993 }
 description = "Donut-shaped domain mesh"
 size_mb = 0.01
+element_type = "triangle"
 
 # Domain: Structured grid meshes
 [[domains]]
@@ -406,6 +440,7 @@ filename = "structuredMesh2.14"
 license = "MIT"
 bounding_box = { min_lon = -2.000000, min_lat = -1.000000, max_lon = 2.000000, max_lat = 1.000000 }
 size_mb = 0.07
+element_type = "triangle"
 
 [[domains.meshes]]
 uploaded_date = "2026-04-26"
@@ -416,6 +451,7 @@ filename = "structuredMesh4.14"
 license = "MIT"
 bounding_box = { min_lon = -2.000000, min_lat = -1.000000, max_lon = 2.000000, max_lat = 1.000000 }
 size_mb = 0.07
+element_type = "triangle"
 
 [[domains.meshes]]
 uploaded_date = "2026-04-26"
@@ -426,6 +462,7 @@ filename = "structuredMesh1.14"
 license = "MIT"
 bounding_box = { min_lon = -2.000000, min_lat = -1.000000, max_lon = 2.000000, max_lat = 1.000000 }
 size_mb = 0.04
+element_type = "triangle"
 
 [[domains.meshes]]
 uploaded_date = "2026-04-26"
@@ -436,6 +473,7 @@ filename = "structuredMesh3.14"
 license = "MIT"
 bounding_box = { min_lon = -2.000000, min_lat = -1.000000, max_lon = 2.000000, max_lat = 1.000000 }
 size_mb = 0.04
+element_type = "triangle"
 
 # Domain: Numbered test cases
 [[domains]]
@@ -453,6 +491,7 @@ filename = "Test_Case_4.14"
 license = "MIT"
 bounding_box = { min_lon = -15.992345, min_lat = -30.000241, max_lon = 15.981827, max_lat = 30.000000 }
 size_mb = 0.39
+element_type = "triangle"
 test_case = true
 
 [[domains.meshes]]
@@ -464,6 +503,7 @@ filename = "Test_Case_4.2.14"
 license = "MIT"
 bounding_box = { min_lon = -30.000241, min_lat = -15.992345, max_lon = 30.000000, max_lat = 15.981827 }
 size_mb = 0.26
+element_type = "triangle"
 test_case = true
 
 [[domains.meshes]]
@@ -475,6 +515,7 @@ filename = "Test_Case_2.14"
 license = "MIT"
 bounding_box = { min_lon = 1.015373, min_lat = 1.000000, max_lon = 12.003913, max_lat = 10.981018 }
 size_mb = 0.22
+element_type = "triangle"
 test_case = true
 
 [[domains.meshes]]
@@ -486,6 +527,7 @@ filename = "Test_Case_1.14"
 license = "MIT"
 bounding_box = { min_lon = 1.000000, min_lat = 1.000000, max_lon = 4.414214, max_lat = 4.414214 }
 size_mb = 0.16
+element_type = "triangle"
 test_case = true
 
 [[domains.meshes]]
@@ -497,6 +539,7 @@ filename = "Test_Case_3.14"
 license = "MIT"
 bounding_box = { min_lon = 1.000802, min_lat = -1.499226, max_lon = 8.001755, max_lat = 4.998047 }
 size_mb = 0.11
+element_type = "triangle"
 test_case = true
 
 # Domain: Western North Atlantic
@@ -518,6 +561,7 @@ license = "MIT"
 bounding_box = { min_lon = -97.856155, min_lat = 7.914458, max_lon = -60.039580, max_lat = 45.832838 }
 description = "Western North Atlantic mesh (Onur variant)"
 size_mb = 15.32
+element_type = "triangle"
 provenance = "derivative-admesh"
 lineage = "Re-meshed from upstream Hagen original via ADmesh GUI; declared boundary count reduced from 113 to 1 (open boundary only; land boundaries/island topology stripped)."
 
@@ -531,6 +575,7 @@ license = "MIT"
 bounding_box = { min_lon = -97.856889, min_lat = 7.912906, max_lon = -60.040000, max_lat = 45.838806 }
 description = "Western North Atlantic mesh (Hagen variant)"
 size_mb = 5.48
+element_type = "triangle"
 aliases = ["WNAT_53K_Nodes"]
 provenance = "upstream"
 lineage = "Original ADCIRC public-domain mesh (NSF-funded). Complete boundary topology preserved: 113 declared BC segments including all island rings (e.g., Bermuda at segment [99])."
@@ -545,6 +590,7 @@ license = "MIT"
 bounding_box = { min_lon = -97.850032, min_lat = 8.001743, max_lon = -60.038337, max_lat = 45.769246 }
 description = "Western North Atlantic test mesh"
 size_mb = 1.17
+element_type = "triangle"
 provenance = "derivative-admesh"
 lineage = "Coarse pedagogical mesh (9,934 nodes) re-meshed from upstream Hagen original via ADmesh GUI; declared boundary count reduced to 0 (all boundary topology/island rings stripped, including Bermuda). Use for testing/tutorials only."
 
@@ -558,4 +604,4 @@ license = "MIT"
 bounding_box = { min_lon = -97.858330, min_lat = 7.909559, max_lon = -60.040029, max_lat = 45.836122 }
 description = "WNAT mesh with NC inundation refinement (adcirc.org/products/grids)"
 size_mb = 2.99
-
+element_type = "triangle"

@@ -223,6 +223,11 @@ class Domain:
     def validate(self) -> None:
         if not self.name or not isinstance(self.name, str):
             raise SchemaError(f"Domain.name must be a non-empty string, got {self.name!r}")
+        if "/" in self.name:
+            raise SchemaError(
+                f"Domain.name must not contain '/' (breaks composite-id grammar "
+                f"'<Domain>/<mesh_id>'), got {self.name!r}"
+            )
         if self.category not in VALID_CATEGORIES:
             raise SchemaError(
                 f"Domain.category must be one of {sorted(VALID_CATEGORIES)}, "
@@ -230,8 +235,14 @@ class Domain:
             )
         if self.bounding_box is not None:
             self.bounding_box.validate()
+        seen_mesh_ids: set[str] = set()
         for mesh in self.meshes:
             mesh.validate()
+            if mesh.id in seen_mesh_ids:
+                raise SchemaError(
+                    f"Duplicate mesh id {mesh.id!r} in domain {self.name!r}"
+                )
+            seen_mesh_ids.add(mesh.id)
 
     @property
     def has_meshes(self) -> bool:

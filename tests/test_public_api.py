@@ -118,3 +118,24 @@ class TestPublicAPIBehavior:
     def test_manifest_errors_are_exceptions(self):
         assert issubclass(admesh_domains.ManifestNotFoundError, Exception)
         assert issubclass(admesh_domains.ManifestValidationError, Exception)
+
+    def test_registry_metadata_instantiates(self):
+        # [M2] RegistryMetadata is exported but had no direct test.
+        md = admesh_domains.RegistryMetadata(
+            version="0.3", description="t", total_domains=1, total_meshes=2,
+        )
+        assert md.version == "0.3"
+        assert md.total_domains == 1
+        assert md.total_meshes == 2
+        assert md.source_repositories == []
+
+    def test_test_meshes_not_collected_by_pytest(self):
+        # [L4] test_meshes is part of the public API but its name matches
+        # pytest's collection pattern. The __test__ = False marker on the
+        # function suppresses collection. Lock that contract here so a
+        # future refactor cannot silently re-enable it.
+        assert getattr(admesh_domains.test_meshes, "__test__", True) is False, (
+            "admesh_domains.test_meshes is missing the __test__ = False marker; "
+            "pytest will try to collect it as a test function. Restore the line "
+            "`test_meshes.__test__ = False` in admesh_domains/query.py."
+        )

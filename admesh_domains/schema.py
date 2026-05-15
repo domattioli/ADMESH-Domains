@@ -237,6 +237,12 @@ class Domain:
     def has_meshes(self) -> bool:
         return len(self.meshes) > 0
 
+    def get_mesh(self, mesh_id: str) -> "Mesh":
+        for mesh in self.meshes:
+            if mesh.id == mesh_id:
+                return mesh
+        raise KeyError(f"No mesh with id {mesh_id!r} in domain {self.name!r}")
+
     def to_dict(self) -> dict:
         d = asdict(self)
         defaults = {"category": "real-world"}

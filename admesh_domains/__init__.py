@@ -31,6 +31,7 @@ from .query import (
     list_regions,
     test_meshes,
 )
+from .generator import random_domain
 
 __version__ = "0.4.1"
 
@@ -55,4 +56,5 @@ __all__ = [
     "list_domains",
     "list_regions",
     "test_meshes",
+    "random_domain",
 ]

@@ -65,3 +65,10 @@ include-package-data = true
 
 [tool.setuptools.package-data]
 admesh_domains = ["py.typed", "data/*.toml", "templates/*.j2"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "network: marks tests requiring network access",
+]

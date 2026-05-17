@@ -1,82 +1,100 @@
-# ADMESH-Domains Catalog Schema
+# Catalog Schema Reference
 
-## Element Type Support
+Reference for fields in the ADMESH-Domains registry (`manifest.toml`). Schema version: **0.3**.
 
-Meshes in the ADMESH-Domains catalog can specify their element composition via the `element_type` field.
+---
 
-### Supported Element Types
+## Mesh Fields
 
-| Type | Meaning | Use Case | Example Constraint |
-|------|---------|----------|-------------------|
-| `"triangle"` | Pure triangular elements | Generic coastal modeling, flexible geometry | All elements use 3 nodes |
-| `"quadrilateral"` | Pure quad elements | Structured/refined regions, channel alignment | All elements use 4 nodes |
-| `"mixed"` | Triangles + quads in same mesh | Hybrid refinement (coarse quads + fine triangles) | Both 3-node and 4-node elements in same mesh |
+| Field | Type | Required | Default | Notes |
+|---|---|---|---|---|
+| `id` | string | yes | — | Composite ID, e.g. `hagen@v1` |
+| `filename` | string | yes | — | Bare filename, e.g. `WNAT_Hagen_v1.14` |
+| `type` | string | yes | `"ADCIRC"` | File format: `ADCIRC`, `SMS_2DM`, `ADCIRC_GRD` |
+| `size_mb` | float | yes | `0.0` | File size in MB |
+| `node_count` | int | no | `null` | Total node count from file header |
+| `element_count` | int | no | `null` | Total element count from file header |
+| `element_type` | string | no | `null` | Element geometry — see below |
+| `license` | string | yes | `"unknown"` | SPDX identifier or `"unknown"` |
+| `contributor` | string | no | `null` | Full name, e.g. `"J. Smith"` |
+| `description` | string | no | `null` | Free-text description |
+| `uploaded_date` | string | no | `null` | ISO 8601 date added to registry |
+| `modified_date` | string | no | `null` | ISO 8601 date file was last changed |
+| `refinement_level` | string | no | `null` | Coarse / medium / fine / very_fine |
+| `features` | list[str] | no | `[]` | Feature tags, e.g. `["barrier_islands"]` |
+| `aliases` | list[str] | no | `[]` | Alternate names for search |
+| `bounding_box` | table | no | `null` | `{min_lon, min_lat, max_lon, max_lat}` |
+| `kind` | string | no | `"mesh"` | `"mesh"` or `"boundary"` |
+| `test_case` | bool | no | `false` | Surface on Test Suites tab |
 
-### Field Details
+---
 
-- **Optional**: `element_type` is optional and defaults to `None` for backward compatibility
-- **Backward compatible**: Existing meshes without `element_type` can coexist with typed meshes
-- **Validation**: Invalid element types (not in the list above) raise a `SchemaError` during catalog validation
+## Element Type
 
-### Registration Examples
+`element_type` encodes the geometry of mesh elements.
 
-#### Pure Triangle Mesh
+### Valid values
+
+| Value | Description |
+|---|---|
+| `"triangle"` | All elements are 3-node triangles |
+| `"quadrilateral"` | All elements are 4-node quadrilaterals |
+| `"Mixed-Element"` | Mesh contains both triangles and quadrilaterals |
+| `null` (omitted) | Element type unspecified; accepted for backward compatibility |
+
+### Validation rules
+
+- If present, value must exactly match one of the three strings above (case-sensitive).
+- `"mixed-element"` and `"Mixed-element"` are **not** valid — use `"Mixed-Element"`.
+- `null` / omitted = unspecified; always passes validation.
+- Enforced by `Mesh.validate()` → raises `SchemaError` on invalid value.
+
+### Registration example (TOML)
+
 ```toml
 [[domains.meshes]]
-id = "tri@v1"
-filename = "triangle_mesh.14"
-element_type = "triangle"
+id = "mixed_gulf@v1"
+filename = "gulf_mixed.14"
+type = "ADCIRC"
+size_mb = 12.4
+node_count = 85000
+element_count = 160000
+element_type = "Mixed-Element"
+license = "CC-BY-4.0"
+contributor = "J. Smith"
 ```
 
-#### Pure Quad Mesh
-```toml
-[[domains.meshes]]
-id = "quad@v1"
-filename = "quad_mesh.14"
-element_type = "quadrilateral"
+### How to detect element type
+
+For fort.14 files, element connectivity lines start with an element ID followed by the node count per element:
+
+```
+<element_id>  <npe>  <node1>  <node2>  ...
 ```
 
-#### Mixed-Element Mesh
-```toml
-[[domains.meshes]]
-id = "hybrid@v1"
-filename = "hybrid_mesh.14"
-element_type = "mixed"
-node_count = 10000
-element_count = 18000
-```
+- `npe == 3` → triangle
+- `npe == 4` → quadrilateral
+- Mix of 3 and 4 → `Mixed-Element`
 
-### Detection
+---
 
-When reading fort14 or 2dm files via CHILmesh, the element type is determined by the element type codes in the file:
-- Type code `3` → triangle
-- Type code `4` → quad
-- Mix of both → `"Mixed-Element"`
+## Domain Fields
 
-The `admesh_metadata()` function in CHILmesh returns the detected `element_type`.
+| Field | Type | Required | Notes |
+|---|---|---|---|
+| `name` | string | yes | Unique, no `/` |
+| `full_name` | string | no | Human-readable display name |
+| `category` | string | no | `"real-world"` or `"synthetic"` |
+| `region` | string | no | Geographic region label |
+| `description` | string | no | Free-text description |
+| `applications` | list[str] | no | Application tags |
+| `bounding_box` | table | no | Union bbox over all geographic meshes |
 
-### Round-Trip Validation
+---
 
-A mesh can be exported to fort14 and re-imported while preserving the `element_type` designation:
+## Schema versioning
 
-```python
-from admesh_domains import load_manifest, Mesh
+`SCHEMA_VERSION = "0.3"` — stored in `manifest.toml` header and `admesh_domains/schema.py`.
 
-# Load catalog
-m = load_manifest()
-domain = m.get_domain("MyDomain")
-mesh = domain.get_mesh("hybrid@v1")
-
-# Access element type
-if mesh.element_type == "mixed":
-    print(f"Hybrid mesh: {mesh.node_count} nodes, {mesh.element_count} elements")
-
-# Round-trip (external system like CHILmesh)
-# mesh.element_type is preserved on serialization
-```
-
-## See Also
-
-- `registry_data/manifest.toml` — the authoritative catalog
-- `admesh_domains/schema.py` — `Mesh` dataclass and validation rules
-- GitHub issue #41 — specification for mixed-element support
+- Breaking changes (field rename, removal, type change) → bump version.
+- Additive changes (new optional field) → no bump.

@@ -8,6 +8,7 @@ realization (one .14 file with its own resolution, contributor, etc.).
 
 from .schema import (
     SCHEMA_VERSION,
+    VALID_ELEMENT_TYPES,
     BoundingBox,
     Domain,
     Mesh,
@@ -30,12 +31,14 @@ from .query import (
     list_regions,
     test_meshes,
 )
+from .generator import random_domain
 
 __version__ = "0.4.1"
 
 __all__ = [
     "__version__",
     "SCHEMA_VERSION",
+    "VALID_ELEMENT_TYPES",
     "BoundingBox",
     "Domain",
     "Mesh",
@@ -53,4 +56,5 @@ __all__ = [
     "list_domains",
     "list_regions",
     "test_meshes",
+    "random_domain",
 ]

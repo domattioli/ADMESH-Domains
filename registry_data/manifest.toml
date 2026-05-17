@@ -346,7 +346,7 @@ filename = "rectangular_mixed_hybrid_mesh.14"
 license = "MIT"
 bounding_box = { min_lon = 40000.000000, min_lat = 10000.000000, max_lon = 150000.000000, max_lat = 55000.000000 }
 size_mb = 0.0
-element_type = "mixed"
+element_type = "Mixed-Element"
 
 # Domain: Simple geometric shapes
 [[domains]]

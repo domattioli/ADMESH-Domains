@@ -16,6 +16,7 @@ import admesh_domains
 EXPECTED_EXPORTS = {
     "__version__",
     "SCHEMA_VERSION",
+    "VALID_ELEMENT_TYPES",
     "BoundingBox",
     "Domain",
     "Mesh",
@@ -33,6 +34,7 @@ EXPECTED_EXPORTS = {
     "list_domains",
     "list_regions",
     "test_meshes",
+    "random_domain",
 }
 
 

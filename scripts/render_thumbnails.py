@@ -25,6 +25,24 @@ else:
 REPO_ROOT = Path(__file__).resolve().parents[1]
 
 
+def parse_fort14_path(path: Path) -> tuple[list[tuple[float, float]], list[list[int]]]:
+    """Parse a fort.14 file by path. Prefers CHILmesh (`[viz]` extra) when available."""
+    try:
+        from chilmesh import CHILmesh
+    except ImportError:
+        return parse_fort14(Path(path).read_text())
+
+    mesh = CHILmesh.read_from_fort14(Path(path), compute_layers=False)
+    nodes = [(float(p[0]), float(p[1])) for p in mesh.points]
+    elements: list[list[int]] = []
+    for elem in mesh.connectivity_list:
+        if len(elem) == 4 and elem[3] == elem[0]:
+            elements.append([int(elem[0]), int(elem[1]), int(elem[2])])
+        else:
+            elements.append([int(v) for v in elem[: 4 if len(elem) >= 4 else 3]])
+    return nodes, elements
+
+
 def parse_fort14(content: str) -> tuple[list[tuple[float, float]], list[list[int]]]:
     """Parse ADCIRC fort.14 file and extract nodes and elements.
 
@@ -214,12 +232,10 @@ def render_single_mesh(mesh_path: Path, output_path: Path) -> None:
     if not mesh_path.exists():
         raise FileNotFoundError(f"Mesh file not found: {mesh_path}")
 
-    content = mesh_path.read_text()
-
     if mesh_path.suffix == '.14':
-        nodes, elements = parse_fort14(content)
+        nodes, elements = parse_fort14_path(mesh_path)
     elif mesh_path.suffix == '.2dm':
-        nodes, elements = parse_2dm(content)
+        nodes, elements = parse_2dm(mesh_path.read_text())
     else:
         raise ValueError(f"Unsupported mesh format: {mesh_path.suffix}")
 
@@ -259,12 +275,10 @@ def render_all_meshes(manifest_path: Path, meshes_dir: Path, out_dir: Path, verb
                 continue
 
             try:
-                content = mesh_path.read_text()
-
                 if filename.endswith('.14'):
-                    nodes, elements = parse_fort14(content)
+                    nodes, elements = parse_fort14_path(mesh_path)
                 elif filename.endswith('.2dm'):
-                    nodes, elements = parse_2dm(content)
+                    nodes, elements = parse_2dm(mesh_path.read_text())
                 else:
                     if verbose:
                         print(f"✗ Unsupported format: {filename}")

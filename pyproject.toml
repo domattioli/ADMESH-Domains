@@ -54,6 +54,16 @@ publish = [
     "build>=1.0",
     "matplotlib>=3.5",
 ]
+gen = [
+    "chilmesh>=0.2.0",
+    "numpy>=1.20",
+    "scipy>=1.7",
+]
+viz = [
+    "chilmesh>=0.2.0",
+    "matplotlib>=3.5",
+    "pillow>=9.0",
+]
 
 [project.scripts]
 admesh-domains = "admesh_domains.cli:main"

@@ -28,6 +28,19 @@ Source repository for **ADCIRC mesh domain registry**: curated catalog of coasta
 
 This repo for **contributors + maintainers** of registry — data, schema, publisher pipeline, CI live here. End users normally don't need to clone; `pip install admesh-domains[hf]` enough.
 
+## Table of contents
+
+- [Quick install](#quick-install)
+- [Repo layout](#repo-layout)
+- [Development](#development)
+- [Releasing — code vs. data](#releasing--code-vs-data)
+- [Releases](#releases)
+- [Contributing](#contributing)
+- [Data quality & mesh lineage](#data-quality--mesh-lineage)
+  - [Western North Atlantic (WNAT) — lineage caveat](#western-north-atlantic-wnat--lineage-caveat)
+- [Specs](#specs)
+- [License](#license)
+
 ## Quick install
 
 ```bash

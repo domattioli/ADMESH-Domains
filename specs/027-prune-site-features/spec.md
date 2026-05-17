@@ -59,10 +59,12 @@ A pure deletion + small footer fix. No new code. The current nav already lists o
 
 ## Constitution Check
 
-| Principle | Verdict | Note |
+| Principle | Status | Justification |
 |---|---|---|
-| I (manifest = SoT) | N/A | No manifest touched |
-| II (pure-Python base install) | N/A | No Python deps touched |
-| III (schema bumps explicit) | N/A | No schema touched |
-| IV (release tracks split) | PASS | Site-only; no PyPI bump, no `publish-data.yml` trigger |
-| VI (curation, no auto-magic) | N/A | No runtime manifest mutation |
+| I. TOML manifest is source of truth | N/A | No manifest touched |
+| II. Pure-Python, optional heavy deps | N/A | No Python deps touched |
+| III. Schema changes are explicit | N/A | No schema touched |
+| IV. Atomic releases — and separate code from data | PASS | Site-only; no PyPI bump, no `publish-data.yml` trigger |
+| V. Test before tagging | PASS | Existing pytest tests still pass; no new code features |
+| VI. Curation over auto-magic | N/A | No runtime manifest mutation |
+| VII. External Upstream (DomI) | PASS | No changes to DomI interaction; pinned DomI version maintained |

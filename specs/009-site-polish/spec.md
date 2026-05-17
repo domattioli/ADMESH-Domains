@@ -174,3 +174,15 @@ The top nav reflects the new structure: no Browse duplicate, **Upload** instead 
 - Site infrastructure from spec 008 (build script, `pages.yml`, `manifest.json` schema).
 - HuggingFace dataset `domattioli/ADMESH-Domains` for Test Suites download URLs.
 - No new Python packages, no new JS libraries.
+
+## Constitution Check
+
+| Principle | Status | Justification |
+|---|---|---|
+| I. TOML manifest is source of truth | PASS | Site displays manifest; adds `test_case` field (additive, no schema version bump) |
+| II. Pure-Python, optional heavy deps | N/A | Static site; adds uPlot JS library (~40KB, no Python deps) |
+| III. Schema changes are explicit | PASS | Adds `test_case: bool` field to Mesh; additive, no SCHEMA_VERSION bump |
+| IV. Atomic releases — and separate code from data | N/A | Site-only; no PyPI bump, deployed via `pages.yml` on push to main |
+| V. Test before tagging | PASS | Site builds on every push; no new dependencies to test |
+| VI. Curation over auto-magic | PASS | Test Suites manually curated; Create page is placeholder |
+| VII. External Upstream (DomI) | PASS | No DomI interaction changes |

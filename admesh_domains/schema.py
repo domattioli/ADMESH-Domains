@@ -22,6 +22,7 @@ SCHEMA_VERSION = "0.3"
 VALID_TYPES = {"ADCIRC", "SMS_2DM", "ADCIRC_GRD"}
 VALID_CATEGORIES = {"real-world", "synthetic"}
 VALID_KINDS = {"mesh", "boundary"}
+VALID_ELEMENT_TYPES = {"triangle", "quadrilateral", "Mixed-Element"}
 VALID_LICENSES = {
     "public-domain",
     "CC0-1.0",
@@ -34,7 +35,6 @@ VALID_LICENSES = {
 REDISTRIBUTABLE_LICENSES = {
     "public-domain", "CC0-1.0", "CC-BY-4.0", "CC-BY-SA-4.0", "MIT",
 }
-VALID_ELEMENT_TYPES = {"triangle", "quadrilateral", "Mixed-Element"}
 
 
 class SchemaError(ValueError):
@@ -224,7 +224,10 @@ class Domain:
         if not self.name or not isinstance(self.name, str):
             raise SchemaError(f"Domain.name must be a non-empty string, got {self.name!r}")
         if "/" in self.name:
-            raise SchemaError(f"Domain.name must not contain '/' (reserved): {self.name!r}")
+            raise SchemaError(
+                f"Domain.name must not contain '/' (breaks composite-id grammar "
+                f"'<Domain>/<mesh_id>'), got {self.name!r}"
+            )
         if self.category not in VALID_CATEGORIES:
             raise SchemaError(
                 f"Domain.category must be one of {sorted(VALID_CATEGORIES)}, "
@@ -232,61 +235,45 @@ class Domain:
             )
         if self.bounding_box is not None:
             self.bounding_box.validate()
-        seen_ids: set[str] = set()
-        for m in self.meshes:
-            m.validate()
-            if m.id in seen_ids:
+        seen_mesh_ids: set[str] = set()
+        for mesh in self.meshes:
+            mesh.validate()
+            if mesh.id in seen_mesh_ids:
                 raise SchemaError(
-                    f"Domain {self.name!r}: duplicate mesh id {m.id!r}"
+                    f"Duplicate mesh id {mesh.id!r} in domain {self.name!r}"
                 )
-            seen_ids.add(m.id)
+            seen_mesh_ids.add(mesh.id)
 
-    def find_mesh(
-        self,
-        id: Optional[str] = None,
-        contributor: Optional[str] = None,
-        min_node_count: Optional[int] = None,
-        max_size_mb: Optional[float] = None,
-    ) -> list[Mesh]:
-        """Return meshes within this domain matching all given filters."""
-        out = []
-        for m in self.meshes:
-            if id is not None and m.id != id and id not in (m.aliases or []):
-                continue
-            if contributor is not None and m.contributor != contributor:
-                continue
-            if min_node_count is not None:
-                if m.node_count is None or m.node_count < min_node_count:
-                    continue
-            if max_size_mb is not None and m.size_mb > max_size_mb:
-                continue
-            out.append(m)
-        return out
+    @property
+    def has_meshes(self) -> bool:
+        return len(self.meshes) > 0
 
-    def get_mesh(self, id: str) -> Mesh:
-        """Return a single mesh by id (or alias). Raises KeyError if not found."""
-        for m in self.meshes:
-            if m.id == id or id in (m.aliases or []):
-                return m
-        raise KeyError(f"Domain {self.name!r} has no mesh with id {id!r}")
+    def get_mesh(self, mesh_id: str) -> "Mesh":
+        for mesh in self.meshes:
+            if mesh.id == mesh_id:
+                return mesh
+        raise KeyError(f"No mesh with id {mesh_id!r} in domain {self.name!r}")
 
     def to_dict(self) -> dict:
-        d = {
-            "name": self.name,
-            "full_name": self.full_name,
-            "description": self.description,
-            "category": self.category,
-            "region": self.region,
-            "applications": self.applications,
-        }
-        if self.bounding_box is not None:
-            d["bounding_box"] = self.bounding_box.to_dict()
+        d = asdict(self)
+        defaults = {"category": "real-world"}
         d["meshes"] = [m.to_dict() for m in self.meshes]
-        return {k: v for k, v in d.items() if v is not None and v != []}
+        if self.bounding_box:
+            d["bounding_box"] = self.bounding_box.to_dict()
+        return {
+            k: v for k, v in d.items()
+            if v is not None and v != [] and v is not False and defaults.get(k) != v
+        }
 
     @classmethod
-    def from_dict(cls, data: dict, base_dir: Optional[Path] = None) -> "Domain":
-        bbox_raw = data.get("bounding_box")
+    def from_dict(
+        cls,
+        data: dict,
+        base_dir: Optional[Path] = None,
+    ) -> "Domain":
+        known = {f.name for f in cls.__dataclass_fields__.values()}
+        kwargs = {k: v for k, v in data.items() if k in known}
+        bbox_raw = kwargs.pop("bounding_box", None)
         bbox = BoundingBox(**bbox_raw) if bbox_raw else None
         meshes_raw = data.get("meshes", [])
         domain_name = data["name"]

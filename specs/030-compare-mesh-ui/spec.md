@@ -97,6 +97,18 @@ Users currently have no way to compare mesh strategies for the same domain. They
 **In**: compare.html, compare.js, nav.js update, styles.css additions
 **Out**: backend API, on-demand mesh generation, quality metric parsing, export, 3D view, zoom sync
 
+## Constitution Check
+
+| Principle | Status | Justification |
+|---|---|---|
+| I. TOML manifest is source of truth | PASS | Reads manifest.json; no mutations |
+| II. Pure-Python, optional heavy deps | N/A | Static site; JavaScript only |
+| III. Schema changes are explicit | N/A | No schema changes |
+| IV. Atomic releases — and separate code from data | N/A | Site-only; no PyPI bump, no data release |
+| V. Test before tagging | PASS | Spec 031 adds comprehensive pytest suite for comparison feature |
+| VI. Curation over auto-magic | PASS | Recommendation algorithm is simple (fewest elements); human selects strategies |
+| VII. External Upstream (DomI) | PASS | No DomI interaction changes |
+
 ## Release Track
 
 Code Track — site changes only. No manifest.toml edits, no PyPI version bump required for Phase 2 alone.

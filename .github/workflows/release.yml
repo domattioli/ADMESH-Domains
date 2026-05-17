@@ -40,10 +40,15 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Install build/publish deps
+      - name: Install build/publish/test deps
         run: |
           python -m pip install --upgrade pip
-          pip install -e ".[publish]"
+          pip install -e ".[dev,publish]"
+
+      - name: Run test suite (release gate)
+        # Re-runs pytest at tag time so a tag cut from a red main can't ship.
+        # See docs/TEST-AUDIT.md §2.2 [H1].
+        run: pytest tests/ -q
 
       - name: Validate manifest
         run: admesh-domains validate

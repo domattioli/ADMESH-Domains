@@ -173,3 +173,15 @@ All publisher-side deps are gated behind the `[publish]` extra; runtime HF downl
 
 - Should the dataset card include a small folium / static-image map of mesh bounding boxes? Leaning **no** for v1 — no `bounding_box` data on Meshes yet, so there's nothing to plot. Revisit when bbox is populated.
 - Should there be a `[publish]` test that exercises the publisher end-to-end against a *test* HF dataset (e.g. `domattioli/admesh-domains-ci`) on every PR? Adds CI cost but catches breakage early.
+
+## Constitution Check
+
+| Principle | Status | Justification |
+|---|---|---|
+| I. TOML manifest is source of truth | PASS | Reads manifest; never writes or mutates it |
+| II. Pure-Python, optional heavy deps | PASS | Heavy deps (`huggingface_hub`, `pyarrow`, `jinja2`) gated behind `[publish]` extra |
+| III. Schema changes are explicit | N/A | Reads existing schema fields; no schema changes |
+| IV. Atomic releases — and separate code from data | PASS | Code track; updates pyproject.toml, triggers release.yml on semver tag |
+| V. Test before tagging | PASS | Tests run before any HF publish; release.yml re-validates before upload |
+| VI. Curation over auto-magic | N/A | Reads manifest; no automatic suggestion or mutation |
+| VII. External Upstream (DomI) | PASS | No DomI interaction changes |

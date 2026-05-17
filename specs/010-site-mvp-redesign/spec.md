@@ -43,3 +43,15 @@ Temporarily retire advanced website features to focus on core functionality: bro
 - [ ] Upload tab shows mesh comparison results
 - [ ] Old pages archived with clear restoration notes
 - [ ] Tested in browser: all links work, no console errors
+
+## Constitution Check
+
+| Principle | Status | Justification |
+|---|---|---|
+| I. TOML manifest is source of truth | N/A | No manifest touched |
+| II. Pure-Python, optional heavy deps | N/A | No Python deps touched |
+| III. Schema changes are explicit | N/A | No schema touched |
+| IV. Atomic releases — and separate code from data | PASS | Site-only change; no PyPI bump, no `publish-data.yml` trigger |
+| V. Test before tagging | PASS | Existing pytest tests still pass; site changes are CSS/HTML only |
+| VI. Curation over auto-magic | N/A | No runtime manifest mutation |
+| VII. External Upstream (DomI) | PASS | No changes to DomI interaction; pinned DomI version maintained |

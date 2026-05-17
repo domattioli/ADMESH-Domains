@@ -151,6 +151,18 @@ A researcher cites the registry in a paper and wants a stable URL with a human-r
 - Spec 007 (Domain auto-suggester) — its IoU logic must be ported to JS for the Preview/Contribute pages.
 - A new GitHub Actions workflow (`pages.yml`) that builds the site and deploys to Pages.
 
+## Constitution Check
+
+| Principle | Status | Justification |
+|---|---|---|
+| I. TOML manifest is source of truth | PASS | Site is read-only view of manifest; contribution flow writes to manifest via PR |
+| II. Pure-Python, optional heavy deps | N/A | Site is static HTML/CSS/JS; no Python runtime |
+| III. Schema changes are explicit | N/A | No schema changes |
+| IV. Atomic releases — and separate code from data | N/A | Site-only; no PyPI bump, no separate release track |
+| V. Test before tagging | PASS | Site builds on every push; GitHub Pages deployment is automated |
+| VI. Curation over auto-magic | PASS | Contribution flow suggests Domain (spec 007); human reviews PR |
+| VII. External Upstream (DomI) | PASS | No DomI interaction changes |
+
 ## Carry-Overs / Follow-Ups
 
 - Full-geometry rendering of meshes (node/element triangulation) — likely its own spec.

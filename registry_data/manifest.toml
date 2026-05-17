@@ -337,6 +337,17 @@ bounding_box = { min_lon = 40000.000000, min_lat = 10000.000000, max_lon = 15000
 size_mb = 0.0
 element_type = "quadrilateral"
 
+[[domains.meshes]]
+uploaded_date = "2026-05-11"
+modified_date = "2026-05-11"
+contributor = "Dominik O Mattioli"
+id = "mixed-hybrid@v1"
+filename = "rectangular_mixed_hybrid_mesh.14"
+license = "MIT"
+bounding_box = { min_lon = 40000.000000, min_lat = 10000.000000, max_lon = 150000.000000, max_lat = 55000.000000 }
+size_mb = 0.0
+element_type = "Mixed-Element"
+
 # Domain: Simple geometric shapes
 [[domains]]
 name = "Shapes"

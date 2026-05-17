@@ -172,6 +172,18 @@ def suggest_domain(
 - Refactor opportunity: move bbox-extraction logic from `scripts/extract_bboxes.py` into `admesh_domains.geometry` so the same code parses both new submissions and existing meshes
 - Existing: `Mesh.bounding_box`, `Domain.meshes`, `BoundingBox` (all in `schema.py`)
 
+## Constitution Check
+
+| Principle | Status | Justification |
+|---|---|---|
+| I. TOML manifest is source of truth | PASS | Suggester reads manifest; never writes or mutates |
+| II. Pure-Python, optional heavy deps | PASS | Uses stdlib only; no new dependencies required |
+| III. Schema changes are explicit | N/A | No schema changes; derives metrics in-memory |
+| IV. Atomic releases — and separate code from data | PASS | Code track; feature addition to v0.3.0 release |
+| V. Test before tagging | PASS | Unit tests for IoU calculation, audit logic, exit codes |
+| VI. Curation over auto-magic | PASS | Suggester proposes; human reviews and decides; advisory only |
+| VII. External Upstream (DomI) | PASS | No DomI interaction changes |
+
 ## Open Questions for Plan Phase
 
 - Should the suggester also propose a `category` (real-world vs synthetic) by inspecting the bbox coordinate system (lat/lon → real-world, otherwise → synthetic)? Leaning **yes** — the prompt's `category` default would be set from the heuristic rather than hardcoded.

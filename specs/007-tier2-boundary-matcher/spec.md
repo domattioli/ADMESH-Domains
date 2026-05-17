@@ -134,14 +134,15 @@ class IoUScore:
 
 ## Constitution Check
 
-| Principle | Status | Notes |
+| Principle | Status | Justification |
 |---|---|---|
-| I. TOML as source of truth | **PASS** | Suggester reads only; never writes. |
-| II. Pure-Python, optional heavy deps | **PASS** | shapely → optional `[suggest]` extra. Base unchanged. |
-| III. Schema versioning | **N/A** | No schema change. |
-| IV. Atomic releases | **PASS** | Code track: v0.4.X release (feature bump in 0.x). |
-| V. Test before tagging | **PASS** | Unit tests for boundary extraction, polygon IoU, fallback behavior. |
-| VI. Curation over auto-magic | **PASS** | Suggester still proposes; human decides. Tier 2 is advisory ranking. |
+| I. TOML manifest is source of truth | PASS | Suggester reads only; never writes |
+| II. Pure-Python, optional heavy deps | PASS | shapely gated behind `[suggest]` extra; base install unchanged |
+| III. Schema changes are explicit | N/A | No schema changes; only derives metrics in-memory |
+| IV. Atomic releases — and separate code from data | PASS | Code track; feature bump to v0.4.X release |
+| V. Test before tagging | PASS | Unit tests for boundary extraction, polygon IoU, fallback behavior |
+| VI. Curation over auto-magic | PASS | Suggester proposes; human reviews and decides; Tier 2 is advisory |
+| VII. External Upstream (DomI) | PASS | No DomI interaction changes |
 
 ## Open Questions
 

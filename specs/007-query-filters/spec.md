@@ -51,3 +51,15 @@ Users need a programmatic way to:
 
 ## Estimate
 **Small:** ~3-4 hours. Straightforward parameter addition, well-scoped.
+
+## Constitution Check
+
+| Principle | Status | Justification |
+|---|---|---|
+| I. TOML manifest is source of truth | N/A | No manifest touched |
+| II. Pure-Python, optional heavy deps | PASS | No new dependencies |
+| III. Schema changes are explicit | N/A | Schema fields already exist; no SCHEMA_VERSION bump needed |
+| IV. Atomic releases — and separate code from data | PASS | Code track; can bump patch version in pyproject.toml |
+| V. Test before tagging | PASS | Unit tests added for all filter combinations |
+| VI. Curation over auto-magic | PASS | Straightforward API enhancement; no auto-curation |
+| VII. External Upstream (DomI) | PASS | No DomI interaction changes |

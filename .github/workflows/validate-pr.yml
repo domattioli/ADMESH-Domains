@@ -28,7 +28,7 @@ jobs:
       - name: Install package + test deps
         run: |
           python -m pip install --upgrade pip
-          pip install -e ".[publish]" pytest
+          pip install -e ".[dev,publish]"
 
       - name: Validate bundled manifest
         run: admesh-domains validate
@@ -36,8 +36,10 @@ jobs:
       - name: Validate dev manifest (with mesh files)
         run: admesh-domains validate registry_data/manifest.toml
 
-      - name: Run test suite
-        run: pytest tests/ -v
+      - name: Run test suite (with coverage)
+        # See docs/TEST-AUDIT.md §2.3 [M1] — pytest-cov declared in deps
+        # but previously not invoked. Now measured per-PR.
+        run: pytest tests/ -v --cov=admesh_domains --cov-report=term-missing
 
   publisher-dry-run:
     runs-on: ubuntu-latest

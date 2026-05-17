@@ -65,6 +65,18 @@ Replace bbox-only SVG placeholders with actual mesh geometry PNG thumbnails for 
 - Confirm fallback to SVG when PNG missing
 - Check site build time impact
 
+## Constitution Check
+
+| Principle | Status | Justification |
+|---|---|---|
+| I. TOML manifest is source of truth | N/A | Thumbnails are derived data assets; no manifest mutations |
+| II. Pure-Python, optional heavy deps | PASS | matplotlib behind [publish] extra; base install unchanged |
+| III. Schema changes are explicit | N/A | No schema changes |
+| IV. Atomic releases — and separate code from data | PASS | Data track; asset-only, no PyPI bump, updates via publish-data.yml |
+| V. Test before tagging | PASS | Thumbnail generation tested and validated before publication |
+| VI. Curation over auto-magic | PASS | Deterministic rendering with manual visual inspection |
+| VII. External Upstream (DomI) | PASS | No DomI interaction changes |
+
 ## Estimate
 **Medium:** ~4-5 hours. Straightforward script + batch job, but needs:
 - fort.14 parsing (may reuse existing bbox parser)

@@ -15,6 +15,24 @@ else:
 REPO_ROOT = Path(__file__).resolve().parents[1]
 
 
+def parse_fort14_fast_path(path: Path) -> tuple[list[tuple[float, float]], list[list[int]]]:
+    """Parse a fort.14 file by path. Prefers CHILmesh (`[viz]` extra) when available."""
+    try:
+        from chilmesh import CHILmesh
+    except ImportError:
+        return parse_fort14_fast(Path(path).read_text())
+
+    mesh = CHILmesh.read_from_fort14(Path(path), compute_layers=False)
+    nodes = [(float(p[0]), float(p[1])) for p in mesh.points]
+    elements: list[list[int]] = []
+    for elem in mesh.connectivity_list:
+        if len(elem) == 4 and elem[3] == elem[0]:
+            elements.append([int(elem[0]), int(elem[1]), int(elem[2])])
+        else:
+            elements.append([int(v) for v in elem[: 4 if len(elem) >= 4 else 3]])
+    return nodes, elements
+
+
 def parse_fort14_fast(content: str) -> tuple[list[tuple[float, float]], list[list[int]]]:
     """Quick fort.14 parser."""
     lines = content.strip().split('\n')
@@ -191,11 +209,10 @@ def main(manifest_path: Path, meshes_dir: Path, out_dir: Path) -> int:
                 continue
 
             try:
-                content = mesh_path.read_text()
                 if filename.endswith('.2dm'):
-                    nodes, elements = parse_2dm_fast(content)
+                    nodes, elements = parse_2dm_fast(mesh_path.read_text())
                 else:
-                    nodes, elements = parse_fort14_fast(content)
+                    nodes, elements = parse_fort14_fast_path(mesh_path)
                 render_with_pil(nodes, elements, thumb_path)
                 success += 1
                 print(f"✓ {domain_name}/{mesh['id']}")

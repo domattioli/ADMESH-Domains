@@ -211,27 +211,57 @@ def _write_fort14(
 ) -> bytes:
     """Write fort.14 format to bytes.
 
-    Parameters:
-        points: ndarray[n, 2] of (x, y) coordinates
-        elements: ndarray[m, 3|4] of vertex indices (triangles or quads)
-        mesh_name: Header name
-
-    Returns:
-        fort14_bytes: bytes
+    Prefers ``chilmesh.write_fort14`` (canonical writer) when the optional
+    ``[gen]`` extra is installed; otherwise uses a built-in writer so the
+    registry stays installable without the heavy CHILmesh stack.
     """
+    chilmesh_bytes = _write_fort14_via_chilmesh(points, elements, mesh_name)
+    if chilmesh_bytes is not None:
+        return chilmesh_bytes
+    return _write_fort14_fallback(points, elements, mesh_name)
+
+
+def _write_fort14_via_chilmesh(
+    points: np.ndarray, elements: np.ndarray, mesh_name: str
+) -> Opt[bytes]:
+    """Delegate to CHILmesh's canonical fort.14 writer if available."""
+    try:
+        from chilmesh import write_fort14 as _chil_write
+    except ImportError:
+        return None
+
+    import tempfile
+    import os
+
+    fd, tmp_path = tempfile.mkstemp(suffix=".14")
+    os.close(fd)
+    try:
+        ok = _chil_write(tmp_path, points, elements, mesh_name)
+        if not ok:
+            return None
+        with open(tmp_path, "rb") as f:
+            return f.read()
+    finally:
+        try:
+            os.unlink(tmp_path)
+        except OSError:
+            pass
+
+
+def _write_fort14_fallback(
+    points: np.ndarray, elements: np.ndarray, mesh_name: str
+) -> bytes:
+    """Built-in fort.14 writer used when CHILmesh isn't installed."""
     n_elems = elements.shape[0]
     n_verts = points.shape[0]
 
-    # ADCIRC fort.14 format (simplified)
     lines = []
     lines.append(mesh_name)
     lines.append(f"{n_elems:10d} {n_verts:10d}")
 
-    # Vertices
     for i, (x, y) in enumerate(points, 1):
         lines.append(f"{i:10d} {x:16.8e} {y:16.8e} {0.0:16.8e}")
 
-    # Elements
     for elem_id, elem in enumerate(elements, 1):
         if elements.shape[1] == 3:
             v0, v1, v2 = elem
@@ -242,7 +272,6 @@ def _write_fort14(
                 f"{elem_id:10d}  4 {v0+1:10d} {v1+1:10d} {v2+1:10d} {v3+1:10d}"
             )
 
-    # Boundary condition section (minimal)
     lines.append("0                     !NOPE(=Number of Boundary Edges)")
     lines.append("0                     !NOPEN(=Number of Open Boundary Nodes)")
 

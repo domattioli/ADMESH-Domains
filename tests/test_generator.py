@@ -164,5 +164,16 @@ class TestFort14Output:
         _, fort14_bytes = random_domain(seed=42, node_count=100)
         fort14_str = fort14_bytes.decode("utf-8")
 
-        # Check that "  3 " or "  4 " appears (element type indicators)
-        assert "  3 " in fort14_str or "  4 " in fort14_str
+        # Element lines look like "<id> <3-or-4> <v0> <v1> <v2>[ <v3>]".
+        # Whitespace is implementation-defined, so check structurally.
+        found_elem_line = False
+        for line in fort14_str.splitlines():
+            toks = line.split()
+            if len(toks) in (5, 6) and toks[1] in ("3", "4"):
+                try:
+                    [int(t) for t in toks]
+                    found_elem_line = True
+                    break
+                except ValueError:
+                    continue
+        assert found_elem_line, "no fort.14 element line found"

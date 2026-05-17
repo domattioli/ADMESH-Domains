@@ -202,7 +202,7 @@ class TestTier2PolygonMetrics:
         try:
             from shapely.geometry import Polygon
         except ImportError:
-            pytest.skip("shapely not installed")
+            pytest.skip("shapely required for Tier2 boundary extraction (install with: pip install -e '.[suggest]')")
 
         square = Polygon([(0, 0), (1, 0), (1, 1), (0, 1)])
         iou = polygon_iou(square, square)
@@ -213,7 +213,7 @@ class TestTier2PolygonMetrics:
         try:
             from shapely.geometry import Polygon
         except ImportError:
-            pytest.skip("shapely not installed")
+            pytest.skip("shapely required for Tier2 boundary extraction (install with: pip install -e '.[suggest]')")
 
         square1 = Polygon([(0, 0), (1, 0), (1, 1), (0, 1)])
         square2 = Polygon([(2, 2), (3, 2), (3, 3), (2, 3)])
@@ -225,7 +225,7 @@ class TestTier2PolygonMetrics:
         try:
             from shapely.geometry import Polygon
         except ImportError:
-            pytest.skip("shapely not installed")
+            pytest.skip("shapely required for Tier2 boundary extraction (install with: pip install -e '.[suggest]')")
 
         square1 = Polygon([(0, 0), (2, 0), (2, 2), (0, 2)])
         square2 = Polygon([(1, 1), (3, 1), (3, 3), (1, 3)])
@@ -243,7 +243,7 @@ class TestTier2PolygonMetrics:
         try:
             from shapely.geometry import Polygon
         except ImportError:
-            pytest.skip("shapely not installed")
+            pytest.skip("shapely required for Tier2 boundary extraction (install with: pip install -e '.[suggest]')")
 
         square = Polygon([(0, 0), (1, 0), (1, 1), (0, 1)])
         dist = hausdorff_distance(square, square)
@@ -254,7 +254,7 @@ class TestTier2PolygonMetrics:
         try:
             from shapely.geometry import Polygon
         except ImportError:
-            pytest.skip("shapely not installed")
+            pytest.skip("shapely required for Tier2 boundary extraction (install with: pip install -e '.[suggest]')")
 
         square1 = Polygon([(0, 0), (1, 0), (1, 1), (0, 1)])
         square2 = Polygon([(10, 10), (11, 10), (11, 11), (10, 11)])

@@ -92,6 +92,21 @@ class TestSiteBuild:
         file_count = sum(1 for f in all_files if f.is_file())
         assert file_count >= 20, f"site/dist seems sparse: {file_count} files"
 
+    def test_js_imports_resolve_to_hashed_files(self):
+        import re
+        js_dir = SITE_DIST / "js"
+        if not js_dir.exists():
+            pytest.skip("dist has no js subdir")
+        existing = {p.name for p in js_dir.iterdir() if p.suffix == ".js"}
+        pattern = re.compile(r'from\s+["\'](\./[^"\']+\.js)["\']')
+        for js_file in js_dir.glob("*.js"):
+            for spec in pattern.findall(js_file.read_text()):
+                target = spec.split("/")[-1]
+                assert target in existing, (
+                    f"{js_file.name} imports {spec!r} which is not in site/dist/js — "
+                    f"hash-rewrite skipped this module"
+                )
+
 
 # ---------------------------------------------------------------------------
 # HTML structure

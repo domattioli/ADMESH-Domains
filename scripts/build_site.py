@@ -49,6 +49,11 @@ def _compute_hash(file_path: Path) -> str:
     return sha[:8]
 
 
+_JS_IMPORT_RE = re.compile(
+    r'(?P<prefix>(?:import|export)\b[^"\']*?from\s+)(?P<quote>["\'])(?P<spec>\./[^"\']+?)(?P=quote)'
+)
+
+
 def _rename_asset_with_hash(src_file: Path, dest_file: Path) -> tuple[str, str]:
     """
     Copy asset and rename with content hash.
@@ -68,6 +73,30 @@ def _rename_asset_with_hash(src_file: Path, dest_file: Path) -> tuple[str, str]:
     else:
         shutil.copy2(src_file, dest_file)
         return (dest_file.name, dest_file.name)
+
+
+def _parse_js_imports(src_file: Path) -> set[str]:
+    """Return set of relative import specifiers found in a JS module."""
+    if src_file.suffix != ".js":
+        return set()
+    try:
+        text = src_file.read_text()
+    except (OSError, UnicodeDecodeError):
+        return set()
+    return {m.group("spec") for m in _JS_IMPORT_RE.finditer(text)}
+
+
+def _rewrite_js_imports(text: str, asset_map: dict[str, str]) -> str:
+    """Rewrite relative JS imports to point at hashed filenames."""
+    def replace(match: re.Match[str]) -> str:
+        spec = match.group("spec")
+        base = spec.rsplit("/", 1)[-1]
+        if base not in asset_map or asset_map[base] == base:
+            return match.group(0)
+        prefix, _, _ = spec.rpartition(base)
+        new_spec = f"{prefix}{asset_map[base]}"
+        return f'{match.group("prefix")}{match.group("quote")}{new_spec}{match.group("quote")}'
+    return _JS_IMPORT_RE.sub(replace, text)
 
 
 def _update_html_asset_refs(out_dir: Path, asset_map: dict[str, str]) -> None:
@@ -146,27 +175,66 @@ def build_manifest_json(manifest_toml: Path) -> dict:
 def copy_assets(src: Path, out: Path) -> tuple[int, dict[str, str]]:
     """Copy assets from src to out, hashing JS/CSS files for cache-busting.
     Returns (file_count, asset_map) where asset_map is {original_name: hashed_name}.
+
+    JS modules are hashed in dependency order so that intra-bundle `import ...
+    from "./dep.js"` statements can be rewritten to the hashed dep name before
+    the importer itself is hashed. Without this, the browser fetches the bare
+    `./dep.js` URL, hits 404, and the site renders as a skeleton.
     """
     if out.exists():
         shutil.rmtree(out)
     out.mkdir(parents=True)
 
-    asset_map = {}
+    asset_map: dict[str, str] = {}
     file_count = 0
+    js_files: list[Path] = []
 
     for src_file in src.rglob("*"):
         if not src_file.is_file():
             continue
         rel_path = src_file.relative_to(src)
         dest_file = out / rel_path
-
         if not dest_file.parent.exists():
             dest_file.parent.mkdir(parents=True)
+
+        if src_file.suffix == ".js":
+            js_files.append(src_file)
+            file_count += 1
+            continue
 
         original, hashed = _rename_asset_with_hash(src_file, dest_file)
         if original != hashed:
             asset_map[original] = hashed
         file_count += 1
+
+    deps: dict[Path, set[str]] = {f: _parse_js_imports(f) for f in js_files}
+    name_to_path = {f.name: f for f in js_files}
+    remaining = set(js_files)
+    while remaining:
+        ready = [
+            f for f in remaining
+            if all(
+                spec.rsplit("/", 1)[-1] not in name_to_path
+                or name_to_path[spec.rsplit("/", 1)[-1]] not in remaining
+                for spec in deps[f]
+            )
+        ]
+        if not ready:
+            raise RuntimeError(
+                f"JS import cycle detected among: {sorted(p.name for p in remaining)}"
+            )
+        for src_file in ready:
+            rel_path = src_file.relative_to(src)
+            dest_file = out / rel_path
+            text = src_file.read_text()
+            rewritten = _rewrite_js_imports(text, asset_map)
+            tmp = dest_file.parent / f".{dest_file.name}.staging"
+            tmp.write_text(rewritten)
+            file_hash = _compute_hash(tmp)
+            hashed_name = f"{dest_file.stem}.{file_hash}{dest_file.suffix}"
+            tmp.rename(dest_file.parent / hashed_name)
+            asset_map[dest_file.name] = hashed_name
+        remaining -= set(ready)
 
     return file_count, asset_map
 

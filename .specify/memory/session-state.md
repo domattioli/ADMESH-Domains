@@ -1,48 +1,31 @@
 # Session State: Daily Issue Fixing
 
-## Completed This Session
-✓ **Issue #28** — Removed deprecated scripts (import_meshes.py, regroup_manifest.py)
-  - Commit: a22178a
+## Completed This Session (2026-05-18)
+✓ **Issue #64** — `/speckit.specify` for content-addressable UIDs
+  - Commit: a34b336 (`specs/064-content-uids/spec.md`)
   - Branch: daily-issue-fixing
-  - PR: #29 (draft)
+  - Result: LARGE+splittable → 3 proposed sub-features (A: Mesh.content_uid MVP, B: Domain.content_uid, C: find_similar_domains)
+  - Posted summary + 6 open clarifications to issue #64
+  - No implementation per routine rule (LARGE+splittable → stop)
 
-✓ **Issue #7** — Already resolved in prior session (kind & test_case filters)
-  - Commit: 84ad13b (in history)
-
-✓ **Issue #11** — Already resolved in prior session (test_meshes() helper)
-  - Commit: 17217c9 (in history)
-
-## Active PR
-- PR #29: Draft, covers issues #7, #11, #28
-  - 113 tests pass
-  - Ready for review
+## Active PRs
+- PR #63: Draft, closes #57 (orphan `mixed-hybrid@v1` manifest entry)
+  - Now also carries spec 064 (no code, spec only)
+  - All publisher tests green; `admesh-domains validate` OK
 
 ## Next Issues to Tackle
-1. **Issue #10** — Pre-bake mesh thumbnails (medium scope)
-   - Requires: render_thumbnails.py script, matplotlib integration, ~41 PNG renders
-   - Scope: Suggest starting fresh session
-
-2. **Issue #5** — Tier 2 auto-suggester (boundary polygon similarity)
-   - Requires: shapely dep behind [suggest] extra
-   - Scope: Medium
-
-3. **Issue #4** — Antimeridian-safe IoU (Pacific meshes)
-   - Low priority: no Pacific meshes yet
-   - Defer to next milestone
+1. **Issue #64 sub-feature A** — `Mesh.content_uid` (MVP)
+   - Awaits operator decisions on 6 clarifications in #64 comment
+   - Tractable in one session; stdlib only
+2. **Issue #25** — Mesh strategy comparison (UI) — large; pair with #59 generator
+3. **Issue #60** — DomI drift sync (pin behind `9dd6491f` → `b8efc4e`); requires plugin install env
 
 ## Blocked Issues
 - **Issue #27** — Awaiting Thomas input (feature pruning)
+- **Issue #64** — Awaiting operator decisions on 6 spec clarifications
 
 ## Branch Status
 - Working branch: `daily-issue-fixing`
-- All commits pushed to origin
-- PR #29 created as draft
-- Tests: ✓ 113 pass
-
-## Token Checkpoint
-Session approaching 20+ tool calls. Recommend fresh session for next batch.
-
-## Key Files Modified
-- specs/028-audit-bloat/spec.md (new)
-- scripts/import_meshes.py (removed)
-- scripts/regroup_manifest.py (removed)
+- All commits pushed to origin (HEAD: a34b336)
+- PR #63 open as draft
+- Tests: not re-run this session (spec-only commit)

@@ -71,6 +71,13 @@ class Manifest:
             for m in d.meshes:
                 yield m
 
+    def find_by_uid(self, uid: str) -> Optional[Mesh]:
+        """Return the first mesh whose ``content_uid`` matches, or ``None``."""
+        for m in self.all_meshes():
+            if m.content_uid == uid:
+                return m
+        return None
+
     @property
     def total_meshes(self) -> int:
         return sum(len(d.meshes) for d in self.domains)

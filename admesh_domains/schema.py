@@ -12,12 +12,15 @@ features, etc.
 
 from __future__ import annotations
 
+import hashlib
 from dataclasses import dataclass, field, asdict
 from pathlib import Path
 from typing import Optional
 
 
 SCHEMA_VERSION = "0.3"
+
+CONTENT_UID_PREFIX = "sha256-v1:"
 
 VALID_TYPES = {"ADCIRC", "SMS_2DM", "ADCIRC_GRD"}
 VALID_CATEGORIES = {"real-world", "synthetic"}
@@ -39,6 +42,18 @@ REDISTRIBUTABLE_LICENSES = {
 
 class SchemaError(ValueError):
     """Raised when an entry fails schema validation."""
+
+
+def canonical_mesh_bytes(raw: bytes) -> bytes:
+    """Normalize mesh-file bytes for content hashing.
+
+    Normalizes line endings to LF and strips per-line trailing whitespace
+    (spaces, tabs, CR). Empty trailing lines are preserved. Versioned by
+    the ``sha256-v1`` prefix; any change here requires a new prefix.
+    """
+    text = raw.replace(b"\r\n", b"\n").replace(b"\r", b"\n")
+    lines = [line.rstrip(b" \t") for line in text.split(b"\n")]
+    return b"\n".join(lines)
 
 
 @dataclass
@@ -82,6 +97,7 @@ class Mesh:
     license: str = "unknown"
     test_case: bool = False
     kind: str = "mesh"
+    content_uid: Optional[str] = None
 
     _domain_name: Optional[str] = field(default=None, repr=False, compare=False)
     _base_dir: Optional[Path] = field(default=None, repr=False, compare=False)
@@ -111,6 +127,18 @@ class Mesh:
                 f"Mesh.element_type must be one of {sorted(VALID_ELEMENT_TYPES)} or None, "
                 f"got {self.element_type!r}"
             )
+        if self.content_uid is not None:
+            if not isinstance(self.content_uid, str) or not self.content_uid.startswith(CONTENT_UID_PREFIX):
+                raise SchemaError(
+                    f"Mesh.content_uid must start with {CONTENT_UID_PREFIX!r}, "
+                    f"got {self.content_uid!r}"
+                )
+            hex_part = self.content_uid[len(CONTENT_UID_PREFIX):]
+            if len(hex_part) != 64 or any(c not in "0123456789abcdef" for c in hex_part):
+                raise SchemaError(
+                    f"Mesh.content_uid hex must be 64 lowercase hex chars, "
+                    f"got {hex_part!r}"
+                )
 
     @property
     def mirror_eligible(self) -> bool:
@@ -144,6 +172,20 @@ class Mesh:
         if not p.exists():
             raise FileNotFoundError(f"Mesh file not found: {p}")
         return p.read_text()
+
+    def compute_content_uid(self) -> Optional[str]:
+        """SHA-256 of the canonical `.14` bytes, prefixed with ``sha256-v1:``.
+
+        Canonical form (see ``docs/CONTENT_UID.md``): CRLF and CR newlines are
+        normalized to LF, and trailing whitespace is stripped from each line.
+        Returns ``None`` if the mesh file is not resolvable on disk.
+        """
+        p = self.path
+        if p is None or not p.exists():
+            return None
+        canonical = canonical_mesh_bytes(p.read_bytes())
+        digest = hashlib.sha256(canonical).hexdigest()
+        return f"{CONTENT_UID_PREFIX}{digest}"
 
     def load(self, *, hf_repo: Optional[str] = None, token: Optional[str] = None) -> Path:
         """Download this mesh from the HuggingFace mirror and return a local Path.

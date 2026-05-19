@@ -376,6 +376,101 @@ def cmd_domain_audit(args: argparse.Namespace) -> int:
     return 0 if not disagreements else 1
 
 
+def cmd_uid_audit(args: argparse.Namespace) -> int:
+    """Compute content_uid for every mesh; report duplicates. Optionally write back."""
+    import json as _json
+    from collections import defaultdict
+
+    manifest_path = Path(args.path) if args.path else None
+    manifest = load_manifest(manifest_path)
+
+    computed: list[tuple[str, str]] = []  # (full_id, uid or "")
+    missing: list[str] = []
+    for mesh in manifest.all_meshes():
+        uid = mesh.compute_content_uid()
+        if uid is None:
+            missing.append(mesh.full_id)
+            computed.append((mesh.full_id, ""))
+        else:
+            computed.append((mesh.full_id, uid))
+
+    by_uid: dict[str, list[str]] = defaultdict(list)
+    for full_id, uid in computed:
+        if uid:
+            by_uid[uid].append(full_id)
+    duplicates = {uid: ids for uid, ids in by_uid.items() if len(ids) > 1}
+
+    if args.json:
+        out = {
+            "manifest": str(manifest.source_path),
+            "total": len(computed),
+            "missing": missing,
+            "duplicates": duplicates,
+            "uids": {full_id: uid for full_id, uid in computed if uid},
+        }
+        print(_json.dumps(out, indent=2))
+    else:
+        print(f"manifest: {manifest.source_path}")
+        print(f"  meshes scanned: {len(computed)}")
+        print(f"  files present:  {len(computed) - len(missing)}")
+        print(f"  files missing:  {len(missing)}")
+        if missing:
+            for full_id in missing[:5]:
+                print(f"    - {full_id}")
+            if len(missing) > 5:
+                print(f"    ... and {len(missing) - 5} more")
+        if duplicates:
+            print(f"  duplicates:     {len(duplicates)} group(s)")
+            for uid, ids in duplicates.items():
+                print(f"    {uid}")
+                for full_id in ids:
+                    print(f"      - {full_id}")
+        else:
+            print("  duplicates:     none")
+
+    if args.write:
+        if manifest.source_path is None:
+            print("ERROR: cannot --write: manifest has no source_path", file=sys.stderr)
+            return 3
+        try:
+            import tomlkit
+        except ImportError:
+            print(
+                "ERROR: --write requires tomlkit. Install with: "
+                "pip install admesh-domains[publish]",
+                file=sys.stderr,
+            )
+            return 4
+        n_written = _write_uids_to_manifest(manifest.source_path, dict(computed))
+        print(f"  wrote {n_written} content_uid entries to {manifest.source_path}")
+
+    return 1 if duplicates else 0
+
+
+def _write_uids_to_manifest(path: Path, uids: dict[str, str]) -> int:
+    """Update ``manifest.toml`` in place, setting ``content_uid`` on each mesh.
+
+    Preserves comments + order via ``tomlkit``. Only writes when the value
+    changes (idempotent). Returns the count of entries written/updated.
+    """
+    import tomlkit
+
+    doc = tomlkit.parse(path.read_text())
+    n_written = 0
+    for domain in doc.get("domains", []):
+        domain_name = domain.get("name")
+        for mesh in domain.get("meshes", []):
+            full_id = f"{domain_name}/{mesh.get('id')}"
+            new_uid = uids.get(full_id, "")
+            if not new_uid:
+                continue
+            if mesh.get("content_uid") != new_uid:
+                mesh["content_uid"] = new_uid
+                n_written += 1
+    path.write_text(tomlkit.dumps(doc))
+    return n_written
+
+
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(
         prog="admesh-domains",
@@ -478,6 +573,18 @@ def build_parser() -> argparse.ArgumentParser:
     pdl.add_argument("--region")
     pdl.add_argument("--application")
     pdl.set_defaults(func=cmd_domains)
+
+    pua = sub.add_parser(
+        "uid-audit",
+        help="Compute Mesh.content_uid for every mesh; report duplicates",
+    )
+    pua.add_argument("path", nargs="?", default=None, help="Manifest path (default: bundled)")
+    pua.add_argument(
+        "--write", action="store_true",
+        help="Persist computed UIDs back into the manifest (requires [publish] extra for tomlkit)",
+    )
+    pua.add_argument("--json", action="store_true", help="Emit JSON output")
+    pua.set_defaults(func=cmd_uid_audit)
 
     return p
 

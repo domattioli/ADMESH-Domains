@@ -53,6 +53,7 @@ publish = [
     "twine>=4.0",
     "build>=1.0",
     "matplotlib>=3.5",
+    "tomlkit>=0.12",
 ]
 gen = [
     "chilmesh>=0.2.0",

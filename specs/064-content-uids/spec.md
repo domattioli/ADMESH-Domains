@@ -191,13 +191,13 @@ Per routine ("Budget LARGE + splittable → stop. List sub-issues."), no impleme
 
 ---
 
-## Sub-Issues to Open (proposal — operator approves)
+## Sub-Issues (filed 2026-05-19)
 
-1. **`feat: Mesh.content_uid file-hash UID (MVP for #64)`** — sub-feature A. Adds optional `content_uid` field, `compute_content_uid()`, `uid-audit` CLI. Track: Code. Budget: medium. Closes part of #64.
-2. **`feat: Domain.content_uid boundary-hash UID`** — sub-feature B. Adds `[geometry]` extra (or extends `[publish]`), `Domain.content_uid`, canonical boundary serializer. Track: Code. Budget: medium. Depends on #64 sub-feature A landing first (shared `docs/CONTENT_UID.md`).
-3. **`feat: find_similar_domains() near-duplicate query`** — sub-feature C. Similarity (not identity). Lives in `query.py`. Track: Code. Budget: medium. No dependency on A or B. Defer until a real near-duplicate domain exists in registry.
+1. **#65 — `feat: Mesh.content_uid file-hash UID (MVP for #64, sub-feature A)`** — adds optional `content_uid` field, `compute_content_uid()`, `uid-audit` CLI. Track: Code. Budget: medium. **MVP — pick first.**
+2. **#66 — `feat: Domain.content_uid boundary-hash UID (#64, sub-feature B)`** — adds `[geometry]` extra (or extends `[publish]`), `Domain.content_uid`, canonical boundary serializer. Track: Code. Budget: medium. Depends on #65 landing first (shared `docs/CONTENT_UID.md`).
+3. **#67 — `feat: find_similar_domains() near-duplicate query (#64, sub-feature C)`** — similarity (not identity). Lives in `query.py`. Track: Code. Budget: medium. No dependency on A or B. Deferred until a real near-duplicate domain exists in registry.
 
-Issue #64 stays open as the umbrella; each sub-issue links back via `Relates #64`.
+Umbrella #64 stays open until all three sub-issues close; each sub-issue links back via `Relates #64`.
 
 ---
 
@@ -224,5 +224,5 @@ Issue #64 stays open as the umbrella; each sub-issue links back via `Relates #64
 ---
 
 **Author:** daily-issue-fixing routine
-**Date:** 2026-05-18
+**Date:** 2026-05-18 (drafted); 2026-05-19 (sub-issues #65/#66/#67 filed)
 **Scope:** Spec only. No code in this commit. Per routine: LARGE+splittable → STOP, list sub-issues.
